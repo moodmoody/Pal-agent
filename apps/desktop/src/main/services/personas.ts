@@ -16,7 +16,7 @@ import { fmScalar, fmString, parseFrontmatter } from './frontmatter'
 import { reassignTaskPersona } from './tasks'
 
 /**
- * Agent 提示词（Personas）服务：发现 / 解析 / 读写 `~/.deva/personas/<id>.md`（全局，与项目无关）。
+ * Agent 提示词（Personas）服务：发现 / 解析 / 读写 `~/.pal/personas/<id>.md`（全局，与项目无关）。
  *
  * 定位（对标 ChatGPT「自定义指令」/ 人格 profile）：每条 persona 是一段命名的**附加系统提示词**
  * （性格、语气、行文风格、偏好等）。可多条并存、独立启停；**已启用**的会在每轮对话前**追加**进
@@ -33,12 +33,13 @@ import { reassignTaskPersona } from './tasks'
  * 运行期（chat.ts 同进程直接调用，无需 IPC）：主轮只注入本对话角色这一条的 name+prompt（见 resolvePersonaId；
  * 子智能体有自己的系统提示词，刻意不注入，避免串味）。
  *
- * 安全：persona 配置由**主进程直读**。注入时以固定前言框定为「用户自定义附加指令，在不违反安全与工具使用原则的前提下遵循」——persona
- * 绝不能借此关闭「切勿用文字征求授权」等安全/工具铁律。
+ * 优先级：persona 配置由**主进程直读**，注入时**置顶为系统提示词的最高优先级槽位**（见 chat.ts 的 systemPrompt /
+ * sealedSystemPrompt）——角色定义的身份、语气、价值取向与表达边界优先于其后的工具机制与环境说明段落。
+ * 工具机制（文件怎么覆盖、只读调用是否并发、相对路径怎么解析）是环境事实而非行为规范，不受此优先级影响。
  */
 
 /**
- * 默认角色 Deva 的固定 id（种子角色，见 deva-personas.ts；界面不允许删除）。
+ * 默认角色 Pal 的固定 id（种子角色，见 Pal-personas.ts；界面不允许删除）。
  * 未绑定角色、或绑定的角色已被删除时一律回落到它；按 id 绑定，用户改名不受影响。
  */
 export const DEFAULT_PERSONA_ID = 'general'
@@ -319,7 +320,7 @@ export function deletePersona(id: string): void {
   }
   // 连自定义头像一起删：不留孤儿文件（旧版 makeId 会复用已删角色的 id，遗留的图曾挂到新角色脸上）。
   clearAvatarImage(id)
-  // 绑定该角色的定时任务改由默认角色 Deva 执行（连同其独占对话），任务照常运行。
+  // 绑定该角色的定时任务改由默认角色 Pal 执行（连同其独占对话），任务照常运行。
   reassignTaskPersona(id, DEFAULT_PERSONA_ID)
   // 从技能 / MCP 的可用角色里剔除；只给它用的那些改回所有角色并停用。
   pruneExtRoles((p) => p !== id)

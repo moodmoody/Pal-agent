@@ -1,8 +1,8 @@
 /**
  * 扩展（技能 / MCP 服务）的**类型定义**。全部为全局配置，与项目无关。
- * 用户内容首启为空态（由用户上传/对话创建，或手放于 ~/.deva 下，source='custom'）；
+ * 用户内容首启为空态（由用户上传/对话创建，或手放于 ~/.pal 下，source='custom'）；
  * 唯一的内置项是系统元技能 `create-skill`（source='builtin'，随二进制内置、不落盘/不可删）。
- * 技能与 MCP 已接入真实存储（~/.deva/skills、~/.deva/mcp.json，经 deva.skills / deva.mcp IPC）。
+ * 技能与 MCP 已接入真实存储（~/.pal/skills、~/.pal/mcp.json，经 Pal.skills / Pal.mcp IPC）。
  * 子智能体（通用 / Explore / Research / Plan）是**内置能力**，不可配置、不在此列——见 main/services/subagents.ts。
  */
 
@@ -13,7 +13,7 @@ export type ExtScope = 'global'
 export type ExtSource = 'custom' | 'builtin'
 
 export interface Skill {
-  /** 文件夹名，稳定身份（与 deva.skills 的 SkillRecord.id 对齐）。 */
+  /** 文件夹名，稳定身份（与 Pal.skills 的 SkillRecord.id 对齐）。 */
   id: string
   /** 显示名（frontmatter name）；对话中 /name 与 skill 工具据此匹配。 */
   name: string
@@ -83,7 +83,7 @@ export interface McpServer {
   enabled: boolean
   /** 可用角色（角色 id）；null = 全部角色。只决定哪些角色的对话里有它的工具，连接与角色无关。 */
   roles: string[] | null
-  /** ↓ 运行期（来自 deva.mcp.list / onStatus，不落盘） */
+  /** ↓ 运行期（来自 Pal.mcp.list / onStatus，不落盘） */
   status: McpStatus
   /** 已发现工具数 */
   toolCount: number

@@ -2,8 +2,10 @@
  * 生成应用图标：build/icon.png（1024，供 mac/linux，electron-builder 自动转 icns）
  * 与 build/icon.ico（16~256 多尺寸，供 Windows）。
  *
- * 零第三方依赖：按 build/icon.svg 的几何形状解析式光栅化（超采样抗锯齿），
- * 用内置 zlib 编码 PNG，ICO 内嵌 PNG 帧。改图形请同步修改 icon.svg 与下方 inShape。
+ * 零第三方依赖：按解析几何形状光栅化（超采样抗锯齿），
+ * 用内置 zlib 编码 PNG，ICO 内嵌 PNG 帧。改图形请同步修改下方 inShape 与 tray-icon.ts。
+ *
+ * 标志：深青→靛青渐变圆角底板 + 白色「P」——竖笔 + 右上半圆弧（碗），碗底接回竖笔。
  *
  * 用法：node scripts/gen-icon.mjs   （在 apps/desktop 下）
  */
@@ -14,10 +16,10 @@ import { dirname, join } from 'path'
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'build')
 
-// ── 几何（1024 画布坐标，与 icon.svg 平移后一致）────────────────────────────
+// ── 几何（1024 画布坐标）────────────────────────────────────────────────────
 const BG_R = 224 // 底板圆角
-const C0 = [0x4f, 0x46, 0xe5] // 渐变起点 indigo
-const C1 = [0x7c, 0x3a, 0xed] // 渐变终点 violet
+const C0 = [0x0f, 0x76, 0x6e] // 渐变起点 teal-700
+const C1 = [0x1e, 0x40, 0xaf] // 渐变终点 blue-800
 
 function inBg(x, y) {
   const cx = Math.min(Math.max(x, BG_R), 1024 - BG_R)
@@ -25,18 +27,37 @@ function inBg(x, y) {
   return (x - cx) ** 2 + (y - cy) ** 2 <= BG_R * BG_R
 }
 
+/** 点到线段的距离平方。 */
+function segDist2(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const len2 = dx * dx + dy * dy
+  let t = len2 === 0 ? 0 : ((px - x1) * dx + (py - y1) * dy) / len2
+  t = Math.min(1, Math.max(0, t))
+  const cx = x1 + t * dx
+  const cy = y1 + t * dy
+  return (px - cx) ** 2 + (py - cy) ** 2
+}
+
+// 「P」的骨架（1024 画布）：
+//   竖笔  x=342，y 250→790（贯穿全高，小尺寸下也有分量）
+//   碗    圆心 (400,455)、中线半径 190、线宽 172 —— 右半圆，开口朝左下接回竖笔
+const P_STEM = [342, 250, 342, 790]
+const P_BOWL_CX = 400
+const P_BOWL_CY = 455
+const P_BOWL_R = 190      // 中线半径
+const P_W = 86            // 笔画半宽 → 线宽 172（比 K 粗，小图标不糊）
+const P_BOWL_IN = P_BOWL_R - P_W
+const P_BOWL_OUT = P_BOWL_R + P_W
+
 function inShape(x, y) {
-  // 感叹号竖线：胶囊 (333,294)-(333,578) 半径 48
-  const cy = Math.min(Math.max(y, 294), 578)
-  if ((x - 333) ** 2 + (y - cy) ** 2 <= 48 * 48) return true
-  // 感叹号圆点
-  if ((x - 333) ** 2 + (y - 730) ** 2 <= 48 * 48) return true
-  // 弧两端的短横（平头）
-  if (x >= 441 && x <= 473 && (Math.abs(y - 294) <= 48 || Math.abs(y - 730) <= 48)) return true
-  // 右半圆环：圆心 (473,512)，中线半径 218，线宽 96
-  if (x >= 473) {
-    const d = Math.hypot(x - 473, y - 512)
-    if (d >= 170 && d <= 266) return true
+  const w2 = P_W * P_W
+  // 竖笔
+  if (segDist2(x, y, ...P_STEM) <= w2) return true
+  // 碗：右半圆环。只画 x >= 圆心，环本身自带两端，不用额外封口。
+  if (x >= P_BOWL_CX) {
+    const d = Math.hypot(x - P_BOWL_CX, y - P_BOWL_CY)
+    if (d >= P_BOWL_IN && d <= P_BOWL_OUT) return true
   }
   return false
 }

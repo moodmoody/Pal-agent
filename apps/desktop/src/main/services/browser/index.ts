@@ -511,7 +511,7 @@ async function evaluate(page: BrowserPage, script: string): Promise<{ ok: boolea
 }
 
 /**
- * 动作开始：浏览器窗口出「Deva 正在操作」状态条与边框、胶囊显示正在做什么。状态条刚出现时网页高度变了，
+ * 动作开始：浏览器窗口出「Pal 正在操作」状态条与边框、胶囊显示正在做什么。状态条刚出现时网页高度变了，
  * 稍等页面重新布局再动手，免得按旧坐标点错。
  */
 async function operate(page: BrowserPage, action: Action, label?: string, signal?: AbortSignal): Promise<void> {
@@ -879,7 +879,7 @@ export async function runBrowserTool(
   const sessionId = ctx.sessionId
   if (!sessionId) return { content: '浏览器在当前环境不可用。', summary: '不可用', isError: true }
   try {
-    // 作用在当前页面上的动作：先在浏览器窗口 / 胶囊上亮出「Deva 正在操作」（open 在 act 里建好页面后再亮）
+    // 作用在当前页面上的动作：先在浏览器窗口 / 胶囊上亮出「Pal 正在操作」（open 在 act 里建好页面后再亮）
     const pre = OPERATING_ACTIONS.has(action) ? currentPage(sessionId) : null
     if (pre) await operate(pre, action, undefined, ctx.signal)
     return await act(action, a, sessionId, ctx.signal, ctx.canPromptUser === true, ctx.personaId)
@@ -895,7 +895,7 @@ export async function runBrowserTool(
   }
 }
 
-/** 作用在当前页面上、要在界面上显示「Deva 正在…」的动作。 */
+/** 作用在当前页面上、要在界面上显示「Pal 正在…」的动作。 */
 const OPERATING_ACTIONS = new Set<Action>([
   'snapshot',
   'click',

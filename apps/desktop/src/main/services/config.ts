@@ -5,7 +5,7 @@ import { join } from 'path'
 /**
  * 应用配置存储（主进程）。
  * 非敏感的用户配置（主题 / 语言 / 服务商与模型 / 默认模型等）以**明文 JSON** 存于
- * `~/.deva/config.json`，开发者可手改 / 备份 / 版本化（对标 ~/.claude）。
+ * `~/.pal/config.json`，开发者可手改 / 备份 / 版本化（对标 ~/.claude）。
  * 根目录可用环境变量 `DEVA_HOME` 覆盖（便携安装 / 测试 / CI）。
  * **敏感信息（API 密钥）绝不进此文件**——见 services/secrets.ts（safeStorage 加密的 secrets.json）。
  * 详见 docs/architecture/security.md。
@@ -13,11 +13,11 @@ import { join } from 'path'
 
 let home = ''
 
-/** Deva 配置根目录：DEVA_HOME 覆盖，否则 ~/.deva。首次调用即确保目录存在。 */
+/** Pal 配置根目录：DEVA_HOME 覆盖，否则 ~/.pal。首次调用即确保目录存在。 */
 export function getDevaHome(): string {
   if (home) return home
   const override = process.env.DEVA_HOME?.trim()
-  home = override && override.length > 0 ? override : join(app.getPath('home'), '.deva')
+  home = override && override.length > 0 ? override : join(app.getPath('home'), '.pal')
   try {
     if (!existsSync(home)) mkdirSync(home, { recursive: true })
   } catch {

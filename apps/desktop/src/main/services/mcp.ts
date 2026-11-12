@@ -316,7 +316,7 @@ async function connect(id: string, cfg: McpServerConfig): Promise<boolean> {
   try {
     const transport = await buildTransport(cfg)
     if (stale()) return false
-    const c = new Client({ name: 'deva', version: app.getVersion() }, { capabilities: {} })
+    const c = new Client({ name: 'Pal', version: app.getVersion() }, { capabilities: {} })
     client = c
     // 连接中就挂上：握手期间被停用、删除或应用退出（settle / forget / disconnectAllServers）也能当即关掉它、
     // 收掉子进程，不必等握手自己结束（慢服务要等到连接超时）。是否可用仍只看 status。

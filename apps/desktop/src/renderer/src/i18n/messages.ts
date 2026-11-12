@@ -10,7 +10,7 @@ export interface MessageTree {
 }
 
 const zhCN: MessageTree = {
-  app: { name: 'Deva', tagline: '' },
+  app: { name: 'Pal', tagline: '' },
   activity: {
     chat: '对话',
     explorer: '资源管理器',
@@ -196,8 +196,8 @@ const zhCN: MessageTree = {
     rolesSummary: '{names}等 {n} 个角色'
   },
   chat: {
-    role: { user: '我', agent: 'Deva' },
-    placeholder: '向 Deva 描述你的任务，或输入 / 使用技能…',
+    role: { user: '我', agent: 'Pal' },
+    placeholder: '向 Pal 描述你的任务，或输入 / 使用技能…',
     send: '发送',
     stop: '停止',
     // 回合进行中插入的消息（执行步骤里的节点）
@@ -235,7 +235,7 @@ const zhCN: MessageTree = {
       onHint: '开启思考（该模型无法设置思考等级）'
     },
     empty: '有什么可以帮你？',
-    emptyHint: '描述任务，Deva 会读写项目文件、按需请求授权来完成。',
+    emptyHint: '描述任务，Pal 会读写项目文件、按需请求授权来完成。',
     error: '出错了',
     notice: {
       truncated: '回复多次撞上输出长度上限或工具参数不完整，自动续写仍未完成，已停下。可发送「继续」，或让我把内容拆小、分段写入文件。',
@@ -509,7 +509,8 @@ const zhCN: MessageTree = {
       autoEmpty: '上一步没有输出，正在自动重试',
       autoContext: '上下文超限，正在压缩后重试',
       autoOutputLimit: '输出上限不被模型接受，已降档重试',
-      autoEffort: '当前模型不支持所选思考等级，已按默认重发'
+      autoEffort: '当前模型不支持所选思考等级，已按默认重发',
+      autoRefusal: '请求被拒绝，正在换表述重试'
     },
     ask: {
       title: '请你决定',
@@ -621,7 +622,8 @@ const zhCN: MessageTree = {
       skipped: '暂不挂载',
       doneHint: '已挂载工作区：'
     },
-    md: { copy: '复制', copied: '已复制' }
+    md: { copy: '复制', copied: '已复制' },
+    msg: { copy: '复制这条消息' }
   },
   bots: {
     title: '机器人',
@@ -630,7 +632,7 @@ const zhCN: MessageTree = {
     addTitle: '添加{p}机器人',
     listEmpty: '还没有机器人，点上方的 + 添加。',
     detailEmpty: '在左侧选择一个机器人查看详情。',
-    paneHint: '把聊天工具接入 Deva，在手机上继续对话。',
+    paneHint: '把聊天工具接入 Pal，在手机上继续对话。',
     unnamed: '未命名机器人',
     platform: { feishu: '飞书', telegram: 'Telegram' },
     region: { cn: '中国', intl: '国际' },
@@ -649,9 +651,9 @@ const zhCN: MessageTree = {
     scanOpenLink: '在电脑上的 Telegram 中打开',
     scanNote: {
       feishu:
-        '扫码的飞书账号会自动成为这个机器人的主人，创建完成后机器人会主动给你发消息。电脑上的 Deva 需要保持运行（关窗驻留托盘即可）。',
+        '扫码的飞书账号会自动成为这个机器人的主人，创建完成后机器人会主动给你发消息。电脑上的 Pal 需要保持运行（关窗驻留托盘即可）。',
       telegram:
-        '点 Start 的 Telegram 账号会成为这个机器人的主人。Token 只加密保存在这台电脑上。电脑上的 Deva 需要保持运行（关窗驻留托盘即可），且能访问 Telegram（如需代理，请设置系统代理）。'
+        '点 Start 的 Telegram 账号会成为这个机器人的主人。Token 只加密保存在这台电脑上。电脑上的 Pal 需要保持运行（关窗驻留托盘即可），且能访问 Telegram（如需代理，请设置系统代理）。'
     },
     tokenLead: '扫码打开 BotFather，发送 /newbot 创建机器人，再把它回复的 Token 粘贴到下面。',
     tokenPlaceholder: '粘贴 Token，形如 123456789:AAH…',
@@ -663,7 +665,7 @@ const zhCN: MessageTree = {
       expired: '二维码已过期。'
     },
     users: '可以使用的账号',
-    usersHint: '只有这些账号能通过机器人和 Deva 对话。',
+    usersHint: '只有这些账号能通过机器人和 Pal 对话。',
     usersEmpty: '还没有账号。',
     owner: '主人',
     invite: '邀请其他账号',
@@ -675,7 +677,7 @@ const zhCN: MessageTree = {
     inviteRegen: '重新生成',
     inviteCancel: '取消邀请',
     removeUser: '移除',
-    removeUserConfirm: '移除后，这个账号将无法再通过机器人操作 Deva。',
+    removeUserConfirm: '移除后，这个账号将无法再通过机器人操作 Pal。',
     replyMode: '回复方式',
     replyModeOpt: { stream: '流式卡片', final: '仅最终结果' },
     replyModeHint: {
@@ -701,7 +703,7 @@ const zhCN: MessageTree = {
     usageText:
       '直接发消息就是在当前对话里继续聊。指令：/new 新建对话、/list 最近对话、/use 序号 切换、/stop 停止、/status 当前对话、/help 帮助。计划审批、提问、定时任务完成通知都会以卡片形式发给你。',
     security:
-      '安全提示：能使用机器人的账号可以让 Deva 在这台电脑上读写文件、运行命令，权限和你在电脑上使用时一样。机器人只响应私聊，群聊消息一律忽略。',
+      '安全提示：能使用机器人的账号可以让 Pal 在这台电脑上读写文件、运行命令，权限和你在电脑上使用时一样。机器人只响应私聊，群聊消息一律忽略。',
     delete: '删除机器人',
     deleteConfirm: {
       feishu: '删除后机器人将断开连接，手机上无法再使用。飞书开放平台上的应用不会被删除，可自行在开放平台删除。',
@@ -734,16 +736,16 @@ const zhCN: MessageTree = {
       notes: '更新说明',
       download: '下载更新',
       downloadInstaller: '下载安装包',
-      manualHintMac: '下载后打开安装包，先退出 Deva，再把 Deva 拖进「应用程序」替换旧版。',
+      manualHintMac: '下载后打开安装包，先退出 Pal，再把 Pal 拖进「应用程序」替换旧版。',
       manualHint: '下载后运行安装包，直接覆盖安装即可。',
-      manualHintLinux: '下载 AppImage 后先退出 Deva，把它设为可执行（chmod +x），再替换旧文件即可。',
-      manualHintDeb: '下载后先退出 Deva，在下载目录里运行 sudo apt install ./{file} 覆盖安装即可。',
+      manualHintLinux: '下载 AppImage 后先退出 Pal，把它设为可执行（chmod +x），再替换旧文件即可。',
+      manualHintDeb: '下载后先退出 Pal，在下载目录里运行 sudo apt install ./{file} 覆盖安装即可。',
       downloadPortable: '下载便携版',
-      portableHint: '下载后退出 Deva，解压新版本并替换原文件夹即可，设置与对话不受影响。',
+      portableHint: '下载后退出 Pal，解压新版本并替换原文件夹即可，设置与对话不受影响。',
       downloading: '正在下载 {percent}%',
       downloaded: '新版本 {version} 已下载',
       install: '重启并安装',
-      installHint: '安装期间 Deva 将自动重启。如暂不安装，更新将在下次退出 Deva 时自动完成。',
+      installHint: '安装期间 Pal 将自动重启。如暂不安装，更新将在下次退出 Pal 时自动完成。',
       checkFailed: '检查更新失败',
       downloadFailed: '下载更新失败',
       retry: '重试',
@@ -1190,7 +1192,7 @@ const zhCN: MessageTree = {
       memDelete: '删除',
       memDeleteConfirm: '确定删除这条记忆吗？\n「{content}」',
       memClear: '清空全部记忆',
-      memClearConfirm: '确定清空全部记忆吗？Deva 将忘记关于你的所有习惯与偏好，此操作不可撤销。',
+      memClearConfirm: '确定清空全部记忆吗？Pal 将忘记关于你的所有习惯与偏好，此操作不可撤销。',
       err: {
         empty: '内容不能为空',
         tooLong: '单条最多 {max} 字，请精简成一句话',
@@ -1228,11 +1230,11 @@ const zhCN: MessageTree = {
     skillDeleteConfirmMac: '技能文件夹（含其中的脚本与资料）将移到废纸篓，可从废纸篓还原。',
     skillDeleteFailed: '删除失败：技能文件夹可能正被占用，可稍后重试或在文件夹中手动删除。'
   },
-  // 内置浏览器：「Deva 浏览器」窗口的外框与主窗口输入框上方的胶囊
+  // 内置浏览器：「Pal 浏览器」窗口的外框与主窗口输入框上方的胶囊
   browser: {
-    title: 'Deva 浏览器',
-    emptyTitle: 'Deva 打开的网页会显示在这里',
-    emptyHint: '在对话里让 Deva 打开网页，就能在这里查看它的操作',
+    title: 'Pal 浏览器',
+    emptyTitle: 'Pal 打开的网页会显示在这里',
+    emptyHint: '在对话里让 Pal 打开网页，就能在这里查看它的操作',
     untitled: '加载中…',
     closeTab: '关闭标签',
     back: '后退',
@@ -1248,11 +1250,11 @@ const zhCN: MessageTree = {
     closePage: '关闭这个网页',
     threadBadge: '浏览器里开着 {n} 个网页',
     closeAll: '全部关闭',
-    closeLocked: 'Deva 正在用，暂不能关闭',
+    closeLocked: 'Pal 正在用，暂不能关闭',
     openedBy: '{name} 打开的网页',
     operating: '{name} 正在操作',
     stop: '停止',
-    stopHint: '停止 Deva 本轮的工作',
+    stopHint: '停止 Pal 本轮的工作',
     handoff: {
       login: '{name} 需要你登录这个网站',
       captcha: '{name} 需要你完成页面上的验证',
@@ -1281,7 +1283,7 @@ const zhCN: MessageTree = {
 }
 
 const en: MessageTree = {
-  app: { name: 'Deva', tagline: '' },
+  app: { name: 'Pal', tagline: '' },
   activity: {
     chat: 'Chat',
     explorer: 'Explorer',
@@ -1468,8 +1470,8 @@ const en: MessageTree = {
     rolesSummary: '{names} and {rest} more'
   },
   chat: {
-    role: { user: 'You', agent: 'Deva' },
-    placeholder: 'Describe a task for Deva, or type / to use a skill…',
+    role: { user: 'You', agent: 'Pal' },
+    placeholder: 'Describe a task for Pal, or type / to use a skill…',
     send: 'Send',
     stop: 'Stop',
     insert: {
@@ -1506,7 +1508,7 @@ const en: MessageTree = {
       onHint: 'Turn thinking on (this model has no thinking levels)'
     },
     empty: 'How can I help?',
-    emptyHint: 'Describe a task; Deva reads and writes project files, asking permission as needed.',
+    emptyHint: 'Describe a task; Pal reads and writes project files, asking permission as needed.',
     error: 'Something went wrong',
     notice: {
       truncated: 'Replies kept hitting the output length limit or producing incomplete tool arguments, and automatic continuation didn’t finish, so I stopped. Send “continue”, or ask me to split the work into smaller pieces.',
@@ -1772,7 +1774,8 @@ const en: MessageTree = {
       autoEmpty: 'Previous step produced nothing, retrying automatically',
       autoContext: 'Context too long, compacting and retrying',
       autoOutputLimit: 'Output budget rejected by the model, retrying with a smaller one',
-      autoEffort: 'This model does not support the selected thinking level; resent with the default'
+      autoEffort: 'This model does not support the selected thinking level; resent with the default',
+      autoRefusal: 'Request was refused, retrying with different wording'
     },
     ask: {
       title: 'Your call',
@@ -1886,7 +1889,8 @@ const en: MessageTree = {
       skipped: 'Skipped',
       doneHint: 'Workspace mounted: '
     },
-    md: { copy: 'Copy', copied: 'Copied' }
+    md: { copy: 'Copy', copied: 'Copied' },
+    msg: { copy: 'Copy this message' }
   },
   bots: {
     title: 'Bots',
@@ -1895,7 +1899,7 @@ const en: MessageTree = {
     addTitle: 'Add a {p} bot',
     listEmpty: 'No bots yet. Use + above to add one.',
     detailEmpty: 'Select a bot on the left to see its details.',
-    paneHint: 'Connect a chat app to Deva and keep chatting from your phone.',
+    paneHint: 'Connect a chat app to Pal and keep chatting from your phone.',
     unnamed: 'Unnamed bot',
     platform: { feishu: 'Feishu', telegram: 'Telegram' },
     region: { cn: 'China', intl: 'Intl' },
@@ -1914,9 +1918,9 @@ const en: MessageTree = {
     scanOpenLink: 'Open in Telegram on this computer',
     scanNote: {
       feishu:
-        'The account that scans becomes the owner of the bot, and the bot will message you once it is ready. Deva must stay running on this computer (keeping it in the tray is enough).',
+        'The account that scans becomes the owner of the bot, and the bot will message you once it is ready. Pal must stay running on this computer (keeping it in the tray is enough).',
       telegram:
-        'The Telegram account that taps Start becomes the owner of the bot. The token is stored encrypted on this computer only. Deva must stay running here (keeping it in the tray is enough) and be able to reach Telegram (set a system proxy if you need one).'
+        'The Telegram account that taps Start becomes the owner of the bot. The token is stored encrypted on this computer only. Pal must stay running here (keeping it in the tray is enough) and be able to reach Telegram (set a system proxy if you need one).'
     },
     tokenLead: 'Scan to open BotFather, send /newbot to create a bot, then paste the token it replies with below.',
     tokenPlaceholder: 'Paste the token, e.g. 123456789:AAH…',
@@ -1928,7 +1932,7 @@ const en: MessageTree = {
       expired: 'The QR code has expired.'
     },
     users: 'Allowed accounts',
-    usersHint: 'Only these accounts can talk to Deva through the bot.',
+    usersHint: 'Only these accounts can talk to Pal through the bot.',
     usersEmpty: 'No accounts yet.',
     owner: 'Owner',
     invite: 'Invite another account',
@@ -1940,7 +1944,7 @@ const en: MessageTree = {
     inviteRegen: 'Regenerate',
     inviteCancel: 'Cancel invite',
     removeUser: 'Remove',
-    removeUserConfirm: 'This account will no longer be able to control Deva through the bot.',
+    removeUserConfirm: 'This account will no longer be able to control Pal through the bot.',
     replyMode: 'Replies',
     replyModeOpt: { stream: 'Streaming card', final: 'Final result only' },
     replyModeHint: {
@@ -1967,7 +1971,7 @@ const en: MessageTree = {
     usageText:
       'Just send a message to continue the current conversation. Commands: /new, /list, /use <n>, /stop, /status, /help. Plan reviews, questions and scheduled-task results arrive as cards.',
     security:
-      'Security note: allowed accounts can make Deva read and write files and run commands on this computer, with the same permissions you have here. The bot only answers direct messages; group chats are ignored.',
+      'Security note: allowed accounts can make Pal read and write files and run commands on this computer, with the same permissions you have here. The bot only answers direct messages; group chats are ignored.',
     delete: 'Delete bot',
     deleteConfirm: {
       feishu:
@@ -2003,20 +2007,20 @@ const en: MessageTree = {
       download: 'Download update',
       downloadInstaller: 'Download installer',
       manualHintMac:
-        'Open the downloaded installer, quit Deva, then drag Deva into Applications to replace the old version.',
+        'Open the downloaded installer, quit Pal, then drag Pal into Applications to replace the old version.',
       manualHint: 'Run the downloaded installer to install over the current version.',
       manualHintLinux:
-        'Quit Deva, make the downloaded AppImage executable (chmod +x), then replace the old file.',
+        'Quit Pal, make the downloaded AppImage executable (chmod +x), then replace the old file.',
       manualHintDeb:
-        'Quit Deva, then run sudo apt install ./{file} in your download folder to install over the current version.',
+        'Quit Pal, then run sudo apt install ./{file} in your download folder to install over the current version.',
       downloadPortable: 'Download portable version',
       portableHint:
-        'Quit Deva, then extract the new version and replace the old folder. Your settings and conversations are not affected.',
+        'Quit Pal, then extract the new version and replace the old folder. Your settings and conversations are not affected.',
       downloading: 'Downloading {percent}%',
       downloaded: 'Version {version} downloaded',
       install: 'Restart and install',
       installHint:
-        'Deva will restart to complete the installation. Otherwise, the update will be installed automatically the next time you quit Deva.',
+        'Pal will restart to complete the installation. Otherwise, the update will be installed automatically the next time you quit Pal.',
       checkFailed: 'Couldn’t check for updates',
       downloadFailed: 'Couldn’t download the update',
       retry: 'Retry',
@@ -2298,7 +2302,7 @@ const en: MessageTree = {
         skip: 'Skip'
       },
       status: {
-        conflict: 'Modified outside Deva after the checkpoint — skipped by default',
+        conflict: 'Modified outside Pal after the checkpoint — skipped by default',
         link: 'Linked file (symlink / hard link) — not written back, for safety',
         blob_missing: 'Backup is missing — can’t be restored',
         too_large: 'Too large — it wasn’t backed up at the time'
@@ -2460,7 +2464,7 @@ const en: MessageTree = {
     profile: {
       open: 'Profile',
       title: 'Profile',
-      memTitle: 'What Deva remembers about you',
+      memTitle: 'What Pal remembers about you',
       memPage: 'Page {n} of {total}',
       memEmpty: 'No memories yet. Just tell "remember…".',
       memEdit: 'Edit',
@@ -2468,7 +2472,7 @@ const en: MessageTree = {
       memDeleteConfirm: 'Delete this memory?\n“{content}”',
       memClear: 'Clear all memories',
       memClearConfirm:
-        'Clear all memories? Deva will forget all your habits and preferences. This cannot be undone.',
+        'Clear all memories? Pal will forget all your habits and preferences. This cannot be undone.',
       err: {
         empty: 'Content cannot be empty',
         tooLong: 'Each entry is limited to {max} characters — keep it to one sentence',
@@ -2510,9 +2514,9 @@ const en: MessageTree = {
       'Could not delete the skill. The folder may be in use; try again later or delete it manually.'
   },
   browser: {
-    title: 'Deva Browser',
-    emptyTitle: 'Pages Deva opens will show up here',
-    emptyHint: 'Ask Deva to open a page in a chat to watch what it does here',
+    title: 'Pal Browser',
+    emptyTitle: 'Pages Pal opens will show up here',
+    emptyHint: 'Ask Pal to open a page in a chat to watch what it does here',
     untitled: 'Loading…',
     closeTab: 'Close tab',
     back: 'Back',
@@ -2528,11 +2532,11 @@ const en: MessageTree = {
     closePage: 'Close this page',
     threadBadge: '{n} page(s) open in the browser',
     closeAll: 'Close all',
-    closeLocked: 'Deva is using these pages, so they cannot be closed yet',
+    closeLocked: 'Pal is using these pages, so they cannot be closed yet',
     openedBy: 'Opened by {name}',
     operating: '{name} is working',
     stop: 'Stop',
-    stopHint: "Stop Deva's current turn",
+    stopHint: "Stop Pal's current turn",
     handoff: {
       login: '{name} needs you to sign in to this site',
       captcha: '{name} needs you to complete the verification',

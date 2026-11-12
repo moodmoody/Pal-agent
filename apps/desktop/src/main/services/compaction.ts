@@ -26,26 +26,26 @@ export interface CompactModelConfig {
 }
 
 /** 摘要消息的标记前缀：极不可能被用户键入；重开时据此识别摘要消息并特殊渲染。 */
-export const COMPACT_MARKER = '⟦deva:compaction⟧'
+export const COMPACT_MARKER = '⟦Pal:compaction⟧'
 
 /**
  * 引擎自愈引导消息的标记前缀（输出被截断后续写、空回合追问等）。这类 user 消息由主进程注入，
  * 不是用户说的话：不算一轮起点、不渲染成用户气泡、不进压缩转录。
  */
-export const AUTO_MARKER = '⟦deva:auto⟧'
+export const AUTO_MARKER = '⟦Pal:auto⟧'
 
 /**
  * 后台任务通知消息的标记前缀：后台子智能体结束、主智能体空闲时，主进程以它开头注入一条 user 消息并自动
  * 起一轮。它**算一轮起点**（展示为一行系统通知而非用户气泡，轮下标照常对齐），标记后的首行是展示用标题。
  */
-export const NOTIFY_MARKER = '⟦deva:notify⟧'
+export const NOTIFY_MARKER = '⟦Pal:notify⟧'
 
 /**
  * 插入消息的标记前缀：回合进行中用户发来的消息，以一个 text 块附在某步工具结果之后交给模型（见 chat.ts 的
  * pendingInserts）。它**不算一轮起点**（所在的 user 消息含 tool_result），展示为执行步骤里的一个节点。
  * 格式：标记 + 写给模型的一行说明 + 换行 + 用户原文。
  */
-export const INSERT_MARKER = '⟦deva:insert⟧'
+export const INSERT_MARKER = '⟦Pal:insert⟧'
 
 /** 插入消息交给模型的完整文本。 */
 export function insertText(body: string, en: boolean): string {

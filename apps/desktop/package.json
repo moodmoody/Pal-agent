@@ -1,12 +1,12 @@
 {
-  "name": "@deva/desktop",
+  "name": "@pal/desktop",
   "version": "0.1.13",
-  "description": "Deva 桌面应用",
+  "description": "Pal 桌面应用",
   "main": "./out/main/index.js",
   "author": "sqfcy",
   "homepage": "https://github.com/sqfcyily/deva",
   "license": "MIT",
-  "desktopName": "deva.desktop",
+  "desktopName": "pal.desktop",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build",

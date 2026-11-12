@@ -39,6 +39,8 @@ import {
 } from './services/browser'
 
 let mainWindow: BrowserWindow | null = null
+let splashWindow: BrowserWindow | null = null
+let splashTimer: NodeJS.Timeout | null = null
 let tray: Tray | null = null
 /** 关窗驻留托盘时，真正退出由此标志放行（before-quit / 托盘「退出」置 true）。 */
 let isQuitting = false
@@ -67,9 +69,9 @@ function ensureLinuxPasswordStore(): void {
 // 必须早于 app ready：Chromium 在初始化 OSCrypt 时读一次，之后再改就没用了
 ensureLinuxPasswordStore()
 
-// 内置浏览器：收起的「Deva 浏览器」窗口挪在屏幕外继续运行（隐藏的窗口不渲染，Deva 没法截图、点击、输入）。
+// 内置浏览器：收起的「Pal 浏览器」窗口挪在屏幕外继续运行（隐藏的窗口不渲染，Pal 没法截图、点击、输入）。
 // Chromium 默认会把完全看不见的窗口判为被遮挡而停止绘制，这里关掉这项检测（实测关掉后屏幕外窗口照常工作）。
-// 代价：Deva 窗口被别的程序挡住时也照常绘制，界面基本静止，影响很小。须早于 app ready。
+// 代价：Pal 窗口被别的程序挡住时也照常绘制，界面基本静止，影响很小。须早于 app ready。
 app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion')
 app.commandLine.appendSwitch('disable-backgrounding-occluded-windows')
 
@@ -95,7 +97,65 @@ function overlayOptions(
   return undefined
 }
 
+/**
+ * 启动画面：无边框、不可交互的小浮窗，先于主窗口出现，给「点了图标到主界面画出首帧」这段空窗一个交代。
+ * 页面是纯静态 HTML（src/renderer/splash.html），无 preload、无脚本，加载即绘。
+ * 失败一律静默——启动画面不该成为启动失败的原因。
+ */
+function showSplash(): void {
+  if (splashWindow && !splashWindow.isDestroyed()) return
+  try {
+    splashWindow = new BrowserWindow({
+      width: 380,
+      height: 260,
+      frame: false,
+      transparent: true,
+      resizable: false,
+      movable: false,
+      minimizable: false,
+      maximizable: false,
+      alwaysOnTop: true,
+      skipTaskbar: true,
+      show: false,
+      // 与 splash.html 的圆角背景一致，transparent 下不会出现白框
+      backgroundColor: '#00000000',
+      webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
+    })
+    splashWindow.once('ready-to-show', () => splashWindow?.show())
+    splashWindow.on('closed', () => {
+      splashWindow = null
+      if (splashTimer) {
+        clearTimeout(splashTimer)
+        splashTimer = null
+      }
+    })
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      void splashWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/splash.html`)
+    } else {
+      void splashWindow.loadFile(join(__dirname, '../renderer/splash.html'))
+    }
+    // 兜底：主线异常（渲染层崩、首帧迟迟不来）时不留浮窗
+    splashTimer = setTimeout(closeSplash, 10_000)
+  } catch (e) {
+    console.warn('[splash] 启动画面不可用：', e)
+    splashWindow = null
+  }
+}
+
+/** 关闭启动画面（幂等）。 */
+function closeSplash(): void {
+  if (splashTimer) {
+    clearTimeout(splashTimer)
+    splashTimer = null
+  }
+  const w = splashWindow
+  splashWindow = null
+  if (w && !w.isDestroyed()) w.destroy()
+}
+
 function createWindow(): void {
+  // 启动画面须在主窗口创建前弹出，否则主窗口的构造耗时会让它错过最该出现的时刻
+  showSplash()
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 820,
@@ -134,6 +194,7 @@ function createWindow(): void {
     if (shown || win.isDestroyed()) return
     shown = true
     if (reason !== 'ready-to-show') console.warn(`[window] 首显兜底触发：${reason}`)
+    closeSplash()
     win.show()
   }
   win.once('ready-to-show', () => revealOnce('ready-to-show'))
@@ -226,7 +287,7 @@ function showMainWindow(): void {
 
 /**
  * 建系统托盘（幂等）：图标运行期生成（tray-icon.ts，无二进制资产；macOS 为单色模板图）。
- * 菜单——显示 Deva / 定时任务概览〔直达 Tasks 标签〕/ 退出；左键切换窗口可见。
+ * 菜单——显示 Pal / 定时任务概览〔直达 Tasks 标签〕/ 退出；左键切换窗口可见。
  * 菜单文案按启动时 config.locale 取中/英（运行时改语言需重启方更新，可接受）。
  */
 function createTray(): void {
@@ -239,9 +300,9 @@ function createTray(): void {
   }
   const en = getConfig().locale === 'en'
   const L = en
-    ? { show: 'Show Deva', tasks: 'Scheduled tasks', quit: 'Quit' }
-    : { show: '显示 Deva', tasks: '定时任务概览', quit: '退出' }
-  tray.setToolTip('Deva')
+    ? { show: 'Show Pal', tasks: 'Scheduled tasks', quit: 'Quit' }
+    : { show: '显示 Pal', tasks: '定时任务概览', quit: '退出' }
+  tray.setToolTip('Pal')
   tray.setContextMenu(
     Menu.buildFromTemplate([
       { label: L.show, click: showMainWindow },
@@ -281,16 +342,16 @@ if (!app.requestSingleInstanceLock()) {
   })
 
   app.whenReady().then(() => {
-  electronApp.setAppUserModelId('dev.sqfcy.deva')
+  electronApp.setAppUserModelId('dev.sqfcy.pal')
   // 便携版没有开始菜单快捷方式：注册通知显示名与图标，否则通知标题是原始 ID（须早于第一条通知）
-  registerToastIdentity('dev.sqfcy.deva')
-  // Linux AppImage：把 desktop 入口与图标写到用户目录，启动器里才找得到 Deva（后台进行，不阻塞启动）
+  registerToastIdentity('dev.sqfcy.pal')
+  // Linux AppImage：把 desktop 入口与图标写到用户目录，启动器里才找得到 Pal（后台进行，不阻塞启动）
   void integrateAppImage()
-  // Linux X11：窗口的 WM_CLASS 取自应用名（默认是 package.json 的 @deva/desktop），与 deva.desktop 的
-  // StartupWMClass=deva 对不上，任务栏就归不到 Deva 图标下（Wayland 的 app_id 取 desktopName，不受影响）。
-  // 必须在 ready 之后改：应用名同时决定 userData 目录与钥匙环里加密密钥的条目名（application=@deva/desktop），
+  // Linux X11：窗口的 WM_CLASS 取自应用名（默认是 package.json 的 @Pal/desktop），与 Pal.desktop 的
+  // StartupWMClass=Pal 对不上，任务栏就归不到 Pal 图标下（Wayland 的 app_id 取 desktopName，不受影响）。
+  // 必须在 ready 之后改：应用名同时决定 userData 目录与钥匙环里加密密钥的条目名（application=@Pal/desktop），
   // ready 前改会换目录、找不到原密钥，已存的 API 密钥就解不开了；ready 后两者都已定下，只影响之后建的窗口。
-  if (process.platform === 'linux') app.setName('deva')
+  if (process.platform === 'linux') app.setName('Pal')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -317,7 +378,7 @@ if (!app.requestSingleInstanceLock()) {
   ipcMain.handle('window:is-fullscreen', () => mainWindow?.isFullScreen() ?? false)
   ipcMain.handle('app:get-platform', () => process.platform)
 
-  // 应用配置（~/.deva/config.json：主题/语言/模型等非敏感项，可 DEVA_HOME 覆盖）
+  // 应用配置（~/.pal/config.json：主题/语言/模型等非敏感项，可 DEVA_HOME 覆盖）
   registerConfigIpc()
 
   // 工作区文件服务（打开文件夹 / 读目录 / 读写文件）
@@ -346,12 +407,12 @@ if (!app.requestSingleInstanceLock()) {
   // 图片 / PDF blob 清扫：删掉已无任何对话或子智能体记录引用的文件
   void sweepMedia().catch((e) => console.warn('[media] 清扫失败：', e))
 
-  // 技能（Skills，全局 ~/.deva/skills/*/SKILL.md；渐进式披露，启用态入 config.json）
+  // 技能（Skills，全局 ~/.pal/skills/*/SKILL.md；渐进式披露，启用态入 config.json）
   registerSkillsIpc(() => mainWindow)
   startSkillsWatcher(() => mainWindow)
 
-  // Agent 提示词（Personas，全局 ~/.deva/personas/*.md；已启用者追加进主智能体系统提示词，启用态入 config.json）
-  // 首启种子：逐条种入默认角色（Deva / 小码酱 …，见 default-personas.ts），对话优先外壳默认身份；
+  // Agent 提示词（Personas，全局 ~/.pal/personas/*.md；已启用者追加进主智能体系统提示词，启用态入 config.json）
+  // 首启种子：逐条种入默认角色（Pal / 小码酱 …，见 default-personas.ts），对话优先外壳默认身份；
   // 按 id 幂等 + 防删除后复活 + 将来新增默认角色可增量补种（守卫位 personas.seeded[id] 入 config）。
   // 每次启动顺带检查默认提示词：升级后有新版、且用户没改过（基线 personas.seededPrompt[id]）→ 换成新版。
   ensureSeededPersonas()
@@ -361,7 +422,7 @@ if (!app.requestSingleInstanceLock()) {
   registerProfileIpc()
   registerMemoryIpc()
 
-  // MCP 服务（全局 ~/.deva/mcp.json；主进程内起真实客户端，工具命名空间化后并入 Agent 工具表，默认 ask 过闸）
+  // MCP 服务（全局 ~/.pal/mcp.json；主进程内起真实客户端，工具命名空间化后并入 Agent 工具表，默认 ask 过闸）
   registerMcpIpc(() => mainWindow)
 
   // 附加文件（原生选择框 + 白名单闸门，base64 只在主进程）
@@ -379,7 +440,7 @@ if (!app.requestSingleInstanceLock()) {
   // 交付卡（present_files）：文件信息与缩略图、用默认应用打开、在文件夹中显示（只作用于该对话里交付的文件）
   registerDeliverablesIpc()
 
-  // 定时任务 / 自动任务（全局 ~/.deva/tasks.json；创建时批准、执行时零交互）。
+  // 定时任务 / 自动任务（全局 ~/.pal/tasks.json；创建时批准、执行时零交互）。
   registerTasksIpc(() => mainWindow)
 
   // 检查更新（设置 → 关于；只在用户点按钮时检查，Windows exe 安装的可应用内下载并覆盖安装）
@@ -413,6 +474,7 @@ let turnsSettled = false
 let settling = false
 app.on('before-quit', (e) => {
   isQuitting = true
+  closeSplash()
   if (!turnsSettled && hasActiveTurns()) {
     e.preventDefault()
     if (settling) return

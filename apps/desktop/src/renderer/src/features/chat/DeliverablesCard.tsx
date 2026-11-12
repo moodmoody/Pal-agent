@@ -66,7 +66,7 @@ export function DeliverablesCard({
 
   useEffect(() => {
     let alive = true
-    void window.deva.deliverables
+    void window.Pal.deliverables
       .inspect(sessionId, block.id)
       .then((list) => {
         if (!alive) return
@@ -79,7 +79,7 @@ export function DeliverablesCard({
             setThumbs((prev) => ({ ...prev, [i]: thumbCache.get(key) ?? null }))
             return
           }
-          void window.deva.deliverables
+          void window.Pal.deliverables
             .thumbnail(sessionId, block.id, i)
             .catch(() => null)
             .then((url) => {
@@ -103,7 +103,7 @@ export function DeliverablesCard({
   }, [copied])
 
   const open = (i: number): void => {
-    void window.deva.deliverables
+    void window.Pal.deliverables
       .open(sessionId, block.id, i)
       .catch(() => ({ ok: false }))
       .then((r) => {
@@ -112,7 +112,7 @@ export function DeliverablesCard({
   }
 
   const reveal = (i: number): void => {
-    void window.deva.deliverables
+    void window.Pal.deliverables
       .reveal(sessionId, block.id, i)
       .catch(() => ({ ok: false }))
       .then((r) => {
@@ -122,7 +122,7 @@ export function DeliverablesCard({
 
   // 优先走原生 clipboard 桥（sandbox 下最稳），失败回退 navigator.clipboard。
   const copyPath = (i: number, path: string): void => {
-    void window.deva.clipboard
+    void window.Pal.clipboard
       .writeText(path)
       .catch(() => navigator.clipboard.writeText(path))
       .then(
@@ -131,7 +131,7 @@ export function DeliverablesCard({
       )
   }
 
-  const platform = window.deva.platform
+  const platform = window.Pal.platform
   const revealLabel = t(
     platform === 'win32'
       ? 'chat.deliver.revealWin'

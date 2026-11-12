@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 /**
  * 可拖动尺寸（左侧对话面板宽 / 输入框高）：拖拽手柄 + 上下限 + 落盘。
- * 持久化走 ~/.deva/config.json 的 `layout` 段（与主题/语言同处，getSync 首帧即可读到、不闪烁）；
+ * 持久化走 ~/.pal/config.json 的 `layout` 段（与主题/语言同处，getSync 首帧即可读到、不闪烁）；
  * config.set 是顶层浅合并，故写入时先合并现有 layout，两个尺寸互不覆盖。
  */
 
@@ -48,7 +48,7 @@ export function clampComposer(h: number, viewportH: number): number {
 
 export function loadLayout(): Layout {
   try {
-    const l = window.deva.config.getSync().layout
+    const l = window.Pal.config.getSync().layout
     return l && typeof l === 'object' ? (l as Layout) : {}
   } catch {
     return {}
@@ -59,7 +59,7 @@ export function loadLayout(): Layout {
 export function saveLayout(patch: Layout): void {
   const next: Record<string, unknown> = { ...loadLayout(), ...patch }
   for (const k of Object.keys(next)) if (next[k] === undefined) delete next[k]
-  void window.deva.config.set({ layout: next })
+  void window.Pal.config.set({ layout: next })
 }
 
 /** 窗口尺寸（resize 时刷新），供按窗口收缩上限。 */

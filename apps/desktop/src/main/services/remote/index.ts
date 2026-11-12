@@ -144,7 +144,7 @@ async function feishuScan(): Promise<Scan> {
         kind: 'done',
         bot: {
           platform: 'feishu',
-          name: name || 'Deva',
+          name: name || 'Pal',
           // 扫码人即主人：直接进白名单。私聊 chatId 等连上后机器人主动打招呼时补上。
           users: r.openId ? [{ id: r.openId, chatId: '', pairedAt: Date.now() }] : [],
           settings: { appId: r.appId, domain: r.domain },

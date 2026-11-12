@@ -1,5 +1,5 @@
 /**
- * 内置浏览器的界面状态（主进程 host.ts 推送，主窗口的胶囊与「Deva 浏览器」窗口的外框共用）。
+ * 内置浏览器的界面状态（主进程 host.ts 推送，主窗口的胶囊与「Pal 浏览器」窗口的外框共用）。
  */
 
 /** 请用户在网页上亲自操作的原因。 */
@@ -27,7 +27,7 @@ export interface BrowserUiState {
   tabs: BrowserUiTab[]
   /** 各对话的当前标签。 */
   current: Record<string, string>
-  /** Deva 正在操作：对话 → 标签、动作（同 browser 工具的 action）、对象（网址 / 元素名）。 */
+  /** Pal 正在操作：对话 → 标签、动作（同 browser 工具的 action）、对象（网址 / 元素名）。 */
   operating: Record<string, { tab: string; action: string; label?: string }>
   /** 等用户在网页上操作：对话 → 标签、原因、模型给的说明。 */
   handoff: Record<string, { tab: string; reason: BrowserHandoffReason; message: string }>
@@ -44,6 +44,6 @@ export interface BrowserLiveFrame {
 export const BROWSER_CHROME = {
   tabBar: 40,
   statusBar: 36,
-  /** 网页四周留出的边距：Deva 操作时外框在这里画主题色边框。 */
+  /** 网页四周留出的边距：Pal 操作时外框在这里画主题色边框。 */
   frame: 2
 } as const

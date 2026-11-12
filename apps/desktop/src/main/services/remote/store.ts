@@ -5,7 +5,7 @@ import type { ChannelId, Platform } from './types'
  * 机器人实例的持久化配置（config.json → remote.bots[]，非敏感项；密钥另存 secrets.json，
  * 键 `remote:<botId>:<field>`，见 secrets.ts）。
  *
- * 结构平台无关：启用开关 / 已配对用户 / IM 会话 ↔ Deva 对话绑定 / 回复方式由 hub 统一管理；
+ * 结构平台无关：启用开关 / 已配对用户 / IM 会话 ↔ Pal 对话绑定 / 回复方式由 hub 统一管理；
  * 平台特有的非敏感参数（飞书 appId、域名 …）放 settings，由各适配器自行解释。
  */
 
@@ -63,7 +63,7 @@ export interface BotConfig {
   replyMode: ReplyMode
   scope: ReplyScope
   users: PairedUser[]
-  /** IM 私聊 chatId → 当前绑定的 Deva 对话 id。 */
+  /** IM 私聊 chatId → 当前绑定的 Pal 对话 id。 */
   bindings: Record<string, string>
   settings: Record<string, unknown>
 }

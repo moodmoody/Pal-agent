@@ -3,7 +3,7 @@
  *
  * 设计（对标 Claude Code 的 Task / subagent_type）：
  * - CC 的做法是**内置一组类型开箱可用**（general-purpose / Explore / Plan / claude-code-guide …），用户自定义是可选增强。
- *   Deva 此前反过来——必须先在 `~/.deva/agents` 建预设才有专家可派，而首启是空的，于是「按需派生专家」
+ *   Pal 此前反过来——必须先在 `~/.pal/agents` 建预设才有专家可派，而首启是空的，于是「按需派生专家」
  *   实际永远只剩一个通用兜底。故整套用户配置（目录/IPC/扩展页 UI）已废弃，改为这里的内置常量。
  * - 身份 = `name`：既是 `run_subagent` 的 `agent` 枚举值，也是对话里 Task 卡的回退标题。
  * - 模型恒**跟随主对话**（继承父轮模型），不再有 per-agent 模型引用。
@@ -78,7 +78,7 @@ const PLAN: SubagentDef = {
 
 /**
  * 资料调研：查外部文档 / changelog / 开源源码，回答第三方库、工具、产品「怎么用、有没有、哪版改了什么」。
- * 对标 CC 的 claude-code-guide，但不限定某个产品——Deva 没有搜索工具，故提示词重点教它从已知入口取材。
+ * 对标 CC 的 claude-code-guide，但不限定某个产品——Pal 没有搜索工具，故提示词重点教它从已知入口取材。
  */
 const RESEARCH: SubagentDef = {
   name: 'Research',

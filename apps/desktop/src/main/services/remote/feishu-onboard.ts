@@ -10,12 +10,12 @@ import * as lark from '@larksuiteoapi/node-sdk'
 
 /** 确认页预填的应用信息（用户仍可在页面上修改）。{user} 由飞书替换为扫码人的名字。 */
 const APP_PRESET = {
-  name: '{user}的 Deva',
-  desc: '在飞书里和电脑上的 Deva 对话：查看回复、审批计划、接收定时任务结果。'
+  name: '{user}的 Pal',
+  desc: '在飞书里和电脑上的 Pal 对话：查看回复、审批计划、接收定时任务结果。'
 }
 
 /**
- * 在平台默认模板之上追加的配置：显式声明 Deva 依赖的消息事件与卡片回调，
+ * 在平台默认模板之上追加的配置：显式声明 Pal 依赖的消息事件与卡片回调，
  * 免得默认模板哪天不再包含它们（只能追加，平台未开放时整段被忽略、走默认流程）。
  */
 const APP_ADDONS = {
@@ -47,9 +47,9 @@ export async function startFeishuScan(): Promise<FeishuScan> {
 
   const outcome: Promise<ScanOutcome> = lark
     .registerApp({
-      source: 'deva',
+      source: 'Pal',
       signal: ac.signal,
-      // 只新建：避免扫码人误选已有应用（其配置之后会被 Deva 的连接方式覆盖）。
+      // 只新建：避免扫码人误选已有应用（其配置之后会被 Pal 的连接方式覆盖）。
       createOnly: true,
       appPreset: APP_PRESET,
       addons: APP_ADDONS,

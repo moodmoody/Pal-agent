@@ -242,7 +242,7 @@ export function ModelSetupCard(): React.JSX.Element {
           return
         }
       }
-      const res = await window.deva.provider.listModels({
+      const res = await window.Pal.provider.listModels({
         adapter: tg.adapter,
         providerId: tg.id,
         baseURL: tg.host

@@ -25,8 +25,8 @@ import { useDialog } from '../components/DialogProvider'
  * 扩展配置（全局，与项目无关）：技能 / MCP 服务 / Agent 提示词。
  * 左侧面板选中某项 → 中央详情页展示与编辑；也可新建自定义项。
  *
- * 三类均已**文件回填**：挂载时经 `deva.skills.list()` / `deva.mcp.list()` /
- * `deva.personas.list()` 读取 ~/.deva，增删改启停都落盘；MCP 还订阅 `deva.mcp.onStatus`
+ * 三类均已**文件回填**：挂载时经 `Pal.skills.list()` / `Pal.mcp.list()` /
+ * `Pal.personas.list()` 读取 ~/.pal，增删改启停都落盘；MCP 还订阅 `Pal.mcp.onStatus`
  * 实时打运行期状态补丁（连接/断开/错误）。
  *
  * 子智能体**不在此列**：它是内置能力（通用 / Explore / Research / Plan，见 main/services/subagents.ts），
@@ -233,8 +233,8 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
   // 都会推来最新全表（输入框的 / 联想与上色、扩展页随之更新，无需重启）。
   useEffect(() => {
     let alive = true
-    const off = window.deva?.skills?.onChanged?.((list) => setSkills(list.map(recToSkill)))
-    void window.deva?.skills
+    const off = window.Pal?.skills?.onChanged?.((list) => setSkills(list.map(recToSkill)))
+    void window.Pal?.skills
       ?.list()
       .then((list) => {
         if (alive) setSkills(list.map(recToSkill))
@@ -251,7 +251,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
   // 挂载：先订阅 MCP 状态广播，再拉取清单（不漏掉启动期自动连接的中间态）。
   useEffect(() => {
     let alive = true
-    const off = window.deva?.mcp?.onStatus?.((view) => {
+    const off = window.Pal?.mcp?.onStatus?.((view) => {
       // 只打运行期补丁，保留本地正在编辑的配置字段（防广播覆盖键入）。
       setMcp((list) => {
         const idx = list.findIndex((m) => m.id === view.id)
@@ -272,7 +272,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
         return next
       })
     })
-    void window.deva?.mcp
+    void window.Pal?.mcp
       ?.list()
       .then((list) => {
         if (alive) setMcp(list.map(viewToMcp))
@@ -289,7 +289,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
   // 挂载：从磁盘载入 Agent 提示词（Personas）。
   useEffect(() => {
     let alive = true
-    void window.deva?.personas
+    void window.Pal?.personas
       ?.list()
       .then((list) => {
         if (alive) setPersonas(list.map(personaRecToPersona))
@@ -303,18 +303,18 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
   }, [])
 
   // 显式刷新：重新从磁盘拉取三类扩展清单（见接口 refresh 注释）。只用稳定的 setter / 模块级转换器 /
-  // window.deva，故 useCallback([]) 标识恒稳定，可安全作 effect 依赖而不致刷新循环。Provider 为
+  // window.Pal，故 useCallback([]) 标识恒稳定，可安全作 effect 依赖而不致刷新循环。Provider 为
   // 应用级、不会卸载，故 .then 里 setState 无卸载竞态，无需 alive 守卫。
   const refresh = useCallback((): void => {
-    void window.deva?.skills
+    void window.Pal?.skills
       ?.list()
       .then((l) => setSkills(l.map(recToSkill)))
       .catch(() => {})
-    void window.deva?.mcp
+    void window.Pal?.mcp
       ?.list()
       .then((l) => setMcp(l.map(viewToMcp)))
       .catch(() => {})
-    void window.deva?.personas
+    void window.Pal?.personas
       ?.list()
       .then((l) => setPersonas(l.map(personaRecToPersona)))
       .catch(() => {})
@@ -323,9 +323,9 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
   // 手机端接受了角色名片：角色由主进程直接建好，本层花名册随之重拉（桌面自己接受时也会收到，重拉无害）。
   useEffect(
     () =>
-      window.deva?.chat?.onEvent((p) => {
+      window.Pal?.chat?.onEvent((p) => {
         if (p.event.type === 'card_resolved' && p.event.card === 'agent' && p.event.status === 'accepted')
-          void window.deva.personas
+          void window.Pal.personas
             .list()
             .then((l) => setPersonas(l.map(personaRecToPersona)))
             .catch(() => {})
@@ -362,11 +362,11 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
 
     const importSkill = (): void => {
       void (async () => {
-        const res = await window.deva?.skills?.import()
+        const res = await window.Pal?.skills?.import()
         if (!res) return
         if (res.ok) {
           // 重新拉全表（含内置置顶），并选中导入项。
-          const list = await window.deva?.skills?.list().catch(() => undefined)
+          const list = await window.Pal?.skills?.list().catch(() => undefined)
           if (list) setSkills(list.map(recToSkill))
           if (res.id) setSelected({ kind: 'skill', id: res.id })
           return
@@ -385,7 +385,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
     const removeSkill = async (id: string): Promise<boolean> => {
       // 内置技能不可删（纵深防御：UI 已隐藏删除入口）。
       if (skills.find((s) => s.id === id)?.source === 'builtin') return false
-      const res = await window.deva?.skills?.remove(id).catch(() => undefined)
+      const res = await window.Pal?.skills?.remove(id).catch(() => undefined)
       if (!res?.ok) return false
       setSkills((list) => list.filter((s) => s.id !== id))
       setSelected((cur) => (cur && cur.kind === 'skill' && cur.id === id ? null : cur))
@@ -394,7 +394,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
 
     const addPersona = (): void => {
       void (async () => {
-        const rec = await window.deva?.personas?.upsert({
+        const rec = await window.Pal?.personas?.upsert({
           name: '新角色',
           description: '',
           // avatar 留空 → 由新 id 确定性生成头像；用户可在编辑器改。
@@ -411,7 +411,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
 
     // 整对象直存：新建（无 id / 未见过的 id → 追加）或改写（已存在 → 替换），返回落库后的 Persona。
     const upsertPersona = async (input: PersonaUpsertInput): Promise<Persona | undefined> => {
-      const rec = await window.deva?.personas?.upsert(input)
+      const rec = await window.Pal?.personas?.upsert(input)
       if (!rec) return undefined
       const p = personaRecToPersona(rec)
       setPersonas((list) => (list.some((x) => x.id === p.id) ? list.map((x) => (x.id === p.id ? p : x)) : [...list, p]))
@@ -423,8 +423,8 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
       if (!id) return ''
       let next = ''
       try {
-        if (dataUri) next = (await window.deva?.personas?.setAvatarImage(id, dataUri)) ?? ''
-        else await window.deva?.personas?.clearAvatarImage(id)
+        if (dataUri) next = (await window.Pal?.personas?.setAvatarImage(id, dataUri)) ?? ''
+        else await window.Pal?.personas?.clearAvatarImage(id)
       } catch {
         return ''
       }
@@ -447,7 +447,7 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
         for (const p of byId.values()) next.push(p)
         return next
       })
-      void window.deva?.personas?.reorder(ids).catch(() => {})
+      void window.Pal?.personas?.reorder(ids).catch(() => {})
     }
 
     return {
@@ -463,14 +463,14 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
         patchLocal(kind, id, (it) => ({ ...it, enabled: !it.enabled }) as AnyExt)
         if (kind === 'skill') {
           const cur = skills.find((s) => s.id === id)
-          if (cur) void window.deva?.skills?.setEnabled(id, !cur.enabled).catch(() => {})
+          if (cur) void window.Pal?.skills?.setEnabled(id, !cur.enabled).catch(() => {})
         } else if (kind === 'mcp') {
           // 启停即兑现：主进程对账连上 / 断开（状态经 onStatus 回流）。
           const cur = mcpRef.current.find((m) => m.id === id)
-          if (cur) void window.deva?.mcp?.setEnabled(id, !cur.enabled).catch(() => {})
+          if (cur) void window.Pal?.mcp?.setEnabled(id, !cur.enabled).catch(() => {})
         } else if (kind === 'persona') {
           const cur = personas.find((p) => p.id === id)
-          if (cur) void window.deva?.personas?.setEnabled(id, !cur.enabled).catch(() => {})
+          if (cur) void window.Pal?.personas?.setEnabled(id, !cur.enabled).catch(() => {})
         }
       },
       update: (kind, id, patch) => {
@@ -481,13 +481,13 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
           // 合到最新快照后落盘（配置字段；密钥值不经此路径，另经 mcpSetSecret）。
           const cur = mcpRef.current.find((m) => m.id === id)
           if (cur)
-            void window.deva?.mcp
+            void window.Pal?.mcp
               ?.upsert(mcpToInput({ ...cur, ...(patch as Partial<McpServer>) }))
               .catch(() => {})
         } else if (kind === 'persona') {
           const cur = personas.find((p) => p.id === id)
           if (cur)
-            void window.deva?.personas
+            void window.Pal?.personas
               ?.upsert(personaToInput({ ...cur, ...(patch as Partial<Persona>) }))
               .catch(() => {})
         }
@@ -499,10 +499,10 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
         }
         setterFor(kind)((list) => list.filter((it) => it.id !== id))
         setSelected((cur) => (cur && cur.kind === kind && cur.id === id ? null : cur))
-        if (kind === 'mcp') void window.deva?.mcp?.remove(id).catch(() => {})
+        if (kind === 'mcp') void window.Pal?.mcp?.remove(id).catch(() => {})
         // 删角色后主进程会改写技能 / MCP 的可用角色（只给它用的改回所有角色并停用），重拉一次。
         else
-          void window.deva?.personas
+          void window.Pal?.personas
             ?.remove(id)
             .then(refresh)
             .catch(() => {})
@@ -521,16 +521,16 @@ export function ExtensionsProvider({ children }: { children: ReactNode }): React
         if (kind === 'skill') {
           if (skills.find((s) => s.id === id)?.source === 'builtin') return
           setSkills((list) => list.map((s) => (s.id === id ? { ...s, roles } : s)))
-          void window.deva?.skills?.setRoles(id, roles).catch(() => {})
+          void window.Pal?.skills?.setRoles(id, roles).catch(() => {})
         } else {
           setMcp((list) => list.map((m) => (m.id === id ? { ...m, roles } : m)))
-          void window.deva?.mcp?.setRoles(id, roles).catch(() => {})
+          void window.Pal?.mcp?.setRoles(id, roles).catch(() => {})
         }
       },
-      mcpRetry: (id) => void window.deva?.mcp?.retry(id).catch(() => {}),
+      mcpRetry: (id) => void window.Pal?.mcp?.retry(id).catch(() => {}),
       mcpSetSecret: async (id, field, value) => {
         try {
-          const r = await window.deva?.mcp?.setSecret(id, field, value)
+          const r = await window.Pal?.mcp?.setSecret(id, field, value)
           return r ?? { ok: false, available: true }
         } catch {
           return { ok: false, available: true }

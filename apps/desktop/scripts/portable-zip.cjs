@@ -12,7 +12,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const TOP_DIR = 'Deva'
+const TOP_DIR = 'Pal'
 
 /** 刚生成的文件可能正被杀毒软件扫描，Windows 上改名偶尔 EPERM / EBUSY：稍等重试。 */
 async function rename(from, to) {

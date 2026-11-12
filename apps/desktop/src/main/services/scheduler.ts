@@ -96,10 +96,10 @@ function firstLine(text: string): string {
  */
 function notify(title: string, body: string, sessionId?: string, echoesReply = false): void {
   // 远程通道（飞书等）经总线同步推送到手机；与系统通知互不影响。
-  publishAppNotice({ title: title || 'Deva', body, sessionId, echoesReply })
+  publishAppNotice({ title: title || 'Pal', body, sessionId, echoesReply })
   try {
     if (!Notification.isSupported()) return
-    const n = new Notification({ title: title || 'Deva', body })
+    const n = new Notification({ title: title || 'Pal', body })
     n.on('click', () => {
       const w = getWin?.()
       if (!w) return

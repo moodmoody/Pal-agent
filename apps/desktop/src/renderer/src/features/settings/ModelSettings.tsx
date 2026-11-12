@@ -245,7 +245,7 @@ export function ModelSettings(): React.JSX.Element {
     if (!selectedProvider) return
     const token = ++fetchTokenRef.current
     setFetchState({ status: 'loading', list: [] })
-    window.deva.provider
+    window.Pal.provider
       .listModels({
         // 仅对话模型可拉取清单；决策模型无「模型清单」，不会走到此处。
         adapter: selectedProvider.adapter as 'anthropic' | 'openai' | 'responses',

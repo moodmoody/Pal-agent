@@ -6,7 +6,7 @@ import { basename, dirname, join, resolve, sep } from 'path'
  * 可读写的区域，路径须先经此校验，杜绝路径穿越。受信根是内存态，随重启清空。
  *
  * Agent 的文件工具（read_file / write_file / edit_file / glob / grep / list_dir）**不经过这里**：
- * 2026-10-09 起文件读写不设任何路径限制（含凭据目录、~/.deva、.git），见 tools.ts 的 resolvePath。
+ * 2026-10-09 起文件读写不设任何路径限制（含凭据目录、~/.pal、.git），见 tools.ts 的 resolvePath。
  */
 
 // 已授权的受信根集合（绝对路径，字面形式）。任何来自渲染层的路径都要先经 isInsideRoot 校验。

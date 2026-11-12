@@ -16,7 +16,7 @@ import { allowsPersona, getRoles, setRoles } from './ext-roles'
 import { fmArray, fmMap, fmScalar, fmString, parseFrontmatter } from './frontmatter'
 
 /**
- * 技能（Skills）服务：发现 / 解析 / 读写 `~/.deva/skills/<id>/SKILL.md`（全局，与项目无关）。
+ * 技能（Skills）服务：发现 / 解析 / 读写 `~/.pal/skills/<id>/SKILL.md`（全局，与项目无关）。
  *
  * 设计（对标 Claude Code 的渐进式披露）：
  * - **身份 = 文件夹名（id），显示名 = frontmatter `name`**。文件夹名恒定不改（改显示名只重写 frontmatter），
@@ -512,7 +512,7 @@ export function loadSkillInstructionsByName(
 // ── 导入（上传 .zip / .md 创建技能）─────────────────────────────────────────
 
 /**
- * 校验并落盘一个导入的技能：frontmatter 必须含 `name`；写入 `~/.deva/skills/<id>/SKILL.md`
+ * 校验并落盘一个导入的技能：frontmatter 必须含 `name`；写入 `~/.pal/skills/<id>/SKILL.md`
  * 及（可选）已过守卫的附带文件；成功后**自动启用**。运行期只注入 SKILL.md 正文，附带文件由模型
  * 按需 read_file（skill 工具结果会给出文件夹绝对路径）。
  */

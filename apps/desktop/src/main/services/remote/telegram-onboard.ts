@@ -53,7 +53,7 @@ export async function startTelegramLink(token: string, me: TelegramMe): Promise<
         const err = e as TelegramError
         if (err.code === 401 || err.code === 404) return { kind: 'error', message: 'Token 已失效，请重新复制。' }
         if (err.code === 409)
-          return { kind: 'error', message: '这个机器人正被其他程序占用（例如另一台电脑上的 Deva），请先停掉那边。' }
+          return { kind: 'error', message: '这个机器人正被其他程序占用（例如另一台电脑上的 Pal），请先停掉那边。' }
         // 网络抖动：稍后重试，直到过期。
         await new Promise((r) => setTimeout(r, 3000))
         continue

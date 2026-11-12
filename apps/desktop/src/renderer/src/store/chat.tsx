@@ -338,7 +338,7 @@ type StreamEvent =
   | { type: 'reconnecting'; attempt: number; max: number }
   | {
       type: 'auto_retry'
-      reason: 'truncated' | 'empty' | 'context' | 'output_limit' | 'effort'
+      reason: 'truncated' | 'empty' | 'context' | 'output_limit' | 'effort' | 'refusal'
       attempt: number
       max: number
       /** context：报错里解析出的真实窗口；output_limit：用户所设上限被拒后降到的值（见主进程 chat.ts）。 */
@@ -551,7 +551,7 @@ const NO_INSERTS: string[] = []
 export interface RecoveryStatus {
   attempt: number
   max: number
-  reason?: 'reconnect' | 'truncated' | 'empty' | 'context' | 'output_limit' | 'effort'
+  reason?: 'reconnect' | 'truncated' | 'empty' | 'context' | 'output_limit' | 'effort' | 'refusal'
 }
 
 const IDLE_STATUS: StreamStatus = { elapsedSec: 0, reconnecting: null, compacting: false }
@@ -1122,7 +1122,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
   // 载入期间已切走 / 已有活动态生成 → 丢弃结果（绝不冲掉实时内容）。
   const attachSession = useCallback(
     async (sid: string): Promise<void> => {
-      const { messages, turnId } = await window.deva.chat.attachSession(sid)
+      const { messages, turnId } = await window.Pal.chat.attachSession(sid)
       if (sessionIdRef.current !== sid || runtimesRef.current.has(sid)) return
       const msgs = displayToMessages(messages as DisplayMessage[])
       if (!turnId) {
@@ -1217,7 +1217,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
   // 拉取当前项目会话清单（左侧只列真实已落盘的会话）。
   const refreshSessions = useCallback(async (): Promise<void> => {
     const path = projectPathRef.current
-    const list = await window.deva.chat.listSessions(path)
+    const list = await window.Pal.chat.listSessions(path)
     if (projectPathRef.current !== path) return // 项目已切换，丢弃过期结果
     setSessions(list)
   }, [])
@@ -1246,7 +1246,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       // 绑定身份 → 立即落盘并刷新左侧（空对话跨重启存活）。
       if (personaId !== undefined) {
         void (async () => {
-          await window.deva.chat.createSession({
+          await window.Pal.chat.createSession({
             sessionId: id,
             workspaceRoot: projectPathRef.current,
             personaId,
@@ -1284,7 +1284,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     projectPathRef.current = path
     let cancelled = false
     void (async () => {
-      const list = await window.deva.chat.listSessions(path)
+      const list = await window.Pal.chat.listSessions(path)
       if (cancelled || projectPathRef.current !== path) return
       setSessions(list)
       openFirstSession(list)
@@ -1304,7 +1304,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     // 从主进程重载某会话并整份替换其 runtime 消息（后台回合完成 / 本轮压缩过后的权威回填）。
     const reloadIntoRuntime = (sid: string): void => {
       void (async () => {
-        const dms = await window.deva.chat.loadSession(sid, projectPathRef.current)
+        const dms = await window.Pal.chat.loadSession(sid, projectPathRef.current)
         // 期间本层又起了新一轮（已建脚手架）→ 绝不覆盖其实时内容。
         if (runtimesRef.current.get(sid)?.streaming) return
         // 期间切走 → 丢掉陈旧 runtime（selectSession 不重载已缓存的 runtime），下次打开自会从主进程重载。
@@ -1323,7 +1323,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       })()
     }
 
-    const unsub = window.deva.chat.onEvent((payload) => {
+    const unsub = window.Pal.chat.onEvent((payload) => {
       const sid = payload.sessionId
       const ev = payload.event as StreamEvent
 
@@ -1526,7 +1526,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
   useEffect(() => {
     const sid = currentSessionId
     if (!sid || todoStatesRef.current.has(sid)) return
-    window.deva.chat
+    window.Pal.chat
       .todos(sid)
       .then((st) => {
         if (!todoStatesRef.current.has(sid)) setTodoState(sid, st)
@@ -1535,7 +1535,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
   }, [currentSessionId, setTodoState])
 
   // 回合之外新建的对话（手机上 /new，还没发消息）：没有 turn_start 可借，主进程单独通知刷新列表。
-  useEffect(() => window.deva.chat.onSessionsChanged(() => void refreshSessions()), [refreshSessions])
+  useEffect(() => window.Pal.chat.onSessionsChanged(() => void refreshSessions()), [refreshSessions])
 
   const viewed = runtimes.get(currentSessionId)
   const viewedStreaming = viewed?.streaming ?? false
@@ -1612,7 +1612,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     setBinding(sid, { model: ref })
     if (sessions.some((s) => s.id === sid))
       void (async () => {
-        await window.deva.chat.setModel({ sessionId: sid, modelRef: ref })
+        await window.Pal.chat.setModel({ sessionId: sid, modelRef: ref })
         await refreshSessions()
       })()
     // 已定格的对话 currentBinding.model 非空、首行即返回，activeModel 之后再变也不会改写它；
@@ -1628,7 +1628,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     setBinding(sid, { effort: activeEffort })
     if (sessions.some((s) => s.id === sid))
       void (async () => {
-        await window.deva.chat.setEffort({ sessionId: sid, effort: activeEffort })
+        await window.Pal.chat.setEffort({ sessionId: sid, effort: activeEffort })
         await refreshSessions()
       })()
     // 已定格的对话首行即返回，activeEffort 之后再变也不会改写它。
@@ -1704,7 +1704,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
           external: false
         }))
         try {
-          const { turnId } = await window.deva.chat.compact({
+          const { turnId } = await window.Pal.chat.compact({
             sessionId: sid,
             model: {
               // 对话模型（选择器已按 purpose 过滤），adapter 必属 LLM 三协议之一。
@@ -1756,7 +1756,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       // focusRoot 可挂/卸更新）。旧壳无覆盖层 → 二者 undefined → 主进程走兼容分支，逐字节不变。
       const binding = bindingsRef.current.get(sid)
       try {
-        const { turnId } = await window.deva.chat.send({
+        const { turnId } = await window.Pal.chat.send({
           sessionId: sid,
           text: body,
           model: {
@@ -1796,7 +1796,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
 
     const stop = (): void => {
       const turnId = runtimesRef.current.get(sessionIdRef.current)?.turnId
-      if (turnId) void window.deva.chat.abort(turnId)
+      if (turnId) void window.Pal.chat.abort(turnId)
     }
 
     // 回合进行中插入（见 ChatContextValue.insert）。模型只在来不及送达、改作下一轮发出时用作回落，解析同 send。
@@ -1814,7 +1814,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
         return false
       }
       try {
-        const r = await window.deva.chat.insert({
+        const r = await window.Pal.chat.insert({
           sessionId: sid,
           text: body,
           model: {
@@ -1837,7 +1837,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
 
     const withdrawInserts = async (): Promise<string> => {
       try {
-        return (await window.deva.chat.withdrawInserts(sessionIdRef.current)).text
+        return (await window.Pal.chat.withdrawInserts(sessionIdRef.current)).text
       } catch {
         return ''
       }
@@ -1856,7 +1856,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       const sid = sessionIdRef.current
       setBinding(sid, { focusRoot: path })
       void (async () => {
-        await window.deva.chat.setFocus({ sessionId: sid, focusRoot: path })
+        await window.Pal.chat.setFocus({ sessionId: sid, focusRoot: path })
         await refreshSessions()
       })()
     }
@@ -1868,7 +1868,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       const sid = sessionIdRef.current
       setBinding(sid, { model: modelRef })
       void (async () => {
-        const r = await window.deva.chat.setModel({ sessionId: sid, modelRef })
+        const r = await window.Pal.chat.setModel({ sessionId: sid, modelRef })
         await refreshSessions()
         // 已落库：撤掉覆盖层里的模型，此后以主进程为准——定时任务对话的模型还会被任务表单改（两边同步），
         // 覆盖层留着会把那次改动挡住。期间又切了别的模型（覆盖层已不是这个值）就不动，等那次落库再撤。
@@ -1887,7 +1887,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       const sid = sessionIdRef.current
       setBinding(sid, { effort: level })
       void (async () => {
-        await window.deva.chat.setEffort({ sessionId: sid, effort: level })
+        await window.Pal.chat.setEffort({ sessionId: sid, effort: level })
         await refreshSessions()
       })()
     }
@@ -1903,7 +1903,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     const deleteSession = (id: string): void => {
       // 删除正在跑的会话：主进程删除时先中止其回合（含本层没打开过的后台回合），这里只移除其活动态。
       void (async () => {
-        await window.deva.chat.deleteSession(id, projectPathRef.current)
+        await window.Pal.chat.deleteSession(id, projectPathRef.current)
         dropRuntime(id)
         // 一并清掉该会话的绑定覆盖层（若有），避免残留。
         if (bindingsRef.current.has(id)) {
@@ -1913,7 +1913,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
           setBindings(map)
         }
         const path = projectPathRef.current
-        const list = await window.deva.chat.listSessions(path)
+        const list = await window.Pal.chat.listSessions(path)
         if (projectPathRef.current !== path) return
         setSessions(list)
         // 删的是当前会话：打开列表第一条（不含已归档）或起新会话。
@@ -1929,7 +1929,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       const typed = title.replace(/\s+/g, ' ').trim()
       if (typed) setTitle(typed)
       void (async () => {
-        const r = await window.deva.chat.renameSession({ sessionId: id, title })
+        const r = await window.Pal.chat.renameSession({ sessionId: id, title })
         if (r) setTitle(r.title)
       })()
     }
@@ -1950,7 +1950,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       if (archived && id === sessionIdRef.current)
         openFirstSession(sessions.filter((s) => s.id !== id))
       void (async () => {
-        const r = await window.deva.chat.setArchived({ sessionId: id, archived })
+        const r = await window.Pal.chat.setArchived({ sessionId: id, archived })
         if (!r.ok) void refreshSessions()
       })()
     }
@@ -1965,7 +1965,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       void (async () => {
         const path = projectPathRef.current
         for (const id of ids) {
-          await window.deva.chat.deleteSession(id, path)
+          await window.Pal.chat.deleteSession(id, path)
           dropRuntime(id)
         }
         // 一并清掉这些会话的绑定覆盖层（若有）。
@@ -1976,7 +1976,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
           setBindings(map)
         }
         if (projectPathRef.current !== path) return
-        const list = await window.deva.chat.listSessions(path)
+        const list = await window.Pal.chat.listSessions(path)
         if (projectPathRef.current !== path) return
         setSessions(list)
         // 删的集合含当前会话：打开列表第一条（不含已归档）或起新会话。
@@ -1991,11 +1991,11 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       const id = sessionIdRef.current
       if (runtimesRef.current.get(id)?.turnId) return
       const path = projectPathRef.current
-      const dms = await window.deva.chat.deleteTurns(id, path, turnIndices)
+      const dms = await window.Pal.chat.deleteTurns(id, path, turnIndices)
       if (sessionIdRef.current !== id) return
       patchRuntime(id, (r) => ({ ...r, messages: displayToMessages(dms as DisplayMessage[]) }))
       // updatedAt 变了 → 刷新左侧列表使排序即时更新（标题不重算，保持稳定）。
-      const list = await window.deva.chat.listSessions(path)
+      const list = await window.Pal.chat.listSessions(path)
       if (projectPathRef.current !== path) return
       setSessions(list)
     }
@@ -2006,7 +2006,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       if (sessionIdRef.current === id || runtimesRef.current.has(id))
         patchRuntime(id, (r) => ({ ...r, messages: displayToMessages(dms) }))
       const path = projectPathRef.current
-      const list = await window.deva.chat.listSessions(path)
+      const list = await window.Pal.chat.listSessions(path)
       if (projectPathRef.current !== path) return
       setSessions(list)
     }
@@ -2018,7 +2018,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     ): Promise<RewindApplyResult> => {
       const id = sessionIdRef.current
       if (runtimesRef.current.get(id)?.turnId) return { ok: false, error: 'busy' }
-      const res = await window.deva.chat.rewindApply({ sessionId: id, turn, mode, force })
+      const res = await window.Pal.chat.rewindApply({ sessionId: id, turn, mode, force })
       if (res.ok) await applyRewound(id, res.messages as DisplayMessage[])
       return res
     }
@@ -2026,13 +2026,13 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     const rewindUndo = async (sessionId?: string): Promise<RewindUndoResult> => {
       const id = sessionId ?? sessionIdRef.current
       if (runtimesRef.current.get(id)?.turnId) return { ok: false, error: 'busy' }
-      const res = await window.deva.chat.rewindUndo(id)
+      const res = await window.Pal.chat.rewindUndo(id)
       if (res.ok) await applyRewound(id, res.messages as DisplayMessage[])
       return res
     }
 
     const respondAsk = (key: string, answers: string[]): void => {
-      void window.deva.chat.respondAsk({ key, answers })
+      void window.Pal.chat.respondAsk({ key, answers })
       patchCardBlocks(sessionIdRef.current, (blocks) =>
         blocks.map((b) => (b.kind === 'ask' && b.key === key ? { ...b, answers } : b))
       )
@@ -2052,7 +2052,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       // 主进程回 {ok:false} = 这把待决键已经没人接了（回合早已结束）→ 把卡片改记为「已取消」，
       // 而不是留一个看起来生效、实则什么都没发生的「已批准」。
       void (async () => {
-        const r = await window.deva.chat.respondPlan({ key, decision, ...(fb ? { feedback: fb } : {}) })
+        const r = await window.Pal.chat.respondPlan({ key, decision, ...(fb ? { feedback: fb } : {}) })
         if (r?.ok) return
         patchCardBlocks(sid, (blocks) =>
           blocks.map((b) =>
@@ -2063,7 +2063,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     }
 
     const respondMount = (key: string, path: string | null): void => {
-      void window.deva.chat.respondMount({ key, path })
+      void window.Pal.chat.respondMount({ key, path })
       // 主进程已就地把 session.focusRoot 设为该目录；渲染层覆盖层必须同步，否则下次 send 会覆盖回去。
       if (path) setBinding(sessionIdRef.current, { focusRoot: path })
       patchCardBlocks(sessionIdRef.current, (blocks) =>
@@ -2082,7 +2082,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
         blocks.map((b) => (b.kind === 'agentcard' && b.id === toolId ? { ...b, status } : b))
       )
       // 持久化终态边车：重开不退回 pending，接受态不会被再次接受成重复角色。
-      void window.deva.chat.resolveProposal(sid, toolId, status)
+      void window.Pal.chat.resolveProposal(sid, toolId, status)
     }
 
     const resolveAutotask = async (
@@ -2091,7 +2091,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       taskInput?: TaskCreateInput
     ): Promise<ResolveAutotaskResult> => {
       const sid = sessionIdRef.current
-      const res = await window.deva.chat.resolveAutotask(sid, toolId, action, taskInput)
+      const res = await window.Pal.chat.resolveAutotask(sid, toolId, action, taskInput)
       // 仅成功才收敛终态（名片属当前所视会话）：created 带 taskId 供跳转、dismissed 只读。
       // 失败（invalid-cron / expired 等）保持 pending，让用户在名片里改日程/授权后重试。
       if (res.ok) {
@@ -2114,7 +2114,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     const cancelTodoList = (): void => {
       const sid = sessionIdRef.current
       if (!sid) return
-      window.deva.chat
+      window.Pal.chat
         .cancelTodoList(sid)
         .then((st) => setTodoState(sid, st))
         .catch(() => undefined)
@@ -2123,7 +2123,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     const stopSubagent = (toolId: string): void => {
       const sid = sessionIdRef.current
       if (!sid) return
-      void window.deva.chat.stopSubagent(sid, toolId).catch(() => undefined)
+      void window.Pal.chat.stopSubagent(sid, toolId).catch(() => undefined)
     }
 
     return {

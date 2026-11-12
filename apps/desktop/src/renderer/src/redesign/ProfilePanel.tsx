@@ -10,7 +10,7 @@ import { AvatarEditor } from './AvatarEditor'
 import { fill, useMemoryEditor, type EditBase, type TagHandlers } from './memory-editor'
 
 /*
- * 个人资料面板（点左上角自己的头像打开）：头像 + Deva 记住的关于你（全局记忆，类用户画像）。
+ * 个人资料面板（点左上角自己的头像打开）：头像 + Pal 记住的关于你（全局记忆，类用户画像）。
  * 记忆的读写与编辑态见 useMemoryEditor。
  * 记忆每条一枚标签：宽时环绕居中头像（每页 12 条，滚轮 / 方向键 / 圆点翻页），窄时退回标签墙；
  * 记忆只由模型在对话中写入，面板仅供查看 / 修改 / 删除（不提供手动追加）；

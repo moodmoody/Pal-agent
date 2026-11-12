@@ -10,7 +10,7 @@ import { useExtensions } from '../store/extensions'
 import feishuLogo from '../assets/platforms/feishu.svg'
 import telegramLogo from '../assets/platforms/telegram.svg'
 
-type RemoteState = Awaited<ReturnType<typeof window.deva.remote.getState>>
+type RemoteState = Awaited<ReturnType<typeof window.Pal.remote.getState>>
 type BotView = RemoteState['bots'][number]
 type Platform = BotView['platform']
 type Scope = BotView['scope']
@@ -39,12 +39,12 @@ export function BotsPane(): React.JSX.Element {
 
   useEffect(() => {
     let alive = true
-    void window.deva.remote.getState().then((s) => {
+    void window.Pal.remote.getState().then((s) => {
       if (!alive) return
       setBots(s.bots)
       setLoaded(true)
     })
-    const off = window.deva.remote.onChanged((s) => setBots(s.bots))
+    const off = window.Pal.remote.onChanged((s) => setBots(s.bots))
     return () => {
       alive = false
       off()
@@ -266,14 +266,14 @@ function ScanModal({
   const [, setTick] = useState(0)
 
   const cancelScan = useCallback((): void => {
-    if (scanRef.current) void window.deva.remote.scanCancel(scanRef.current)
+    if (scanRef.current) void window.Pal.remote.scanCancel(scanRef.current)
     scanRef.current = null
   }, [])
 
   const start = useCallback(async () => {
     cancelScan()
     setSt({ phase: 'loading' })
-    const r = await window.deva.remote.scanStart(platform, needsToken ? { token } : undefined)
+    const r = await window.Pal.remote.scanStart(platform, needsToken ? { token } : undefined)
     if (!r.ok) {
       // Telegram 的失败多半是 Token 不对：退回输入步骤，就地提示。
       setSt(needsToken ? { phase: 'token', error: r.error } : { phase: 'failed', message: r.error })
@@ -295,7 +295,7 @@ function ScanModal({
 
   useEffect(
     () =>
-      window.deva.remote.onScan((ev) => {
+      window.Pal.remote.onScan((ev) => {
         if (ev.scanId !== scanRef.current) return
         scanRef.current = null
         if (ev.status === 'done') onCreated(ev.botId)
@@ -458,7 +458,7 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
   pairRef.current = pair
   useEffect(
     () => () => {
-      if (pairRef.current) void window.deva.remote.pairCancel(bot.id)
+      if (pairRef.current) void window.Pal.remote.pairCancel(bot.id)
     },
     [bot.id]
   )
@@ -466,7 +466,7 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
   const toggle = async (): Promise<void> => {
     setBusy(true)
     try {
-      const r = await window.deva.remote.setEnabled(bot.id, !bot.enabled)
+      const r = await window.Pal.remote.setEnabled(bot.id, !bot.enabled)
       if (!r.ok) toast.show({ variant: 'error', message: r.error || t('bots.failed') })
     } finally {
       setBusy(false)
@@ -480,7 +480,7 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
       confirmText: t('bots.removeUser'),
       variant: 'danger'
     })
-    if (ok) await window.deva.remote.removeUser(bot.id, id)
+    if (ok) await window.Pal.remote.removeUser(bot.id, id)
   }
 
   const remove = async (): Promise<void> => {
@@ -490,7 +490,7 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
       confirmText: t('common.delete'),
       variant: 'danger'
     })
-    if (ok) await window.deva.remote.deleteBot(bot.id)
+    if (ok) await window.Pal.remote.deleteBot(bot.id)
   }
 
   const state = bot.enabled ? bot.state : 'off'
@@ -538,7 +538,7 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
             <span className="bots-card__hint">{t('bots.usersHint')}</span>
           </div>
           {bot.state === 'connected' && !pair && (
-            <button className="bots-btn" onClick={() => void window.deva.remote.pairCode(bot.id).then(setPair)}>
+            <button className="bots-btn" onClick={() => void window.Pal.remote.pairCode(bot.id).then(setPair)}>
               {t('bots.invite')}
             </button>
           )}
@@ -549,14 +549,14 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
             <code className="bots-pair__code">/pair {pair.code}</code>
             <div className="bots-pair__meta">
               <span className="bots-card__hint">{t('bots.inviteExpires').replace('{s}', fmtLeft(left))}</span>
-              <button className="ext-linkbtn" onClick={() => void window.deva.remote.pairCode(bot.id).then(setPair)}>
+              <button className="ext-linkbtn" onClick={() => void window.Pal.remote.pairCode(bot.id).then(setPair)}>
                 {t('bots.inviteRegen')}
               </button>
               <button
                 className="ext-linkbtn"
                 onClick={() => {
                   setPair(null)
-                  void window.deva.remote.pairCancel(bot.id)
+                  void window.Pal.remote.pairCancel(bot.id)
                 }}
               >
                 {t('bots.inviteCancel')}
@@ -591,7 +591,7 @@ function BotDetail({ bot }: { bot: BotView }): React.JSX.Element {
               <button
                 key={m}
                 className={`cf-seg__opt${bot.replyMode === m ? ' is-on' : ''}`}
-                onClick={() => void window.deva.remote.setReplyMode(bot.id, m)}
+                onClick={() => void window.Pal.remote.setReplyMode(bot.id, m)}
               >
                 {t(`bots.replyModeOpt.${m}`)}
               </button>
@@ -630,7 +630,7 @@ function ScopeCard({ bot }: { bot: BotView }): React.JSX.Element {
   // 左侧列表变了（删对话）或范围变了（手机上新建的对话自动纳入）都重取一次。
   useEffect(() => {
     let alive = true
-    void window.deva.chat.listSessions(null).then((list) => alive && setSessions(list))
+    void window.Pal.chat.listSessions(null).then((list) => alive && setSessions(list))
     return () => {
       alive = false
     }
@@ -641,7 +641,7 @@ function ScopeCard({ bot }: { bot: BotView }): React.JSX.Element {
       ? scope.personas.filter((id) => personas.some((p) => p.id === id)).length
       : scope.sessions.filter((id) => sessions.some((s) => s.id === id)).length
 
-  const save = (next: Scope): void => void window.deva.remote.setScope(bot.id, next)
+  const save = (next: Scope): void => void window.Pal.remote.setScope(bot.id, next)
 
   const pickMode = (m: Scope['mode']): void => {
     if (m === scope.mode) return
@@ -729,7 +729,7 @@ function ScopePicker({
       return {
         id: s.id,
         title: s.title || t('bots.scopeUntitled'),
-        sub: `${p?.name ?? 'Deva'} · ${new Date(s.updatedAt).toLocaleString()}`,
+        sub: `${p?.name ?? 'Pal'} · ${new Date(s.updatedAt).toLocaleString()}`,
         persona: p
       }
     })

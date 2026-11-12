@@ -5,7 +5,7 @@ import type { EffortLevel } from '../../../preload'
 /**
  * 模型配置（全局，与项目无关）。
  * 服务商清单/模型/默认模型为内存状态（种子来自 mock/models）；
- * **API 密钥不进渲染层**——只经 window.deva.secrets 交主进程加密保存，这里仅持有「是否已配置」的布尔态。
+ * **API 密钥不进渲染层**——只经 window.Pal.secrets 交主进程加密保存，这里仅持有「是否已配置」的布尔态。
  */
 interface ModelsContextValue {
   providers: Provider[]
@@ -125,7 +125,7 @@ export function ModelsProvider({ children }: { children: ReactNode }): React.JSX
   const [keyStatus, setKeyStatus] = useState<Record<string, boolean>>({})
   const [secretsAvailable, setSecretsAvailable] = useState(true)
 
-  // 配置载入完成前不回写，避免用默认种子覆盖已存 ~/.deva/config.json
+  // 配置载入完成前不回写，避免用默认种子覆盖已存 ~/.pal/config.json
   const [hydrated, setHydrated] = useState(false)
 
   useEffect(() => {
@@ -133,8 +133,8 @@ export function ModelsProvider({ children }: { children: ReactNode }): React.JSX
     void (async () => {
       try {
         const [ids, available] = await Promise.all([
-          window.deva.secrets.list(),
-          window.deva.secrets.available()
+          window.Pal.secrets.list(),
+          window.Pal.secrets.available()
         ])
         if (!alive) return
         setKeyStatus(Object.fromEntries(ids.map((id) => [id, true])))
@@ -148,12 +148,12 @@ export function ModelsProvider({ children }: { children: ReactNode }): React.JSX
     }
   }, [])
 
-  // 载入持久化的模型配置（~/.deva/config.json 的 models 段），与默认种子合并
+  // 载入持久化的模型配置（~/.pal/config.json 的 models 段），与默认种子合并
   useEffect(() => {
     let alive = true
     void (async () => {
       try {
-        const cfg = await window.deva.config.get()
+        const cfg = await window.Pal.config.get()
         const saved = cfg?.models as
           | { providers?: unknown; activeModelId?: unknown; activeEffort?: EffortLevel }
           | undefined
@@ -193,7 +193,7 @@ export function ModelsProvider({ children }: { children: ReactNode }): React.JSX
   useEffect(() => {
     if (!hydrated) return
     // models 段整块替换（config:set 只做顶层浅合并），新增的兄弟字段必须一并写，漏写即被清掉。
-    void window.deva.config.set({ models: { providers, activeModelId, activeEffort } })
+    void window.Pal.config.set({ models: { providers, activeModelId, activeEffort } })
   }, [hydrated, providers, activeModelId, activeEffort])
 
   const patchProvider = (id: string, fn: (p: Provider) => Provider): void =>
@@ -261,7 +261,7 @@ export function ModelsProvider({ children }: { children: ReactNode }): React.JSX
       },
       removeProvider: (id) => {
         // 一并清理密钥、选中项与悬空默认模型；密钥删除交主进程（明文不经渲染层）
-        void window.deva.secrets.delete(id)
+        void window.Pal.secrets.delete(id)
         setProviders((list) => list.filter((p) => p.id !== id))
         setSelectedProviderId((cur) => {
           if (cur !== id) return cur
@@ -310,7 +310,7 @@ export function ModelsProvider({ children }: { children: ReactNode }): React.JSX
       },
       hasKey: (providerId) => Boolean(keyStatus[providerId]),
       setApiKey: async (providerId, key) => {
-        const res = await window.deva.secrets.set(providerId, key)
+        const res = await window.Pal.secrets.set(providerId, key)
         if (res.ok) {
           setKeyStatus((s) => ({ ...s, [providerId]: Boolean(key) }))
           // 填入密钥即自动启用该服务商，省去手动开关（清空密钥不动启用态）

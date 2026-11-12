@@ -2,8 +2,8 @@
  * 内置浏览器的网页登记与宿主。
  *
  * 两种宿主（kind）：
- * - window：前台对话（用户在电脑前）的网页，是「Deva 浏览器」窗口里的一个 WebContentsView（见 host.ts）。用户打开
- *   窗口看到的就是 Deva 正在操作的同一个页面；窗口收起时挪到屏幕外继续渲染。
+ * - window：前台对话（用户在电脑前）的网页，是「Pal 浏览器」窗口里的一个 WebContentsView（见 host.ts）。用户打开
+ *   窗口看到的就是 Pal 正在操作的同一个页面；窗口收起时挪到屏幕外继续渲染。
  * - offscreen：定时任务、手机端发起的对话用的网页，放在离屏渲染的 BrowserWindow 里，从不显示。
  * 实测（Win11 / Electron 33）：普通窗口一旦隐藏或从未显示，截图失败、点击输入也不生效，所以两种宿主都必须「在渲染」。
  *
@@ -15,7 +15,7 @@ import { existsSync } from 'fs'
 import { join, parse } from 'path'
 import { DIALOG_SHIM } from './page-scripts'
 
-export const BROWSER_PARTITION = 'persist:deva-browser'
+export const BROWSER_PARTITION = 'persist:Pal-browser'
 /** 网页视口尺寸（CSS 像素）。 */
 export const VIEWPORT = { width: 1280, height: 800 }
 /** 每个对话最多同时开的网页数；超出时关掉最久没用的。每个网页是一个独立的渲染进程，上限从严。 */
@@ -46,7 +46,7 @@ export interface BrowserPage {
   dispose: () => void
   lastUsed: number
   /**
-   * 用户要求看过（browser 的 show 弹给用户看）。浏览器默认在后台给 Deva 用，界面上不显示；
+   * 用户要求看过（browser 的 show 弹给用户看）。浏览器默认在后台给 Pal 用，界面上不显示；
    * 弹给用户看过的网页此后一直显示在胶囊里，直到关掉（见 host.ts visibleTabs）。
    */
   shown: boolean
@@ -64,7 +64,7 @@ export interface BrowserPage {
 }
 
 /**
- * 网页的细滚动条（同 Deva 界面：8px、圆角、轨道透明）。滑块用半透明中性灰，浅色、深色网页上都看得清。
+ * 网页的细滚动条（同 Pal 界面：8px、圆角、轨道透明）。滑块用半透明中性灰，浅色、深色网页上都看得清。
  * 只用 ::-webkit-scrollbar：网站若设了标准的 scrollbar-width / scrollbar-color，Chromium 会以网站的为准。
  */
 const SCROLLBAR_CSS = `
@@ -154,7 +154,7 @@ export function browserSession(): Session {
   ses.setUserAgent(
     ses
       .getUserAgent()
-      .replace(/\s(Electron|@?deva[\w./-]*)\/\S+/gi, '')
+      .replace(/\s(Electron|@?Pal[\w./-]*)\/\S+/gi, '')
       .trim()
   )
   ses.setPermissionRequestHandler((_wc, _perm, cb) => cb(false))
@@ -235,7 +235,7 @@ export function basePage(
   dispose: () => void
 ): BrowserPage {
   wc.setAudioMuted(kind === 'offscreen')
-  // 网页滚动条换成和 Deva 界面一致的细滚动条。以「用户样式表」注入：优先级低于网站自己的样式，网站自定义过滚动条的保留原样。
+  // 网页滚动条换成和 Pal 界面一致的细滚动条。以「用户样式表」注入：优先级低于网站自己的样式，网站自定义过滚动条的保留原样。
   // 每个新文档加载完注入一次（换页后旧样式随文档失效）
   wc.on('dom-ready', () => {
     void wc.insertCSS(SCROLLBAR_CSS, { cssOrigin: 'user' }).catch(() => {})

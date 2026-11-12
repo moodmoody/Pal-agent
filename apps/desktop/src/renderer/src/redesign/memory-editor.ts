@@ -68,7 +68,7 @@ export function useMemoryEditor({
   const reqRef = useRef(0)
   const reload = (): void => {
     const req = ++reqRef.current
-    void window.deva.memory
+    void window.Pal.memory
       .list(root)
       .then((snap) => {
         if (req === reqRef.current) setMem(snap)
@@ -84,7 +84,7 @@ export function useMemoryEditor({
     setError(null)
     reload()
     // 面板开着时模型可能调用了 memory_write / memory_delete：任一轮结束即刷新。
-    return window.deva.chat.onEvent((p) => {
+    return window.Pal.chat.onEvent((p) => {
       if (p.event.type === 'done') reload()
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,9 +129,9 @@ export function useMemoryEditor({
     if (!editId) return
     const cur = mem?.entries.find((e) => e.id === editId)
     if (!cur || editText.trim() === cur.content) return cancelEdit()
-    if (await run(() => window.deva.memory.write(editText, editId, root))) setEditId(null)
+    if (await run(() => window.Pal.memory.write(editText, editId, root))) setEditId(null)
   }
-  // 删除先二次确认（记忆一旦删掉，Deva 就不再知道这件事）。
+  // 删除先二次确认（记忆一旦删掉，Pal 就不再知道这件事）。
   const remove = async (id: string): Promise<void> => {
     const hit = mem?.entries.find((e) => e.id === id)
     if (!hit || pending) return
@@ -143,7 +143,7 @@ export function useMemoryEditor({
     })
     if (!ok) return
     if (editId === id) setEditId(null)
-    void run(() => window.deva.memory.remove(id, root))
+    void run(() => window.Pal.memory.remove(id, root))
   }
   const clearAll = async (): Promise<void> => {
     const ok = await dialog.confirm({
@@ -154,7 +154,7 @@ export function useMemoryEditor({
     })
     if (ok) {
       setEditId(null)
-      void run(() => window.deva.memory.clear(root))
+      void run(() => window.Pal.memory.clear(root))
     }
   }
 

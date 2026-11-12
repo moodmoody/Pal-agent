@@ -6,11 +6,11 @@ import { getDevaHome } from './config'
 
 /**
  * 记忆（Memory）服务，分两个作用域（scope）：
- * - **global**：`<DEVA_HOME>/memory.json`（默认 ~/.deva），与项目无关，只记用户本人的长期习惯 / 偏好 / 背景
+ * - **global**：`<DEVA_HOME>/memory.json`（默认 ~/.pal），与项目无关，只记用户本人的长期习惯 / 偏好 / 背景
  *   （如「偏好简体中文」「提交信息用 Conventional Commits」）。
  * - **project**：`<DEVA_HOME>/projects/<key>/memory.json`，按工作区隔离的**私有**项目记忆——
  *   只记「这个项目里、只对用户本人有用」的经验（构建/调试踩坑、个人在此项目的工作习惯、进行中的约定）。
- *   存在 ~/.deva 而非工作区内：不入库、不会被误提交、不被他人或其它工具读到。团队共享的约定仍归 AGENTS.md。
+ *   存在 ~/.pal 而非工作区内：不入库、不会被误提交、不被他人或其它工具读到。团队共享的约定仍归 AGENTS.md。
  *   key = 工作区真实路径（realpath，防符号链接换壳）规整后 sha1 前 24 位。
  *
  * 设计：

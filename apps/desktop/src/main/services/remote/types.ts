@@ -4,7 +4,7 @@ import type { AskQuestion } from '../chat'
  * 远程通道契约（平台无关）。
  *
  * 分层：
- *  · hub.ts（平台无关）：订阅会话总线、按 IM 会话 ↔ Deva 对话的绑定聚合回合视图、解析指令、鉴权配对、
+ *  · hub.ts（平台无关）：订阅会话总线、按 IM 会话 ↔ Pal 对话的绑定聚合回合视图、解析指令、鉴权配对、
  *    把答复回送 chatRuntime。所有业务规则只写一次。
  *  · 各平台适配器（feishu.ts，以后的 telegram.ts …）：只负责「连上平台 / 收消息 / 把视图渲染成该平台的
  *    消息并发送或更新」。不碰会话、不做鉴权判定、不解析指令。
@@ -14,7 +14,7 @@ import type { AskQuestion } from '../chat'
 
 export type Platform = 'feishu' | 'telegram'
 
-/** 一个「通道」= 用户添加的一个机器人实例（同一平台可以有多个），id 由 Deva 生成。 */
+/** 一个「通道」= 用户添加的一个机器人实例（同一平台可以有多个），id 由 Pal 生成。 */
 export type ChannelId = string
 
 /** 某机器人的一个会话（私聊）。chatId 为平台原生 id（飞书 chat_id / Telegram chat.id）。 */

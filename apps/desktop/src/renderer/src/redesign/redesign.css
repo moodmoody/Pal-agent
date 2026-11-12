@@ -1712,6 +1712,54 @@ body.cf-resizing-y * {
   /* 全局 body 为 user-select:none（应用外壳观感）；对话内容须可选中才能右键复制，故在消息体上放开。
      头像 .cf-ava 自带 user-select:none，不受影响。 */
   user-select: text;
+  /* 消息级「复制」按钮的定位基准（见 .cf-msg__copy） */
+  position: relative;
+}
+/* 消息级复制按钮：悬停该条消息才浮现，不占布局（绝对定位在消息正文末尾、右下角）。
+   放在文末而不是顶部——读完一条消息手就在下面，鼠标不用往回跑。
+   助手消息与用户消息共用；用户气泡靠右，按钮仍贴右下。 */
+.cf-msg__copy {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  /* 半透明底：落在正文最后一行右侧时也不糊住字 */
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+  backdrop-filter: blur(2px);
+  color: var(--fg-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s ease, color 0.12s ease, background 0.12s ease;
+  /* 浮在内容之上；z-index 只需压过正文，不与吸顶元素（--z-panel 起）抢层级 */
+  z-index: 1;
+}
+.cf-msg:hover .cf-msg__copy,
+.cf-msg__copy:focus-visible {
+  opacity: 1;
+}
+/* 用户消息：气泡本身有内边距、又靠右，按钮放气泡左下外侧（放气泡里会压住末行文字）。 */
+.cf-msg.is-user .cf-msg__copy {
+  right: auto;
+  left: 0;
+  transform: translate(-100%, 0);
+  margin-left: -6px;
+}
+.cf-msg__copy:hover {
+  color: var(--fg);
+  background: var(--bg-hover);
+}
+/* 触屏 / 无悬停设备：直接常显，否则永远点不到 */
+@media (hover: none) {
+  .cf-msg__copy {
+    opacity: 1;
+  }
 }
 .cf-msg__head {
   display: flex;

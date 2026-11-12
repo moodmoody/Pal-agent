@@ -22,7 +22,7 @@ import {
 /**
  * 定时任务 store（主进程）· 对标 skills.ts：模块级内存 Map + 懒加载 + 原子回写。
  *
- * 持久化：`~/.deva/tasks.json` = `{ version:1, tasks:TaskRecord[] }`，走 getDevaHome()（尊重 DEVA_HOME）。
+ * 持久化：`~/.pal/tasks.json` = `{ version:1, tasks:TaskRecord[] }`，走 getDevaHome()（尊重 DEVA_HOME）。
  * 因是**单文件汇总所有任务**（不同于「一对话一文件」），采用「临时文件 + rename」原子回写，杜绝写坏半份。
  *
  * 执行不在此文件：本文件只管 CRUD 与持久化 + `tasks:changed` 广播。真正的无头触发由 scheduler.ts
@@ -398,7 +398,7 @@ export function setTaskRunner(fn: TaskRunner | null): void {
 
 // ── IPC ──────────────────────────────────────────────────────────────────────
 
-/** 任务读写 IPC（全局；持久化于 ~/.deva/tasks.json）。 */
+/** 任务读写 IPC（全局；持久化于 ~/.pal/tasks.json）。 */
 export function registerTasksIpc(getWindow: () => BrowserWindow | null): void {
   getWin = getWindow
 

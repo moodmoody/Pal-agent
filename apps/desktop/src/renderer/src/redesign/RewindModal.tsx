@@ -60,7 +60,7 @@ export function RewindModal({
 
   useEffect(() => {
     let live = true
-    window.deva.chat
+    window.Pal.chat
       .rewindList(sessionId)
       .then((r) => live && setStats(r))
       .catch(() => live && setStats({ turns: [], canUndo: false }))
@@ -73,7 +73,7 @@ export function RewindModal({
     setForce(new Set())
     if (sel === null) return
     let live = true
-    window.deva.chat
+    window.Pal.chat
       .rewindPreview(sessionId, sel)
       .then((data) => live && setPreview({ turn: sel, data }))
       .catch(() => live && setPreview({ turn: sel, data: null }))

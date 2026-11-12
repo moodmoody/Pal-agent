@@ -34,8 +34,8 @@ const HANDOFF_ICON: Record<string, LucideIcon> = {
 const IS_MAC = navigator.userAgent.includes('Macintosh')
 
 /**
- * 「Deva 浏览器」窗口的外框：一行标签条（占标题栏，带角色头像；左侧后退，右侧「⋯」/ 置顶；收起用窗口的 ✕）与状态条
- * （Deva 正在操作 / 等你操作）。浏览器只给 Deva 用，不显示网址、不能输入网址；等用户登录等操作时在状态条里显示站点，
+ * 「Pal 浏览器」窗口的外框：一行标签条（占标题栏，带角色头像；左侧后退，右侧「⋯」/ 置顶；收起用窗口的 ✕）与状态条
+ * （Pal 正在操作 / 等你操作）。浏览器只给 Pal 用，不显示网址、不能输入网址；等用户登录等操作时在状态条里显示站点，
  * 输入密码前能确认是哪个网站。
  * 网页本身是主进程叠放在外框下方的原生视图（见 main/services/browser/host.ts），这里只画外框与网页四周的边框；
  * 各部分高度须与 BROWSER_CHROME 一致，主进程按同一套数字摆放网页。
@@ -47,8 +47,8 @@ export function BrowserChrome(): React.JSX.Element {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    void window.deva.browser.ready().then(setS)
-    return window.deva.browser.onState(setS)
+    void window.Pal.browser.ready().then(setS)
+    return window.Pal.browser.onState(setS)
   }, [])
 
   // 标签上的头像：标签里出现没见过的角色时重新取一次角色表
@@ -57,7 +57,7 @@ export function BrowserChrome(): React.JSX.Element {
     [s?.tabs]
   )
   useEffect(() => {
-    void window.deva.personas.list().then((list) => setPersonas(Object.fromEntries(list.map((p) => [p.id, p]))))
+    void window.Pal.personas.list().then((list) => setPersonas(Object.fromEntries(list.map((p) => [p.id, p]))))
   }, [personaKey])
 
   const tabs = s?.tabs ?? []
@@ -77,9 +77,9 @@ export function BrowserChrome(): React.JSX.Element {
       <Globe size={12} />
     )
   }
-  const api = window.deva.browser
-  // 状态条里说话的是这个对话的角色（没取到角色时叫 Deva）
-  const who = persona(active?.personaId)?.name || 'Deva'
+  const api = window.Pal.browser
+  // 状态条里说话的是这个对话的角色（没取到角色时叫 Pal）
+  const who = persona(active?.personaId)?.name || 'Pal'
   const HandoffIcon = handoff ? (HANDOFF_ICON[handoff.reason] ?? Hand) : Hand
   const site = handoff && active ? siteOf(active.url) : null
 

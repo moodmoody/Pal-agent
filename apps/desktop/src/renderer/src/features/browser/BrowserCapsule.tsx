@@ -31,7 +31,7 @@ const HANDOFF_ICON: Record<string, LucideIcon> = {
 const PREVIEW_DELAY = 300
 
 /**
- * 预览卡：tab = 看哪个标签，null 表示跟着 Deva（等你操作的 → 正在操作的 → 当前标签）。
+ * 预览卡：tab = 看哪个标签，null 表示跟着 Pal（等你操作的 → 正在操作的 → 当前标签）。
  * mode：hover = 悬停浮出（移开即收）；open = 点胶囊打开（移开不收，点别处 / Esc / 再点胶囊收）；
  * pinned = 卡上点了「固定」（点别处、打字都不收，可以边聊边看；取消固定或再点胶囊才收）。
  */
@@ -42,8 +42,8 @@ interface Preview {
 
 /**
  * 内置浏览器胶囊（输入框正上方，与待办清单 / 后台任务胶囊同一排）：本对话在浏览器里打开过网页才出现。
- * 显示 Deva 此刻在网页上做什么（停止用输入框的停止键，这里不重复放）、等你操作时的提示（「去处理」打开窗口）。
- * 悬停或点胶囊浮出预览卡：网页的实时画面（主进程按 CDP 推送，只在卡显示时推；点画面在「Deva 浏览器」窗口中打开）、
+ * 显示 Pal 此刻在网页上做什么（停止用输入框的停止键，这里不重复放）、等你操作时的提示（「去处理」打开窗口）。
+ * 悬停或点胶囊浮出预览卡：网页的实时画面（主进程按 CDP 推送，只在卡显示时推；点画面在「Pal 浏览器」窗口中打开）、
  * 标题（不显示网址，悬停标题看站点）、固定、关闭（关掉这个网页）。有两个以上网页时右侧出箭头，列出本对话打开的全部网页：
  * 点一行预览它，✕ 关掉它，标题右侧「全部关闭」；只有一个网页时没有箭头，关网页用卡上的「关闭」。
  */
@@ -51,7 +51,7 @@ export function BrowserCapsule({ sessionId }: { sessionId: string | null }): Rea
   const { t } = useI18n()
   const { streaming } = useChat()
   const s = useBrowserState()
-  const api = window.deva.browser
+  const api = window.Pal.browser
   const [listOpen, setListOpen] = useState(false)
   const [preview, setPreview] = useState<Preview | null>(null)
   /** 打开预览时先放一张截图（实时画面的首帧到之前不空着）。 */
@@ -97,7 +97,7 @@ export function BrowserCapsule({ sessionId }: { sessionId: string | null }): Rea
     return () => void api.liveStop()
   }, [api, previewId, visible])
 
-  // 固定着的预览卡在看哪个标签：告诉主进程（用户正在看，Deva 关不掉、闲置也不回收）
+  // 固定着的预览卡在看哪个标签：告诉主进程（用户正在看，Pal 关不掉、闲置也不回收）
   const pinnedTab = preview?.mode === 'pinned' ? (previewId ?? null) : null
   useEffect(() => {
     void api.setPreviewPinned(pinnedTab)
@@ -174,7 +174,7 @@ export function BrowserCapsule({ sessionId }: { sessionId: string | null }): Rea
     setPreview(null)
     void api.open({ tab: tab ?? cur.id })
   }
-  /** 打开预览卡；tab 为 null 时跟着 Deva。 */
+  /** 打开预览卡；tab 为 null 时跟着 Pal。 */
   const showPreview = (tab: string | null, mode: Preview['mode']): void => {
     window.clearTimeout(hoverTimer.current)
     setListOpen(false)
@@ -198,7 +198,7 @@ export function BrowserCapsule({ sessionId }: { sessionId: string | null }): Rea
 
   const img = frame?.tab === shown.id ? frame.src : thumb?.tab === shown.id ? thumb.src : null
   const openLabel = s.open ? t('browser.switchWindow') : t('browser.openWindow')
-  /** Deva 正在用（本轮进行中 / 正在操作 / 等你操作）时不给关网页（卡上「关闭」与列表同一规则）。 */
+  /** Pal 正在用（本轮进行中 / 正在操作 / 等你操作）时不给关网页（卡上「关闭」与列表同一规则）。 */
   const locked = streaming || !!op || !!ho
   /** 只有一个网页：不要右侧箭头（列表），关网页用卡上的「关闭」。 */
   const multi = tabs.length > 1
@@ -285,7 +285,7 @@ export function BrowserCapsule({ sessionId }: { sessionId: string | null }): Rea
             >
               {preview.mode === 'pinned' ? <PinOff size={15} /> : <Pin size={15} />}
             </button>
-            {/* 关闭：关掉这个网页（卡随之收起；最后一个网页关掉后胶囊也消失）。Deva 正在用时置灰 */}
+            {/* 关闭：关掉这个网页（卡随之收起；最后一个网页关掉后胶囊也消失）。Pal 正在用时置灰 */}
             <button
               type="button"
               className="cf-browser__open"

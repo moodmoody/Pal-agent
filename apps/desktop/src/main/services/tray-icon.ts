@@ -5,7 +5,7 @@ import { deflateSync } from 'zlib'
  * 应用 / 托盘图标（运行期生成，无需任何二进制资产文件）。
  *
  * 遵「免装铁律」：只用内置 `zlib` 手写最小 PNG（RGBA 真彩 + alpha），
- * 画 Deva 标志（「!」作 D 的竖笔 + 半圆），与安装包图标 build/icon.ico 保持一致。
+ * 画 Pal 标志（「!」作 D 的竖笔 + 半圆），与安装包图标 build/icon.ico 保持一致。
  * - 应用图标：32×32 逻辑像素彩色 PNG（附 2x）；Windows / Linux 托盘也用它（Windows 自动缩放到 16px）。
  * - macOS 菜单栏：另生成只有「!D」字形的单色模板图（见 `getTrayIcon`），由系统按菜单栏深浅着色。
  * 全程纯 JS、零第三方依赖，dev 与打包行为一致（不经 electron-vite `?asset` 资产管线，
@@ -65,13 +65,13 @@ function encodePng(width: number, height: number, rgba: Uint8Array): Buffer {
   ])
 }
 
-// ── 绘制 Deva 标志（与 build/icon.svg、scripts/gen-icon.mjs 同一几何）──────────
+// ── 绘制 Pal 标志（与 build/icon.svg、scripts/gen-icon.mjs 同一几何）──────────
 
 type RGB = [number, number, number]
 
 const BG_R = 224 // 底板圆角（1024 画布坐标）
-const C0: RGB = [0x4f, 0x46, 0xe5] // 渐变起点 indigo
-const C1: RGB = [0x7c, 0x3a, 0xed] // 渐变终点 violet
+const C0: RGB = [0x0f, 0x76, 0x6e] // 渐变起点 teal-700
+const C1: RGB = [0x1e, 0x40, 0xaf] // 渐变终点 blue-800
 
 /** 点是否在圆角方形底板内（1024 画布坐标）。 */
 function inBg(x: number, y: number): boolean {
@@ -80,25 +80,41 @@ function inBg(x: number, y: number): boolean {
   return (x - cx) ** 2 + (y - cy) ** 2 <= BG_R * BG_R
 }
 
-/** 点是否在白色图形内：感叹号（竖线 + 圆点）充当 D 的竖笔，右侧接半圆弧。 */
+/** 点到线段的距离平方。 */
+function segDist2(px: number, py: number, x1: number, y1: number, x2: number, y2: number): number {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  const len2 = dx * dx + dy * dy
+  let t = len2 === 0 ? 0 : ((px - x1) * dx + (py - y1) * dy) / len2
+  t = Math.min(1, Math.max(0, t))
+  const cx = x1 + t * dx
+  const cy = y1 + t * dy
+  return (px - cx) ** 2 + (py - cy) ** 2
+}
+
+// 「P」的骨架（1024 画布，与 scripts/gen-icon.mjs 一致）：
+//   竖笔 x=342，y 250→790；碗 圆心(400,455) 中线半径 190 线宽 172，只取右半
+const P_STEM: [number, number, number, number] = [342, 250, 342, 790]
+const P_BOWL_CX = 400
+const P_BOWL_CY = 455
+const P_BOWL_R = 190
+const P_W = 86 // 笔画半宽 → 线宽 172
+const P_BOWL_IN = P_BOWL_R - P_W
+const P_BOWL_OUT = P_BOWL_R + P_W
+
+/** 点是否在白色「P」字形内。 */
 function inShape(x: number, y: number): boolean {
-  // 感叹号竖线：胶囊 (333,294)-(333,578)，半径 48
-  const cy = Math.min(Math.max(y, 294), 578)
-  if ((x - 333) ** 2 + (y - cy) ** 2 <= 48 * 48) return true
-  // 感叹号圆点
-  if ((x - 333) ** 2 + (y - 730) ** 2 <= 48 * 48) return true
-  // 弧两端的短横（平头）
-  if (x >= 441 && x <= 473 && (Math.abs(y - 294) <= 48 || Math.abs(y - 730) <= 48)) return true
-  // 右半圆环：圆心 (473,512)，中线半径 218，线宽 96
-  if (x >= 473) {
-    const d = Math.hypot(x - 473, y - 512)
-    if (d >= 170 && d <= 266) return true
+  const w2 = P_W * P_W
+  if (segDist2(x, y, ...P_STEM) <= w2) return true
+  if (x >= P_BOWL_CX) {
+    const d = Math.hypot(x - P_BOWL_CX, y - P_BOWL_CY)
+    if (d >= P_BOWL_IN && d <= P_BOWL_OUT) return true
   }
   return false
 }
 
 /**
- * 生成标志 RGBA 像素：渐变圆角底板 + 白色「!」+ 半圆（D）。
+ * 生成标志 RGBA 像素：渐变圆角底板 + 白色「P」。
  * 按解析几何做 ss×ss 超采样抗锯齿，小尺寸（托盘 16/32px）边缘也不发毛。
  */
 function drawLogo(size: number, ss = 8): Uint8Array {
@@ -158,18 +174,24 @@ export function getAppIcon(): NativeImage {
 
 // ── macOS 菜单栏模板图（纯字形，系统着色）─────────────────────────────────
 
-/** 字形外接框高度（1024 画布坐标 y 246–778；x 285–739），外接框中心恰为 (512, 512)。 */
-const GLYPH_H = 532
+/**
+ * 「P」字形外接框（1024 画布坐标）：x 256–676、y 250–790，中心 (466, 520)，高 540、宽 420。
+ * 模板图按外接框居中，故横向参考点用 466 而非底板中心 512。
+ */
+const GLYPH_H = 540
+const GLYPH_CX = 466
+const GLYPH_CY = 520
+const GLYPH_LEFT = 256
 
 /**
  * 生成纯字形 RGBA 像素：无底板，RGB 恒为 0（黑），只写 alpha——模板图只看 alpha。
- * `size` 为画布边长（px），字形高 `glyphH`（px）并居中；ss×ss 超采样抗锯齿。
- * 横向微移使竖笔左边缘落在整像素上，1x 屏上竖笔不发虚（纵向在 18/16 下本就对齐）。
+ * `size` 为画布边长（px），字形高 `glyphH`（px）并按外接框居中；ss×ss 超采样抗锯齿。
+ * 横向微移使竖笔左边缘落在整像素上，1x 屏上竖笔不发虚。
  */
 function drawGlyph(size: number, glyphH: number, ss = 8): Uint8Array {
   const px = new Uint8Array(size * size * 4)
   const k = GLYPH_H / glyphH // 每像素对应的画布单位
-  const left = size / 2 - (512 - 285) / k // 竖笔左边缘（x=285）所在像素位置
+  const left = size / 2 - (GLYPH_CX - GLYPH_LEFT) / k // 竖笔左边缘所在像素位置
   const dx = Math.round(left) - left
   const n = ss * ss
   for (let py = 0; py < size; py++) {
@@ -177,8 +199,8 @@ function drawGlyph(size: number, glyphH: number, ss = 8): Uint8Array {
       let cov = 0
       for (let sy = 0; sy < ss; sy++) {
         for (let sx = 0; sx < ss; sx++) {
-          const x = 512 + (pxl + (sx + 0.5) / ss - size / 2 - dx) * k
-          const y = 512 + (py + (sy + 0.5) / ss - size / 2) * k
+          const x = GLYPH_CX + (pxl + (sx + 0.5) / ss - size / 2 - dx) * k
+          const y = GLYPH_CY + (py + (sy + 0.5) / ss - size / 2) * k
           if (inShape(x, y)) cov++
         }
       }

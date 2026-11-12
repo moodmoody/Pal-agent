@@ -18,12 +18,12 @@ import {
 export type ThemeMode = 'light' | 'dark' | 'system'
 export type ResolvedTheme = 'light' | 'dark'
 
-const STORAGE_KEY = 'deva.theme'
+const STORAGE_KEY = 'Pal.theme'
 
-/** 从 ~/.deva/config.json 同步取主题（首帧，避免闪烁）。不可用时返回 null 走后续兜底。 */
+/** 从 ~/.pal/config.json 同步取主题（首帧，避免闪烁）。不可用时返回 null 走后续兜底。 */
 function readConfigMode(): ThemeMode | null {
   try {
-    const v = window.deva?.config?.getSync()?.theme
+    const v = window.Pal?.config?.getSync()?.theme
     if (v === 'light' || v === 'dark' || v === 'system') return v
   } catch {
     /* config 不可用（如纯 web 预览）时回退 */
@@ -44,7 +44,7 @@ function getSystemTheme(): ResolvedTheme {
 }
 
 function readStoredMode(): ThemeMode {
-  // 优先 ~/.deva/config.json（可手改），其次 localStorage 兜底，最后默认跟随系统
+  // 优先 ~/.pal/config.json（可手改），其次 localStorage 兜底，最后默认跟随系统
   const fromConfig = readConfigMode()
   if (fromConfig) return fromConfig
   try {
@@ -74,13 +74,13 @@ export function ThemeProvider({ children }: { children: ReactNode }): React.JSX.
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', resolved)
     const symbolColor = resolved === 'dark' ? '#e4e4e7' : '#3a3a3d'
-    void window.deva?.window.setOverlaySymbolColor(symbolColor)
+    void window.Pal?.window.setOverlaySymbolColor(symbolColor)
   }, [resolved])
 
   const setMode = (next: ThemeMode): void => {
     setModeState(next)
-    // 主存 ~/.deva/config.json；localStorage 作为兜底缓存
-    void window.deva?.config?.set({ theme: next })
+    // 主存 ~/.pal/config.json；localStorage 作为兜底缓存
+    void window.Pal?.config?.set({ theme: next })
     try {
       localStorage.setItem(STORAGE_KEY, next)
     } catch {

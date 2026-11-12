@@ -156,7 +156,7 @@ export function useComposerEditor(handlers: ComposerEditorHandlers): ComposerEdi
   handlersRef.current = handlers
   const [editor] = useState<LexicalEditor>(() =>
     createEditor({
-      namespace: 'deva-composer',
+      namespace: 'Pal-composer',
       nodes: [SlashTokenNode],
       onError: (err) => console.error('[composer]', err)
     })

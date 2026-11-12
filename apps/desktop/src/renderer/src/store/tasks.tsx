@@ -48,13 +48,13 @@ export function TasksProvider({ children }: { children: ReactNode }): React.JSX.
   // 初始拉取 + 订阅全量广播（仿 useExtensions 对 mcp.onStatus 的处理）。
   useEffect(() => {
     let alive = true
-    void window.deva?.tasks
+    void window.Pal?.tasks
       ?.list?.()
       .then((list) => {
         if (alive) setTasks(list)
       })
       .catch(() => {})
-    const off = window.deva?.tasks?.onChanged?.((list) => setTasks(list))
+    const off = window.Pal?.tasks?.onChanged?.((list) => setTasks(list))
     return () => {
       alive = false
       off?.()
@@ -63,28 +63,28 @@ export function TasksProvider({ children }: { children: ReactNode }): React.JSX.
 
   // 创建：结果直接回给调用方（失败带稳定错误码供渲染层本地化）；成功后的列表刷新交由 tasks:changed 广播。
   const create = useCallback(
-    (input: TaskCreateInput): Promise<CreateTaskResult> => window.deva.tasks.create(input),
+    (input: TaskCreateInput): Promise<CreateTaskResult> => window.Pal.tasks.create(input),
     []
   )
 
   const setStatus = useCallback(async (id: string, status: TaskStatus): Promise<void> => {
-    await window.deva.tasks.setStatus(id, status)
+    await window.Pal.tasks.setStatus(id, status)
     // 刷新交由 tasks:changed 广播。
   }, [])
 
   const runNow = useCallback(
     (id: string): Promise<{ ok: boolean; reason?: string; already?: 'running' | 'queued' }> =>
-      window.deva.tasks.runNow(id),
+      window.Pal.tasks.runNow(id),
     []
   )
 
   const update = useCallback(
-    (input: TaskUpdateInput): Promise<TaskRecord | null> => window.deva.tasks.update(input),
+    (input: TaskUpdateInput): Promise<TaskRecord | null> => window.Pal.tasks.update(input),
     []
   )
 
   const remove = useCallback(async (id: string): Promise<void> => {
-    await window.deva.tasks.remove(id)
+    await window.Pal.tasks.remove(id)
   }, [])
 
   const value: TasksContextValue = { tasks, create, setStatus, runNow, update, remove }

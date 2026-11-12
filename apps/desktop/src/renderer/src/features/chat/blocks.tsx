@@ -279,7 +279,9 @@ export function StatusIndicator({
               ? t('chat.work.autoOutputLimit')
               : reason === 'effort'
                 ? t('chat.work.autoEffort')
-                : t('chat.work.reconnecting')
+                : reason === 'refusal'
+                  ? t('chat.work.autoRefusal')
+                  : t('chat.work.reconnecting')
     return (
       <div className="chat__status is-reconnecting" role="status" aria-live="polite">
         <Loader2 size={14} className="spin" />
@@ -620,7 +622,7 @@ function MountRequestCard({
   const decided = block.decided
   const pick = (): void => {
     void (async () => {
-      const r = await window.deva.fs.openFolder()
+      const r = await window.Pal.fs.openFolder()
       if (r && onMountReq) onMountReq(block.key, r.path)
     })()
   }
@@ -1805,7 +1807,7 @@ function formatDuration(sec: number, t: (key: string) => string): string {
  * 套一层时间轴节点：否则进行中标题写着「思考中」，展开后下面又一行「思考中」节点，收起节点时两处重复。结束后
  * 标题为「已思考 12 秒」（没记录耗时为「已思考」）。进行中随后出现工具调用时才换成时间轴，那时思考已结束、
  * 节点本就收起，看着与自动收起无异。
- * lead：排在折叠条同一行最前面的内容（对话区传角色名，显示为「Deva  已处理 … · N 步 ⌄」）。带 lead 时
+ * lead：排在折叠条同一行最前面的内容（对话区传角色名，显示为「Pal  已处理 … · N 步 ⌄」）。带 lead 时
  * 箭头挪到文字末尾、朝下（展开后朝上）：夹在名字和文字之间读起来像层级路径，也看不出是展开按钮。
  */
 export function ProcessFold({

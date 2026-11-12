@@ -90,7 +90,7 @@ async function createPool(route: Route): Promise<Pool> {
   const sessions: Session[] = []
   for (let i = 0; i < POOL_SIZE; i++) {
     // 无 persist: 前缀 = 纯内存分区，不落盘。
-    const ses = session.fromPartition(`deva-http-${route}-${i}`)
+    const ses = session.fromPartition(`Pal-http-${route}-${i}`)
     if (route === 'system') await ses.setProxy({ mode: 'system' })
     else if (env) await ses.setProxy({ mode: 'fixed_servers', proxyRules: env.rules, proxyBypassRules: env.bypass })
     else await ses.setProxy({ mode: 'direct' })

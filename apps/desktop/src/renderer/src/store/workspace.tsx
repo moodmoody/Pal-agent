@@ -8,7 +8,7 @@ import {
 } from 'react'
 
 /**
- * 工作区状态（真实数据，经 window.deva.fs 走主进程）。
+ * 工作区状态（真实数据，经 window.Pal.fs 走主进程）。
  * - 项目：可多开的真实文件夹，顶部切换。
  * - 文件树：按需懒加载（展开目录时才读取其子项），以绝对路径为键，天然支持多项目。
  * - 编辑器：多标签，跟踪脏状态，Ctrl+S 写回磁盘。
@@ -98,7 +98,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }): React.
   const activePath = activeProjectId ? activePathByProject[activeProjectId] ?? null : null
 
   const ensureChildren = useCallback(async (dir: string): Promise<void> => {
-    const list = await window.deva.fs.readDir(dir)
+    const list = await window.Pal.fs.readDir(dir)
     setChildrenMap((prev) => ({ ...prev, [dir]: list }))
   }, [])
 
@@ -114,7 +114,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }): React.
   )
 
   const openFolder = useCallback(async (): Promise<void> => {
-    const res = await window.deva.fs.openFolder()
+    const res = await window.Pal.fs.openFolder()
     if (!res) return
     await applyOpen({ id: res.path, name: res.name, path: res.path })
   }, [applyOpen])
@@ -188,7 +188,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }): React.
       })
       setActivePathByProject((prev) => ({ ...prev, [pid]: path }))
       if (content[path] !== undefined || fileState[path] !== undefined) return
-      const res = await window.deva.fs.readFile(path)
+      const res = await window.Pal.fs.readFile(path)
       if (res.binary) {
         setFileState((s) => ({ ...s, [path]: 'binary' }))
       } else if (res.tooLarge) {
@@ -245,7 +245,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }): React.
     if (!path || fileState[path] !== 'ok') return
     if (content[path] === savedContent[path]) return
     const text = content[path] ?? ''
-    await window.deva.fs.writeFile(path, text)
+    await window.Pal.fs.writeFile(path, text)
     setSavedContent((c) => ({ ...c, [path]: text }))
   }, [activePath, fileState, content, savedContent])
 

@@ -410,7 +410,7 @@ export const toolSpecs: ToolSpec[] = [
   {
     name: 'create_mcp',
     description:
-      '创建并启用一个新的 **MCP 服务**（Model Context Protocol server），写入用户的全局 MCP 配置（~/.deva/mcp.json）。' +
+      '创建并启用一个新的 **MCP 服务**（Model Context Protocol server），写入用户的全局 MCP 配置（~/.pal/mcp.json）。' +
       '仅在用户明确想接入某个 MCP 服务、且你已收集好要素并向用户复述确认后调用。' +
       '请始终用本工具写入——**不要**用 write_file / run_command 直接改 mcp.json（会绕过配置校验与密钥占位处理）。' +
       '**密钥零明文**：绝不把 API Key / Token 等真实密钥值写进本工具参数或对话；只在 secretEnv / secretHeaders 里列出这些字段的**名字**，' +
@@ -561,7 +561,7 @@ const READ_TOOLS = new Set([
   'skill',
   'run_subagent',
   'send_to_subagent',
-  // 读记忆（主进程直读 ~/.deva 下的全局 / 项目记忆，无路径入参）；写/删记忆不在此集，落默认分支同 create_skill。
+  // 读记忆（主进程直读 ~/.pal 下的全局 / 项目记忆，无路径入参）；写/删记忆不在此集，落默认分支同 create_skill。
   'memory_read',
   // 惰性提议工具：不写盘、不弹权限框；真正的授权是用户在名片里点「接受」（走渲染层 personas:upsert）。
   'propose_agent',
@@ -711,7 +711,7 @@ function toAbsPath(root: string | null, p: string): string {
 
 /**
  * 文件工具的路径解析（读写共用）：把 path 解析为绝对路径。
- * 不设任何路径限制（2026-10-09 起）：不校验受信根，凭据目录、~/.deva、.git 一律可读写。
+ * 不设任何路径限制（2026-10-09 起）：不校验受信根，凭据目录、~/.pal、.git 一律可读写。
  */
 function resolvePath(root: string | null, p: unknown): string {
   if (typeof p !== 'string' || !p.trim()) throw new Error('缺少有效的 path 参数')
@@ -1168,7 +1168,7 @@ function killTree(child: import('node:child_process').ChildProcess, msys?: MsysK
       delete env.DEVA_EXEC_TAG // 杀手自己绝不能带目标 tag
       const k = spawn(
         msys.bash,
-        ['--noprofile', '--norc', '-c', MSYS_KILL_SCRIPT, 'deva-kill', msys.tag],
+        ['--noprofile', '--norc', '-c', MSYS_KILL_SCRIPT, 'Pal-kill', msys.tag],
         { env, windowsHide: true, stdio: 'ignore', timeout: 5000 }
       )
       k.once('exit', taskkill)
@@ -1606,7 +1606,7 @@ export async function executeTool(
           signal: controller.signal,
           redirect: 'follow',
           headers: {
-            'user-agent': `Deva/${app.getVersion()} (+https://github.com/sqfcyily/deva)`,
+            'user-agent': `Pal/${app.getVersion()} (+https://github.com/sqfcyily/Pal)`,
             accept: 'text/html,application/xhtml+xml,application/json,text/plain;q=0.9,*/*;q=0.8'
           }
         })
@@ -1830,7 +1830,7 @@ export async function executeTool(
       const allowedTools = Array.isArray(a.allowedTools)
         ? a.allowedTools.filter((t): t is string => typeof t === 'string' && t.trim().length > 0)
         : []
-      // 直调主进程 upsertSkill（渲染层写不进 ~/.deva；本工具已过权限闸）——自动启用。
+      // 直调主进程 upsertSkill（渲染层写不进 ~/.pal；本工具已过权限闸）——自动启用。
       const rec = upsertSkill({
         name: skillName,
         description: typeof a.description === 'string' ? a.description : '',
@@ -2003,7 +2003,7 @@ export async function executeTool(
         secretFields = secretNames(a.secretHeaders)
       }
 
-      // 直调主进程 upsertServer（渲染层写不进 ~/.deva；本工具已过权限闸）——自动启用；
+      // 直调主进程 upsertServer（渲染层写不进 ~/.pal；本工具已过权限闸）——自动启用；
       // 写入层的变更通知随即触发 mcp.ts 对账，后台连接（缺密钥则停在「待填密钥」）。
       const rec = upsertServer(input)
       const tail = secretFields.length

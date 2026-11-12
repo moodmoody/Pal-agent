@@ -2,7 +2,7 @@ import { Notification, type BrowserWindow } from 'electron'
 import { getConfig } from './config'
 
 /**
- * 回复提醒：一轮对话结束、或中途停下来等用户处理时，若用户此刻没在看 Deva，弹一条系统通知；
+ * 回复提醒：一轮对话结束、或中途停下来等用户处理时，若用户此刻没在看 Pal，弹一条系统通知；
  * 点击唤起窗口并打开该对话。
  *
  * 「没在看」= 窗口不在焦点上：最小化、关窗驻留托盘、被其它应用盖住都属此类。只看焦点而不看遮挡，
@@ -39,7 +39,7 @@ function show(
   if (current && !current.isDestroyed() && current.isFocused()) return
   try {
     if (!Notification.isSupported()) return
-    const n = new Notification({ title: title || 'Deva', body })
+    const n = new Notification({ title: title || 'Pal', body })
     live.add(n)
     n.on('close', () => live.delete(n))
     n.on('click', () => {

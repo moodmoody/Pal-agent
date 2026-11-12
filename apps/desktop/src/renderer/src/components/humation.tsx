@@ -22,7 +22,7 @@ import type { PartOption } from '@humation/core'
 export { humation1 }
 
 /** 人类用户（「我」）的固定头像 seed —— 稳定、确定性，与角色区分（角色以 persona.id 为 seed）。 */
-export const USER_AVATAR_SEED = 'deva-you'
+export const USER_AVATAR_SEED = 'Pal-you'
 
 /** 头像自定义规格：序列化为 JSON 存进 persona 的 avatar 字段；空对象 → 回落 seed 生成。 */
 export interface AvatarSpec {

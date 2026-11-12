@@ -117,8 +117,8 @@ async function greetPending(adapter: RemoteAdapter): Promise<void> {
     try {
       const chatId = await adapter.openDirect(u.id, {
         tone: 'success',
-        title: '已连接到 Deva',
-        text: `你好！我已经连上你电脑上的 Deva，现在可以直接给我发消息了。\n\n${HELP}`
+        title: '已连接到 Pal',
+        text: `你好！我已经连上你电脑上的 Pal，现在可以直接给我发消息了。\n\n${HELP}`
       })
       if (chatId) setUserChat(adapter.id, u.id, chatId)
     } catch (e) {
@@ -196,7 +196,7 @@ async function tryPair(msg: InboundMessage, code: string): Promise<void> {
     pairing.delete(id)
     return notice(msg.chat, {
       tone: 'warning',
-      text: '配对码已过期或尚未生成。请在电脑端 Deva 的「机器人」面板里生成新的配对码。'
+      text: '配对码已过期或尚未生成。请在电脑端 Pal 的「机器人」面板里生成新的配对码。'
     })
   }
   if (code !== p.code) {
@@ -302,7 +302,7 @@ function sessionTitle(sessionId: string): string {
 
 function personaName(sessionId: string): string {
   const pid = getSession(sessionId)?.personaId
-  return (pid && getPersona(resolvePersonaId(pid))?.name) || 'Deva'
+  return (pid && getPersona(resolvePersonaId(pid))?.name) || 'Pal'
 }
 
 // ───────── 出站：回合视图 ─────────
@@ -882,7 +882,7 @@ async function handleMessage(msg: InboundMessage): Promise<void> {
     return notice(msg.chat, {
       tone: 'warning',
       title: '尚未配对',
-      text: '请让机器人的主人在电脑端 Deva 的「机器人」面板里生成邀请码，然后在这里发送：\n/pair 邀请码'
+      text: '请让机器人的主人在电脑端 Pal 的「机器人」面板里生成邀请码，然后在这里发送：\n/pair 邀请码'
     })
   }
   // 扫码创建时还不知道私聊 chatId（主动打招呼也可能失败）：用户第一次发消息时补上。
@@ -911,7 +911,7 @@ async function runCommand(chat: ChatAddress, name: string, arg: string, trail: T
   switch (name) {
     case 'help':
     case 'start':
-      await say({ title: 'Deva 使用说明', text: HELP })
+      await say({ title: 'Pal 使用说明', text: HELP })
       return true
     case 'pair':
       await say({ text: '你已经配对过了。' })
@@ -968,7 +968,7 @@ async function runCommand(chat: ChatAddress, name: string, arg: string, trail: T
         text: `共 ${all.length} 个对话${more}。点一下即可切换。`,
         buttonLayout: 'column',
         buttons: list.map((s, i) => {
-          const p = (s.personaId && getPersona(resolvePersonaId(s.personaId))?.name) || 'Deva'
+          const p = (s.personaId && getPersona(resolvePersonaId(s.personaId))?.name) || 'Pal'
           return {
             // 截断交给客户端按屏宽处理（单行省略），这里只防极端长标题撑大卡片。
             label: `${i + 1}. ${truncate(s.title || '新对话', 80)} · ${p}${s.id === cur ? '（当前）' : ''}`,
@@ -1013,8 +1013,8 @@ async function runCommand(chat: ChatAddress, name: string, arg: string, trail: T
 }
 
 /**
- * 按名称 / id 找本机器人能用的角色。未指定角色（空名）固定用默认角色 Deva，不挑列表里的第一个——
- * 除非回复范围限定了角色且不含 Deva，才取范围内的第一个。
+ * 按名称 / id 找本机器人能用的角色。未指定角色（空名）固定用默认角色 Pal，不挑列表里的第一个——
+ * 除非回复范围限定了角色且不含 Pal，才取范围内的第一个。
  */
 function pickPersona(channel: ChannelId, name: string): { id: string; name: string } | null {
   if (!name) {
@@ -1104,7 +1104,7 @@ function lastAssistantText(sid: string): string {
 
 async function sendToSession(chat: ChatAddress, text: string): Promise<void> {
   const rt = getChatRuntime()
-  if (!rt) return notice(chat, { tone: 'error', text: 'Deva 还没准备好，请稍后再试。' })
+  if (!rt) return notice(chat, { tone: 'error', text: 'Pal 还没准备好，请稍后再试。' })
   let sid = boundSession(chat)
   if (!sid) {
     const persona = pickPersona(chat.channel, '')
@@ -1170,7 +1170,7 @@ async function sendToSession(chat: ChatAddress, text: string): Promise<void> {
 async function handleAction(a: InboundAction): Promise<ActionResult> {
   if (!isAuthorized(a.chat.channel, a.user.id)) return { ok: false, message: '未配对的用户无法操作。' }
   const rt = getChatRuntime()
-  if (!rt) return { ok: false, message: 'Deva 还没准备好。' }
+  if (!rt) return { ok: false, message: 'Pal 还没准备好。' }
   const v = a.value
   switch (v.k) {
     case 'ask': {

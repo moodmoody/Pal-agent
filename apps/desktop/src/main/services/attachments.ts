@@ -69,7 +69,7 @@ const allowed = new Set<string>()
  * 白名单是内存态、随重启清空，上次运行留下的文件已无用：注册 IPC 时整目录清掉。
  * 发送时内容即转成 base64 块进历史，文件只需活到发送前。
  */
-const PASTE_DIR = join(tmpdir(), 'deva-paste')
+const PASTE_DIR = join(tmpdir(), 'Pal-paste')
 
 /**
  * 粘贴去重：同一内容（sha256）重复粘贴返回同一条附件（同一路径），渲染层按路径过滤即只留一份。

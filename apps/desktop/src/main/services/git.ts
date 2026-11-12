@@ -12,7 +12,7 @@ import { streamChat } from '../providers'
  * Git 源代码管理服务（主进程）。
  *
  * 技术路线（对标 VS Code）：**调用系统已装的 git 命令行**，凭据/身份全部交给系统
- * git + 系统凭据管理器（Windows 的 Git Credential Manager）。因此 Deva 本身
+ * git + 系统凭据管理器（Windows 的 Git Credential Manager）。因此 Pal 本身
  * **零凭据存储、零 PAT UI**——push/pull 直接复用系统已存的登录态。
  *
  * 安全要点：

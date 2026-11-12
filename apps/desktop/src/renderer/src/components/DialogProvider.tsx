@@ -44,7 +44,7 @@ type Request =
   | { kind: 'prompt'; opts: PromptOptions; resolve: (v: string | null) => void }
 
 const DialogContext = createContext<DialogApi | null>(null)
-const TITLE_ID = 'deva-dialog-title'
+const TITLE_ID = 'Pal-dialog-title'
 
 /**
  * 全局对话框服务：以命令式 API 取代原生 window.confirm / 各处自绘输入框，

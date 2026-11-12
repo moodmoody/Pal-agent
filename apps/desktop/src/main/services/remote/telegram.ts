@@ -240,7 +240,7 @@ export class TelegramAdapter implements RemoteAdapter {
         healthy = false
         host.onState(
           err.code === 409 ? 'error' : 'connecting',
-          err.code === 409 ? '这个机器人正被其他程序占用（例如另一台电脑上的 Deva），正在重试…' : err.message
+          err.code === 409 ? '这个机器人正被其他程序占用（例如另一台电脑上的 Pal），正在重试…' : err.message
         )
         const wait = err.retryAfter ? err.retryAfter * 1000 : err.code === 409 ? 15_000 : backoff
         backoff = Math.min(backoff * 2, 30_000)
@@ -277,7 +277,7 @@ export class TelegramAdapter implements RemoteAdapter {
     const chat: ChatAddress = { channel: this.id, chatId: String(msg.chat.id) }
     const user = { id: String(q.from.id), name: userName(q.from) }
     const p = this.decode(q.data)
-    if (!p) return void reply('按钮已失效，请重新操作（Deva 重启过）。', true)
+    if (!p) return void reply('按钮已失效，请重新操作（Pal 重启过）。', true)
 
     if (p.t === 'pick') {
       const d = this.drafts.get(p.key)

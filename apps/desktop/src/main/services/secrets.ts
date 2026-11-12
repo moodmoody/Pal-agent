@@ -6,7 +6,7 @@ import { getDevaHome } from './config'
 /**
  * 密钥安全存储（主进程）。
  * 用 Electron safeStorage 加密（OS 凭据体系：Win DPAPI / macOS Keychain / Linux libsecret），
- * 密文（base64）落盘 `~/.deva/secrets.json`（与非敏感 config.json 同一根目录，可被 DEVA_HOME 覆盖）。
+ * 密文（base64）落盘 `~/.pal/secrets.json`（与非敏感 config.json 同一根目录，可被 DEVA_HOME 覆盖）。
  * 即便放在点目录，也**始终保持加密、绝不明文**——DPAPI 密文绑定 OS 用户账户、与文件路径无关。
  * **明文永不出主进程**——不提供 get 给渲染层，解密只在主进程内被 provider 调用时发生。
  * 详见 docs/architecture/security.md。
@@ -25,7 +25,7 @@ async function migrateLegacy(): Promise<void> {
     const parsed = JSON.parse(raw)
     if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
       store = parsed as Record<string, string>
-      await persist() // 写到新位置 ~/.deva/secrets.json（旧文件保留，作兜底，不删）
+      await persist() // 写到新位置 ~/.pal/secrets.json（旧文件保留，作兜底，不删）
     }
   } catch {
     // 无旧文件 / 解析失败 —— 视为空库

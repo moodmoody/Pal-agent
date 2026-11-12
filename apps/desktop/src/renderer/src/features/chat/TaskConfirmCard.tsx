@@ -75,12 +75,12 @@ function TaskTerminalCard({
   useEffect(() => {
     if (block.status !== 'created' || !block.taskId) return
     let alive = true
-    void window.deva.tasks
+    void window.Pal.tasks
       .get(block.taskId)
       .then(async (tk) => {
         if (!alive || !tk) return
         setTask(tk)
-        const p = await window.deva.tasks.preview(tk.schedule, locale).catch(() => null)
+        const p = await window.Pal.tasks.preview(tk.schedule, locale).catch(() => null)
         if (alive && p && p.ok) setDesc(p.description)
       })
       .catch(() => {})
@@ -179,7 +179,7 @@ function TaskEditor({
   useEffect(() => {
     let alive = true
     const timer = setTimeout(() => {
-      void window.deva.tasks
+      void window.Pal.tasks
         .preview(schedule, locale)
         .then((r) => {
           if (alive) setPreview(r)

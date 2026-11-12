@@ -5,14 +5,14 @@ import { deleteSecretsByPrefix, getSecret } from './secrets'
 import { setRoles } from './ext-roles'
 
 /**
- * MCP 服务配置的读写（全局，`~/.deva/mcp.json`，与项目无关）。
+ * MCP 服务配置的读写（全局，`~/.pal/mcp.json`，与项目无关）。
  *
  * 设计：
- * - 服务清单存 `~/.deva/mcp.json` 的 `mcpServers` 映射（沿用 Claude Desktop 的键名，便于用户迁移/理解）。
+ * - 服务清单存 `~/.pal/mcp.json` 的 `mcpServers` 映射（沿用 Claude Desktop 的键名，便于用户迁移/理解）。
  * - **身份 = 映射键（id）**，显示名 = `name`；id 稳定不改（改显示名只重写字段）。
  * - 启用态**不入 mcp.json**，集中存 `config.json` 的 `mcp.enabled[id]`，默认关（与 skills 一致）。
  * - **密钥零明文落盘**：env / headers 里的敏感值以 `{ secretRef }` 占位，真实值经 safeStorage 加密存
- *   `~/.deva/secrets.json`（键 `mcp:<id>:<field>`）。`{secretRef}` 占位本身非敏感，可回渲染层用于「已配置」展示。
+ *   `~/.pal/secrets.json`（键 `mcp:<id>:<field>`）。`{secretRef}` 占位本身非敏感，可回渲染层用于「已配置」展示。
  *
  * 安全：MCP 配置由**主进程直读**；Agent 写配置应走 create_mcp（校验 + 密钥占位）。
  * 连接、子进程 spawn、密钥解密全部只发生在主进程（mcp.ts），明文永不出主进程。

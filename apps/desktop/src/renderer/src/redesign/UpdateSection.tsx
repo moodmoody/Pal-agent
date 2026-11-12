@@ -3,7 +3,7 @@ import { AlertTriangle, CheckCircle2, Download, ExternalLink, Loader2, RefreshCw
 import { useI18n } from '../i18n/i18n'
 import { RELEASES_URL, type UpdateState } from '../../../shared/update'
 
-const PLATFORM = window.deva?.platform ?? (navigator.userAgent.includes('Mac') ? 'darwin' : '')
+const PLATFORM = window.Pal?.platform ?? (navigator.userAgent.includes('Mac') ? 'darwin' : '')
 const IS_MAC = PLATFORM === 'darwin'
 const IS_LINUX = PLATFORM === 'linux'
 /** 手动更新时的说明文案：各平台（Linux 再分 deb / AppImage）的「下载之后怎么装」不一样。 */
@@ -25,22 +25,22 @@ export function UpdateSection(): React.JSX.Element {
 
   useEffect(() => {
     let pushed = false
-    const off = window.deva.update.onState((s) => {
+    const off = window.Pal.update.onState((s) => {
       pushed = true
       setState(s)
     })
     // 先订阅再取快照；取回之前已收到推送就以推送为准（快照可能更旧）
-    void window.deva.update.getState().then((s) => {
+    void window.Pal.update.getState().then((s) => {
       if (!pushed) setState(s)
     })
     return off
   }, [])
 
-  const check = (): void => void window.deva.update.check()
-  const download = (): void => void window.deva.update.download()
+  const check = (): void => void window.Pal.update.check()
+  const download = (): void => void window.Pal.update.download()
   const install = (): void => {
     setInstalling(true)
-    void window.deva.update.install()
+    void window.Pal.update.install()
   }
   const link = (href: string, label: string): React.JSX.Element => (
     <a className="cf-update__link" href={href} target="_blank" rel="noreferrer">

@@ -44,7 +44,7 @@
   --bg-inset: #f0f0f2;
   --bg-hover: rgba(0, 0, 0, 0.045);
   --bg-active: rgba(0, 0, 0, 0.08);
-  --bg-selected: rgba(91, 91, 214, 0.12);
+  --bg-selected: rgba(15, 118, 110, 0.12);
 
   --fg: #1f1f24;
   --fg-muted: #5c5c66;
@@ -53,13 +53,13 @@
   --border: #e6e6ea;
   --border-strong: #d5d5db;
 
-  --accent: #5b5bd6;
-  --accent-hover: #4c4cc4;
+  --accent: #0f766e;
+  --accent-hover: #115e59;
   --accent-fg: #ffffff;
-  --accent-tint: rgba(91, 91, 214, 0.1);
+  --accent-tint: rgba(15, 118, 110, 0.1);
 
   /* 对话：用户消息气泡（助手消息无气泡） */
-  --chat-user-bubble: #edeffb;
+  --chat-user-bubble: #e6f4f2;
 
   --success: #2f9e44;
   --warning: #d9860b;
@@ -102,7 +102,7 @@
   --bg-inset: #191919;
   --bg-hover: rgba(255, 255, 255, 0.06);
   --bg-active: rgba(255, 255, 255, 0.1);
-  --bg-selected: rgba(124, 124, 240, 0.2);
+  --bg-selected: rgba(45, 212, 191, 0.2);
 
   --fg: #e4e4e7;
   --fg-muted: #a1a1aa;
@@ -111,13 +111,13 @@
   --border: #2f2f33;
   --border-strong: #3d3d42;
 
-  --accent: #7c7cf0;
-  --accent-hover: #9090f5;
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
   --accent-fg: #14141a;
-  --accent-tint: rgba(124, 124, 240, 0.16);
+  --accent-tint: rgba(45, 212, 191, 0.16);
 
   /* 对话：用户消息气泡（助手消息无气泡） */
-  --chat-user-bubble: #303043;
+  --chat-user-bubble: #17303a;
 
   --success: #51cf66;
   --warning: #fcc419;

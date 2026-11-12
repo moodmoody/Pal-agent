@@ -9,15 +9,15 @@ import './capsule.css'
 export function useBrowserState(): BrowserUiState | null {
   const [s, setS] = useState<BrowserUiState | null>(null)
   useEffect(() => {
-    void window.deva.browser.getState().then(setS)
-    return window.deva.browser.onState(setS)
+    void window.Pal.browser.getState().then(setS)
+    return window.Pal.browser.onState(setS)
   }, [])
   return s
 }
 
 /**
  * 本对话打开的网页列表（胶囊右侧箭头）：点一行切到它；每行 ✕ 关掉它，标题右侧「全部关闭」。
- * locked（Deva 正在用 / 等你操作）时不给关（✕ 不显示，「全部关闭」置灰并在悬停提示里说明）。
+ * locked（Pal 正在用 / 等你操作）时不给关（✕ 不显示，「全部关闭」置灰并在悬停提示里说明）。
  * 定位由外层（.cf-todo__panel 的 bottom:100%）决定。
  */
 export function PagesPanel({
@@ -34,7 +34,7 @@ export function PagesPanel({
   onPick: (tab: string) => void
 }): React.JSX.Element {
   const { t } = useI18n()
-  const api = window.deva.browser
+  const api = window.Pal.browser
   return (
     <div className="cf-todo__panel cf-bpages" role="dialog" aria-label={t('browser.pages')}>
       <div className="cf-todo__head">

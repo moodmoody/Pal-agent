@@ -122,7 +122,7 @@ export interface StoredSession {
   background?: Record<string, 'running' | 'ok' | 'error'>
   /**
    * 回合耗时边车（毫秒），按该轮第一个 tool_use 的 id 记录：工作过程折叠条显示「已处理 X」。
-   * 扣除了等用户作答 / 批准计划 / 挂载工作区的时间，只算 Deva 自己在干活的时长。没有工具调用的轮不记——
+   * 扣除了等用户作答 / 批准计划 / 挂载工作区的时间，只算 Pal 自己在干活的时长。没有工具调用的轮不记——
    * 重开后它没有可折叠的过程（思考块不重建）。按轮删除时随 tool_use 修剪。
    */
   durations?: Record<string, number>
@@ -167,7 +167,7 @@ export interface StoredSession {
    * 按轮删除 / 压缩时随 tool_use 一并清理（同 proposals）。见 services/checkpoints.ts。
    */
   checkpoints?: Record<string, CheckpointRec[]>
-  /** 路径键 → Deva 最近一次写入或回滚后该文件内容的 hash（null = 不存在）。回滚时据此检测外部改动。 */
+  /** 路径键 → Pal 最近一次写入或回滚后该文件内容的 hash（null = 不存在）。回滚时据此检测外部改动。 */
   lastKnown?: Record<string, string | null>
   /** 路径键 → 本会话第一次动这个文件前的内容 hash（给日后的完整 diff 功能留底）。 */
   baselines?: Record<string, string | null>

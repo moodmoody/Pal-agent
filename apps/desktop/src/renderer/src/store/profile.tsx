@@ -3,7 +3,7 @@ import { parseAvatarSpec, serializeAvatarSpec, type AvatarSpec } from '../compon
 
 /**
  * 本机用户资料（个人资料面板）：目前只有头像。真源在主进程（spec 存 config.json，图片另存
- * ~/.deva/profile/），这里只持渲染用的镜像；启动拉一次，改头像时本地同步更新（左栏与消息气泡即时刷新）。
+ * ~/.pal/profile/），这里只持渲染用的镜像；启动拉一次，改头像时本地同步更新（左栏与消息气泡即时刷新）。
  */
 interface ProfileContextValue {
   /** 头像 spec（未配置时主进程已回默认头像）；null = 尚未读到 / 读失败，回落固定 seed 头像。 */
@@ -22,7 +22,7 @@ export function ProfileProvider({ children }: { children: ReactNode }): React.JS
 
   useEffect(() => {
     let alive = true
-    void window.deva.profile
+    void window.Pal.profile
       .get()
       .then((p) => {
         if (!alive) return
@@ -40,10 +40,10 @@ export function ProfileProvider({ children }: { children: ReactNode }): React.JS
   const saveAvatar = useCallback(
     async (spec: AvatarSpec, image: string): Promise<boolean> => {
       try {
-        await window.deva.profile.setAvatar(serializeAvatarSpec(spec))
+        await window.Pal.profile.setAvatar(serializeAvatarSpec(spec))
         setAvatar(spec)
         if (image !== avatarImage) {
-          const saved = await window.deva.profile.setAvatarImage(image)
+          const saved = await window.Pal.profile.setAvatarImage(image)
           setAvatarImage(saved)
           // 非空图却读回空串 = 主进程校验 / 写入失败。
           if (image && !saved) return false

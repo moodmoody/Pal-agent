@@ -1,7 +1,7 @@
 /**
- * 「Deva 浏览器」窗口：前台对话的网页都放在这一个窗口里（所有对话共用，标签上带角色头像）。
+ * 「Pal 浏览器」窗口：前台对话的网页都放在这一个窗口里（所有对话共用，标签上带角色头像）。
  *
- * 浏览器只给 Deva 用：不显示网址、不能输入网址（用户要自己看可以「在系统浏览器中打开」）。
+ * 浏览器只给 Pal 用：不显示网址、不能输入网址（用户要自己看可以「在系统浏览器中打开」）。
  *
  * 窗口自身的 webContents 是浏览器的外框界面（标签条、状态条，渲染层 browser.html）；每个网页是一个
  * WebContentsView，叠放在外框下方，当前标签放在最上面。被盖住的视图照常渲染，所以别的对话可以同时在后台标签上操作。
@@ -9,8 +9,8 @@
  * 收起（用户点窗口的关闭按钮）不是隐藏：隐藏的窗口不渲染，截图、点击、输入都会失效。收起时把窗口挪到所有
  * 屏幕之外继续显示、不进任务栏；配合启动时关掉 Chromium 的窗口遮挡检测（index.ts），屏幕外的窗口也照常渲染。
  *
- * 状态（标签、当前标签、Deva 正在做什么、等用户操作）经 browser:state 推给主窗口（输入框上方的胶囊）和外框界面。
- * 只推用户该看到的网页（见 visibleTabs）：Deva 在后台用的网页不出现在界面上。
+ * 状态（标签、当前标签、Pal 正在做什么、等用户操作）经 browser:state 推给主窗口（输入框上方的胶囊）和外框界面。
+ * 只推用户该看到的网页（见 visibleTabs）：Pal 在后台用的网页不出现在界面上。
  */
 import {
   BrowserWindow,
@@ -87,7 +87,7 @@ let pinnedPreview: string | null = null
 
 /**
  * 用户正在看 / 正在操作的网页：等用户操作中、浏览器窗口展开着且正显示、胶囊预览卡固定着看。
- * 闲置回收跳过它们，Deva 用 close_tab 也关不掉（会被告知用户正在看）。
+ * 闲置回收跳过它们，Pal 用 close_tab 也关不掉（会被告知用户正在看）。
  */
 export function isPageInUse(p: BrowserPage): boolean {
   return (
@@ -111,12 +111,12 @@ export function setSessionAborter(fn: (sessionId: string) => boolean): void {
 /* ───────── 状态推送 ───────── */
 
 /**
- * 界面上显示哪些网页。浏览器默认在后台给 Deva 用，不打扰用户；只有这几种显示（胶囊、对话列表的地球标记、窗口标签条）：
+ * 界面上显示哪些网页。浏览器默认在后台给 Pal 用，不打扰用户；只有这几种显示（胶囊、对话列表的地球标记、窗口标签条）：
  * - 用户要求看过的（show 弹出过，page.shown），一直显示到关掉；
  * - 正等用户操作的对话的全部网页（登录页弹出的新标签也要能切过去），等待结束后回到后台；
  * - 窗口展开着、正显示在用户眼前的那个；
  * - 胶囊上固定着看的那个。
- * Deva 在后台打开、操作的其余网页都不显示，它做了什么看执行步骤。
+ * Pal 在后台打开、操作的其余网页都不显示，它做了什么看执行步骤。
  */
 function visibleTabs(): Set<string> {
   const open = !!win && !win.isDestroyed() && !docked
@@ -151,7 +151,7 @@ export function uiState(): BrowserUiState {
     pinned,
     active,
     tabs,
-    // 当前标签、正在操作也只报显示着的网页：Deva 在后台网页上的操作不出现在胶囊上
+    // 当前标签、正在操作也只报显示着的网页：Pal 在后台网页上的操作不出现在胶囊上
     current: Object.fromEntries(Object.entries(currentBySession()).filter(([, tab]) => visible.has(tab))),
     operating: Object.fromEntries(
       [...operating]
@@ -192,7 +192,7 @@ function overlay(): Electron.TitleBarOverlay | undefined {
 
 let destroyTimer: NodeJS.Timeout | null = null
 
-/** 窗口收起、且没有网页了：稍等一会儿（Deva 可能马上又开新网页）再销毁窗口。 */
+/** 窗口收起、且没有网页了：稍等一会儿（Pal 可能马上又开新网页）再销毁窗口。 */
 function destroyWhenEmpty(): void {
   if (destroyTimer || quitting || !win || win.isDestroyed() || !docked || views.size) return
   destroyTimer = setTimeout(() => {
@@ -219,7 +219,7 @@ function ensureWindow(): BrowserWindow {
     minHeight: 360,
     show: false,
     skipTaskbar: true,
-    title: isEn() ? 'Deva Browser' : 'Deva 浏览器',
+    title: isEn() ? 'Pal Browser' : 'Pal 浏览器',
     icon: getAppIcon(),
     backgroundColor: dark ? '#252528' : '#f7f7f8',
     titleBarStyle: 'hidden',
@@ -266,7 +266,7 @@ function ensureWindow(): BrowserWindow {
 
 /**
  * 外框占的高度（顶部标签条，有状态条时再加一条）。等用户操作的提示条在该对话的任一标签上都显示（如登录页点「扫码登录」
- * 开了新标签，用户在新标签里也能点「完成，继续」）；「正在操作」只在 Deva 正在操作的那个标签上显示。外框须同一规则。
+ * 开了新标签，用户在新标签里也能点「完成，继续」）；「正在操作」只在 Pal 正在操作的那个标签上显示。外框须同一规则。
  */
 function chromeHeight(): number {
   const tab = active
@@ -295,7 +295,7 @@ function repositionIfDocked(): void {
 
 /**
  * 本次运行第一次展开时的位置大小（之后记住用户拖动后的）：主窗口等比缩小（FIRST_RATIO），在主窗口上居中，
- * 四周露出一圈 Deva，不把它整个盖住。主窗口最小化 / 不在时，按主窗口默认尺寸算、在屏幕上居中。
+ * 四周露出一圈 Pal，不把它整个盖住。主窗口最小化 / 不在时，按主窗口默认尺寸算、在屏幕上居中。
  */
 function firstBounds(main: BrowserWindow | null, w: BrowserWindow): Rectangle {
   const mainOk = !!main && !main.isDestroyed() && !main.isMinimized()
@@ -318,7 +318,7 @@ function firstBounds(main: BrowserWindow | null, w: BrowserWindow): Rectangle {
   }
 }
 
-/** 展开窗口并切到某个标签。focus=false 时不抢焦点（如 Deva 自己弹出时）。 */
+/** 展开窗口并切到某个标签。focus=false 时不抢焦点（如 Pal 自己弹出时）。 */
 export function showWindow(tab?: string | null, focus = true): void {
   const w = ensureWindow()
   if (tab && views.has(tab)) active = tab
@@ -421,7 +421,7 @@ function createWindowPage(id: string, sessionId: string, personaId?: string): Br
   })
 }
 
-/* ───────── Deva 正在操作 / 等用户操作 ───────── */
+/* ───────── Pal 正在操作 / 等用户操作 ───────── */
 
 /** 动作开始：外框出状态条与边框、胶囊显示「正在…」。返回 true 表示状态条刚出现（网页高度变了，动作前稍等）。 */
 export function beginOperating(page: BrowserPage, action: string, label?: string): boolean {
@@ -471,7 +471,7 @@ export function clearOperating(sessionId: string): void {
 
 /**
  * 请用户在网页上亲自操作：展开窗口、切到该标签、外框出提示条（「完成，继续」「跳过」），等用户处理。
- * 用户操作的就是 Deva 正在用的同一个页面，完成后不需要重新加载。
+ * 用户操作的就是 Pal 正在用的同一个页面，完成后不需要重新加载。
  */
 export function requestHandoff(
   page: BrowserPage,
@@ -551,7 +551,7 @@ export function registerBrowserIpc(): void {
     closeSessionPages(sessionId)
     return { ok: true }
   })
-  // 胶囊预览卡「固定」着看哪个标签（null = 没有固定）：用户正在看，Deva 关不掉、闲置也不回收
+  // 胶囊预览卡「固定」着看哪个标签（null = 没有固定）：用户正在看，Pal 关不掉、闲置也不回收
   ipcMain.handle('browser:preview-pinned', (_e, tab: string | null) => {
     pinnedPreview = typeof tab === 'string' ? tab : null
     // 固定着看的网页算显示中：取消固定后若已不该显示（如等待已结束），胶囊随之收起

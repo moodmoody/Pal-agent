@@ -1,5 +1,5 @@
-appId: dev.sqfcy.deva
-productName: Deva
+appId: dev.sqfcy.pal
+productName: Pal
 copyright: Copyright © 2026 sqfcy
 
 directories:
@@ -59,7 +59,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: Deva
+  shortcutName: Pal
 
 mac:
   target:
@@ -95,6 +95,6 @@ linux:
 deb:
   # 包名默认取 package.json 的 name（@deva/desktop），装好后得 apt remove 一个奇怪的名字；统一叫 deva
   packageName: deva
-  # 默认的 AppArmor 配置只放行 /opt/Deva/deva，而那已被换成启动脚本（见 scripts/linux-launcher.cjs），
+  # 默认的 AppArmor 配置只放行 /opt/Pal/deva，而那已被换成启动脚本（见 scripts/linux-launcher.cjs），
   # 真正的 Electron 是 deva-bin；不放行它的话 Ubuntu 24+ 上沙箱建不起来、应用直接打不开。见模板内说明
   appArmorProfile: build/linux/apparmor-profile.tpl

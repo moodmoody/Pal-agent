@@ -14,7 +14,7 @@ import { messages, type Locale, type MessageTree } from './messages'
  * 详见 docs/modules/ui-theming-i18n.md。
  */
 
-const STORAGE_KEY = 'deva.locale'
+const STORAGE_KEY = 'Pal.locale'
 const SUPPORTED: Locale[] = ['zh-CN', 'en']
 
 interface I18nContextValue {
@@ -26,9 +26,9 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | null>(null)
 
 function detectLocale(): Locale {
-  // 优先 ~/.deva/config.json（可手改），其次 localStorage 兜底，最后跟随系统语言
+  // 优先 ~/.pal/config.json（可手改），其次 localStorage 兜底，最后跟随系统语言
   try {
-    const v = window.deva?.config?.getSync()?.locale
+    const v = window.Pal?.config?.getSync()?.locale
     if (typeof v === 'string' && SUPPORTED.includes(v as Locale)) return v as Locale
   } catch {
     /* config 不可用时回退 */
@@ -62,8 +62,8 @@ export function I18nProvider({ children }: { children: ReactNode }): React.JSX.E
 
   const setLocale = (next: Locale): void => {
     setLocaleState(next)
-    // 主存 ~/.deva/config.json；localStorage 作为兜底缓存
-    void window.deva?.config?.set({ locale: next })
+    // 主存 ~/.pal/config.json；localStorage 作为兜底缓存
+    void window.Pal?.config?.set({ locale: next })
     try {
       localStorage.setItem(STORAGE_KEY, next)
     } catch {

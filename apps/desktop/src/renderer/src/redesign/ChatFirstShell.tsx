@@ -212,7 +212,7 @@ function DragBar(): React.JSX.Element {
   return <div className="cf-dragbar" aria-hidden="true" />
 }
 
-const IS_MAC = window.deva.platform === 'darwin'
+const IS_MAC = window.Pal.platform === 'darwin'
 
 /**
  * macOS 左上角红绿灯（关闭/最小化/全屏）当前是否可见：可见时图标栏加宽并在顶部为它让位。
@@ -223,8 +223,8 @@ function useTrafficLights(): boolean {
   useEffect(() => {
     if (!IS_MAC) return
     let alive = true
-    const off = window.deva.window.onFullScreen(setFullScreen)
-    void window.deva.window.isFullScreen().then((on) => alive && setFullScreen(on))
+    const off = window.Pal.window.onFullScreen(setFullScreen)
+    void window.Pal.window.isFullScreen().then((on) => alive && setFullScreen(on))
     return () => {
       alive = false
       off()
@@ -285,7 +285,7 @@ const TOC_TEXT_MAX = 200
  */
 const TOC_VISIBLE_MAX = 10
 
-/** 系统默认角色 id（首启种子「Deva」，id 恒为 general）：兼作兜底身份，且不允许删除。 */
+/** 系统默认角色 id（首启种子「Pal」，id 恒为 general）：兼作兜底身份，且不允许删除。 */
 const DEFAULT_PERSONA_ID = 'general'
 
 /** 一次挑选返回的附件（与 preload PickedAttachment 结构一致）。 */
@@ -541,7 +541,7 @@ export function ChatFirstShell(): React.JSX.Element {
   // 主进程导航意图（tasks:navigate）：通知点击带 `{sessionId}` → 打开该对话（定时任务独占会话 / 刚回复完的对话）并回消息视图；
   // 托盘「定时任务概览」带 `{pane:'tasks'}` → 切到 Tasks 标签。窗口从托盘唤起时随即落到目标视图。
   useEffect(() => {
-    const off = window.deva?.tasks?.onNavigate?.((payload) => {
+    const off = window.Pal?.tasks?.onNavigate?.((payload) => {
       if (payload?.sessionId) {
         selectSession(payload.sessionId)
         setRailTab('chats')
@@ -656,7 +656,7 @@ export function ChatFirstShell(): React.JSX.Element {
     // 系统默认角色不可删除（UI 侧菜单项已禁用，此处再兜一道，防其他触发路径）。
     if (id === DEFAULT_PERSONA_ID) return
     // 该角色名下已落库的对话（草稿未落库不计），删角色时一并清除；数量用于提示影响面。
-    // 定时任务的独占对话不在此列：任务改由 Deva 执行，对话随之改挂 Deva（主进程删角色时处理）。
+    // 定时任务的独占对话不在此列：任务改由 Pal 执行，对话随之改挂 Pal（主进程删角色时处理）。
     const taskSessionIds = new Set(tasks.map((x) => x.sessionId))
     const relatedIds = sessions
       .filter((s) => s.personaId === id && !taskSessionIds.has(s.id))
@@ -1385,7 +1385,7 @@ function Rail({
         )}
       </div>
 
-      {/* 角色 tab：角色为空只会是还没加载完（默认角色 Deva 删不掉），先留空，不落到「未找到匹配项」。 */}
+      {/* 角色 tab：角色为空只会是还没加载完（默认角色 Pal 删不掉），先留空，不落到「未找到匹配项」。 */}
       <div className="cf-list" ref={listRef}>
         {tab === 'chats' && archiveView ? (
           archivedSessions.map(threadRow)
@@ -1625,7 +1625,7 @@ function ContextMenu({
 
 /* ─────────────────────────── Git 快捷面板（IDEA 式点击浮出） ───────────────────────────
  * 挂载工作区若是 git 仓库，则在挂载 chip 里跟一枚分支 pill，点击浮出常用操作。
- * 后端（services/git.ts + window.deva.git.*）早已齐备；此处只是薄薄一层 renderer UI。
+ * 后端（services/git.ts + window.Pal.git.*）早已齐备；此处只是薄薄一层 renderer UI。
  * 安全：focusRoot 在 fs:open-folder 时已 trustRoot，git:status 内部 assertInside——复用既有受信根，
  * 不新增任何越权面，也不弹权限框（与「全放行 + 静默硬底线」一致）。
  */
@@ -1634,7 +1634,7 @@ function ContextMenu({
 let gitAvailablePromise: Promise<boolean> | null = null
 function probeGitAvailable(): Promise<boolean> {
   if (!gitAvailablePromise) {
-    gitAvailablePromise = window.deva.git
+    gitAvailablePromise = window.Pal.git
       .available()
       .then((r) => r.available)
       .catch(() => false)
@@ -1720,7 +1720,7 @@ function useGitStatus(root: string | null): GitState {
     }
     setBusy(true)
     try {
-      const st = await window.deva.git.status(root)
+      const st = await window.Pal.git.status(root)
       if (seq !== reqRef.current) return
       setStatus(st.isRepo ? st : null)
     } catch {
@@ -1782,7 +1782,7 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
     const el = pillRef.current
     if (!el) return
     try {
-      setBranches(await window.deva.git.branches(root))
+      setBranches(await window.Pal.git.branches(root))
     } catch {
       setBranches([])
     }
@@ -1824,14 +1824,14 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
       validate: isValidBranchName
     })
     if (!name) return
-    await run(() => window.deva.git.createBranch(root, name, true), fmt('cf.git.doneCreateBranch', name))
+    await run(() => window.Pal.git.createBranch(root, name, true), fmt('cf.git.doneCreateBranch', name))
   }
 
   // 合并到当前分支：冲突时不当作普通失败——提示去解决或中止，并给「中止合并」快捷按钮。
   const mergeBranch = async (ref: string): Promise<void> => {
     setOpBusy(true)
     try {
-      const r = await window.deva.git.merge(root, ref)
+      const r = await window.Pal.git.merge(root, ref)
       if (r.ok) toast.show({ variant: 'success', message: fmt('cf.git.doneMerge', ref) })
       else if (r.reason === 'conflict')
         toast.show({
@@ -1861,7 +1861,7 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
       }))
     )
       return
-    await run(() => window.deva.git.mergeAbort(root), t('cf.git.doneAbortMerge'))
+    await run(() => window.Pal.git.mergeAbort(root), t('cf.git.doneAbortMerge'))
   }
 
   // 删除本地分支：先确认 → -d；未合并则再确认一次（写明会丢失的提交数）→ -D。
@@ -1876,7 +1876,7 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
     const done = fmt('cf.git.doneDeleteBranch', name)
     let first: GitOpResult
     try {
-      first = await window.deva.git.deleteBranch(root, name, false)
+      first = await window.Pal.git.deleteBranch(root, name, false)
     } catch {
       toast.show({ variant: 'error', message: gitReasonText(t, 'error') })
       return
@@ -1888,7 +1888,7 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
         variant: 'danger',
         confirmText: t('cf.git.forceDelete')
       })
-      if (force) await run(() => window.deva.git.deleteBranch(root, name, true), done)
+      if (force) await run(() => window.Pal.git.deleteBranch(root, name, true), done)
       return
     }
     await run(async () => first, done)
@@ -1903,7 +1903,7 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
       validate: (v) => isValidBranchName(v) && v.trim() !== oldName
     })
     if (!name) return
-    await run(() => window.deva.git.renameBranch(root, oldName, name), fmt('cf.git.doneRenameBranch', name))
+    await run(() => window.Pal.git.renameBranch(root, oldName, name), fmt('cf.git.doneRenameBranch', name))
   }
 
   const deleteRemoteBranch = async (b: GitBranchEntry): Promise<void> => {
@@ -1917,7 +1917,7 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
     })
     if (!ok) return
     await run(
-      () => window.deva.git.deleteRemoteBranch(root, remote, b.name.slice(remote.length + 1)),
+      () => window.Pal.git.deleteRemoteBranch(root, remote, b.name.slice(remote.length + 1)),
       fmt('cf.git.doneDeleteBranch', b.name)
     )
   }
@@ -1926,13 +1926,13 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
   const checkout = (b: GitBranchEntry): void => {
     const done = t('cf.git.doneCheckout')
     if (!b.remote) {
-      void run(() => window.deva.git.checkout(root, b.name), done)
+      void run(() => window.Pal.git.checkout(root, b.name), done)
       return
     }
     const short = b.name.slice(b.remote.length + 1)
     if (branches.some((x) => !x.remote && x.name === short))
-      void run(() => window.deva.git.checkout(root, short), done)
-    else void run(() => window.deva.git.checkoutRemote(root, b.name), done)
+      void run(() => window.Pal.git.checkout(root, short), done)
+    else void run(() => window.Pal.git.checkoutRemote(root, b.name), done)
   }
 
   const spacer = <span style={{ width: 14, display: 'inline-block' }} />
@@ -2012,9 +2012,9 @@ function GitWidget({ root, streaming }: { root: string; streaming: boolean }): R
             { kind: 'separator' as const }
           ]
         : []),
-      { label: t('cf.git.pull'), icon: <ArrowDownToLine size={14} />, onClick: () => void run(() => window.deva.git.pull(root), t('cf.git.donePull')) },
-      { label: t('cf.git.push'), icon: <ArrowUpFromLine size={14} />, onClick: () => void run(() => window.deva.git.push(root, status.upstream ? null : status.branch), t('cf.git.donePush')) },
-      { label: t('cf.git.fetch'), icon: <Download size={14} />, onClick: () => void run(() => window.deva.git.fetch(root), t('cf.git.doneFetch')) },
+      { label: t('cf.git.pull'), icon: <ArrowDownToLine size={14} />, onClick: () => void run(() => window.Pal.git.pull(root), t('cf.git.donePull')) },
+      { label: t('cf.git.push'), icon: <ArrowUpFromLine size={14} />, onClick: () => void run(() => window.Pal.git.push(root, status.upstream ? null : status.branch), t('cf.git.donePush')) },
+      { label: t('cf.git.fetch'), icon: <Download size={14} />, onClick: () => void run(() => window.Pal.git.fetch(root), t('cf.git.doneFetch')) },
       { label: t('cf.git.commit'), icon: <GitCommitHorizontal size={14} />, onClick: () => setCommitOpen(true) },
       { kind: 'separator' },
       { label: t('cf.git.branches'), icon: <GitBranch size={14} />, onClick: () => go({ kind: 'branches' }) },
@@ -2115,13 +2115,13 @@ function WorkspaceMenu({ root }: { root: string }): React.JSX.Element {
 
   // 优先走原生 clipboard 桥（sandbox 下最稳），失败回退 navigator.clipboard。
   const copyPath = (): void => {
-    void window.deva.clipboard.writeText(root).catch(() => {
+    void window.Pal.clipboard.writeText(root).catch(() => {
       void navigator.clipboard?.writeText(root).catch(() => {})
     })
   }
 
   const reveal = (): void => {
-    void window.deva.fs
+    void window.Pal.fs
       .revealFolder(root)
       .catch(() => ({ ok: false }))
       .then((r) => {
@@ -2129,7 +2129,7 @@ function WorkspaceMenu({ root }: { root: string }): React.JSX.Element {
       })
   }
 
-  const platform = window.deva.platform
+  const platform = window.Pal.platform
   const revealLabel = t(
     platform === 'win32' ? 'cf.ws.revealWin' : platform === 'darwin' ? 'cf.ws.revealMac' : 'cf.ws.revealOther'
   )
@@ -2207,7 +2207,7 @@ function CommitModal({
   // 关闭提交框（卸载）时中断仍在进行的生成，免得主进程白跑到超时。
   useEffect(
     () => () => {
-      if (genIdRef.current) void window.deva.git.cancelCommitMessage(genIdRef.current)
+      if (genIdRef.current) void window.Pal.git.cancelCommitMessage(genIdRef.current)
     },
     []
   )
@@ -2222,7 +2222,7 @@ function CommitModal({
   const [status, setStatus] = useState(initialStatus)
   useEffect(() => {
     let alive = true
-    window.deva.git
+    window.Pal.git
       .status(root)
       .then((st) => {
         if (alive && st.isRepo) setStatus(st)
@@ -2246,7 +2246,7 @@ function CommitModal({
   const canCommit = Boolean(msg.trim()) && changed > 0 && !hasConflicts && !busy && !gen
 
   const stopGenerate = (): void => {
-    if (genIdRef.current) void window.deva.git.cancelCommitMessage(genIdRef.current)
+    if (genIdRef.current) void window.Pal.git.cancelCommitMessage(genIdRef.current)
   }
 
   const generate = async (): Promise<void> => {
@@ -2257,13 +2257,13 @@ function CommitModal({
     genIdRef.current = id
     setGen(true)
     setMsg('')
-    const off = window.deva.git.onCommitMessageDelta((rid, text) => {
+    const off = window.Pal.git.onCommitMessageDelta((rid, text) => {
       if (rid !== id) return
       raw += text
       setMsg(cleanStreamingCommit(raw))
     })
     try {
-      const r = await window.deva.git.generateCommitMessage(root, model, locale, id)
+      const r = await window.Pal.git.generateCommitMessage(root, model, locale, id)
       if (r.ok && r.text) setMsg(r.text)
       else {
         // 失败，或中断时一个字都还没出来：还原生成前的内容；中断不算错误、不提示。
@@ -2286,7 +2286,7 @@ function CommitModal({
     try {
       // 提交前再取一次最新状态，暂存其中全部未暂存改动（未跟踪文件已含在 unstaged 内），再提交——
       // 弹窗打开期间新增的文件也不会漏。
-      const fresh = await window.deva.git.status(root)
+      const fresh = await window.Pal.git.status(root)
       const latest = fresh.isRepo ? fresh : status
       if (latest.conflicts.length > 0) {
         setStatus(latest)
@@ -2294,13 +2294,13 @@ function CommitModal({
       }
       const toStage = latest.unstaged.map((f) => f.path)
       if (toStage.length > 0) {
-        const sres = await window.deva.git.stage(root, toStage)
+        const sres = await window.Pal.git.stage(root, toStage)
         if (!sres.ok) {
           toast.show(gitErrorToast(t, sres))
           return
         }
       }
-      const cres = await window.deva.git.commit(root, msg.trim())
+      const cres = await window.Pal.git.commit(root, msg.trim())
       if (cres.ok) {
         toast.show({ variant: 'success', message: t('cf.git.doneCommit') })
         onDone()
@@ -2737,7 +2737,7 @@ function PersonaRow({
 /**
  * 左侧对话被清空后中列的落点：列出花名册全部角色，点头像/卡片直接与该角色开启新对话
  * （onStart → startWith：新建并落盘一条绑定该角色的空对话，随即切入消息视图）。
- * 默认角色 Deva 删不掉，花名册只在加载完成前为空，此时网格先留空。
+ * 默认角色 Pal 删不掉，花名册只在加载完成前为空，此时网格先留空。
  */
 function QuickStart({
   personas,
@@ -2892,7 +2892,7 @@ function TasksPane({
     [tasks, editTaskId]
   )
 
-  // 人格名：未指定 / 引用已删 → 显示默认角色 Deva（执行时同样回落 Deva，见主进程 runScheduledTurn）。
+  // 人格名：未指定 / 引用已删 → 显示默认角色 Pal（执行时同样回落 Pal，见主进程 runScheduledTurn）。
   const personaName = (id: string | null): string => {
     const p =
       personas.find((x) => x.id === id) ?? personas.find((x) => x.id === DEFAULT_PERSONA_ID)
@@ -3020,7 +3020,7 @@ function useSchedulePreview(schedule: TaskSchedule): string {
   const sig = `${schedule.kind}|${schedule.at ?? ''}|${schedule.cron ?? ''}|${schedule.tz}`
   useEffect(() => {
     let alive = true
-    void window.deva.tasks
+    void window.Pal.tasks
       .preview(schedule, locale, true)
       .then((res) => {
         if (!alive) return
@@ -3475,7 +3475,7 @@ function TaskFormModal({
   useEffect(() => {
     let alive = true
     const timer = setTimeout(() => {
-      void window.deva.tasks
+      void window.Pal.tasks
         .preview(schedule, locale)
         .then((r) => {
           if (alive) setPreview(r)
@@ -3706,12 +3706,14 @@ function Conversation({
   // 选择态（按轮删除）：selecting=是否在选择模式；selected=选中的轮下标集合（0 基，与 groupTurns 一致）。
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState<Set<number>>(() => new Set())
-  // 右键菜单：记录光标位置、命中的轮下标（turn=null 表示未落在某一轮上），以及右键那一刻的选中文字与是否可删。
-  // selection 有值 → 提供「复制」；canDelete（非流式且有内容）→ 提供「选择删除」。二者各自独立成项。
+  // 右键菜单：记录光标位置、命中的轮下标（turn=null 表示未落在某一轮上）、命中消息 id（复制整条用），
+  // 以及右键那一刻的选中文字与是否可删。
+  // selection 有值 → 「复制选中」；msgId 有值 → 「复制这条消息」；canDelete → 「选择删除」。各自独立成项。
   const [ctxMenu, setCtxMenu] = useState<{
     x: number
     y: number
     turn: number | null
+    msgId: string | null
     selection: string
     canDelete: boolean
   } | null>(null)
@@ -3953,17 +3955,21 @@ function Conversation({
     if (selecting) return
     const selection = (window.getSelection()?.toString() ?? '').trim()
     const canDelete = !streaming && messages.length > 0
-    if (!selection && !canDelete) return
-    e.preventDefault()
+    // 命中某条消息（根节点带 data-msg）：有正文就也能「复制这条消息」，故不必先选中文字才接管右键。
     const hit = (e.target as HTMLElement).closest('[data-turn]') as HTMLElement | null
     const n = hit ? Number(hit.dataset.turn) : NaN
     const turn = Number.isInteger(n) && n >= 0 ? n : null
-    setCtxMenu({ x: e.clientX, y: e.clientY, turn, selection, canDelete })
+    const hitId = (e.target as HTMLElement).closest('[data-msg]')?.getAttribute('data-msg') ?? null
+    const hitMsg = hitId ? messages.find((m) => m.id === hitId) : undefined
+    const msgId = hitMsg && messageCopyText(hitMsg) ? hitId : null
+    if (!selection && !canDelete && !msgId) return
+    e.preventDefault()
+    setCtxMenu({ x: e.clientX, y: e.clientY, turn, msgId, selection, canDelete })
   }
   // 复制选中文字到系统剪贴板：优先走原生 clipboard 桥（sandbox 下最稳），失败回退 navigator.clipboard。
   const copySelection = (text: string): void => {
     if (!text) return
-    void window.deva?.clipboard?.writeText(text).catch(() => {
+    void window.Pal?.clipboard?.writeText(text).catch(() => {
       void navigator.clipboard?.writeText(text).catch(() => {})
     })
   }
@@ -4030,7 +4036,7 @@ function Conversation({
     if (!el || !inner || !isTail) return
     const ro = new ResizeObserver(() => {
       // 贴底时可视区变矮（如输入框上方多出一排胶囊：浏览器 / 待办 / 后台任务）：立刻贴回底部。否则最新的步骤、思考
-      // 被挤到可视区下面，要等下一次内容更新才滚回来——Deva 正在执行耗时的步骤时，那一行会一直被挡着
+      // 被挤到可视区下面，要等下一次内容更新才滚回来——Pal 正在执行耗时的步骤时，那一行会一直被挡着
       if (stickRef.current) {
         if (el.scrollHeight - el.scrollTop - el.clientHeight > 1) el.scrollTop = el.scrollHeight
         return
@@ -4096,6 +4102,7 @@ function Conversation({
       elapsedSec={i === messages.length - 1 ? streamStatus.elapsedSec : 0}
       footer={statusInMsg && !selecting && i === messages.length - 1 ? statusLine : undefined}
       dataTurn={turn}
+      dataMsg={m.id}
       onAsk={onAsk}
       onPlan={onPlan}
       onMountReq={onMountReq}
@@ -4205,6 +4212,19 @@ function Conversation({
                     label: t('common.copy'),
                     icon: <Copy size={14} />,
                     onClick: () => copySelection(ctxMenu.selection)
+                  }
+                ]
+              : []),
+            // 命中的那条消息有正文才给：复制整条（含 Markdown 原文），不受选区影响。
+            ...(ctxMenu.msgId
+              ? [
+                  {
+                    label: t('chat.msg.copy'),
+                    icon: <Copy size={14} />,
+                    onClick: () => {
+                      const m = messages.find((x) => x.id === ctxMenu.msgId)
+                      if (m) copySelection(messageCopyText(m))
+                    }
                   }
                 ]
               : []),
@@ -4440,6 +4460,81 @@ function UserText({ text }: { text: string }): React.JSX.Element {
 const NO_HOLD =
   '.msg__process [aria-expanded="true"], .ask:not(.is-answered), .msg__plan:not(.is-decided), .msg__mount:not(.is-decided)'
 
+/**
+ * 单条消息的可复制正文（纯文本 / Markdown 原文），供「复制整条」用。
+ *
+ * 只取用户真正读到的正文：text、insert（注入的补充说明）、error、compaction 摘要。
+ * 刻意跳过 thinking（内部推理）、tool（调用参数，通常又长又没意义）、agentcard / plan / ask 等交互卡
+ * （它们是结构不是文字），以及 notice（系统提示）。这样复制出来的就是「这条消息说了什么」。
+ * 不取 DOM textContent：那样会带上按钮标签、代码块表头的语言名，也丢了 Markdown 原文的格式。
+ */
+function messageCopyText(msg: ChatMessage): string {
+  const parts: string[] = []
+  for (const b of msg.blocks) {
+    switch (b.kind) {
+      case 'text':
+      case 'insert':
+        if (b.text.trim()) parts.push(b.text)
+        break
+      case 'error':
+        if (b.message.trim()) parts.push(b.message)
+        break
+      case 'compaction':
+        if (b.summary.trim()) parts.push(b.summary)
+        break
+      default:
+        break
+    }
+  }
+  return parts.join('\n\n')
+}
+
+/**
+ * 消息级的「复制」按钮：悬停在消息上浮现，点击复制该条消息正文。
+ * 与代码块表头的 CopyButton 分开——那个只复制一个代码块，这里复制整条消息。
+ * 复制走原生 clipboard 桥（sandbox 下最稳），失败回退 navigator.clipboard；成功后 1.5 秒显示「已复制」。
+ */
+function MessageCopyButton({ getText }: { getText: () => string }): React.JSX.Element | null {
+  const { t } = useI18n()
+  const [copied, setCopied] = useState(false)
+  const timer = useRef<number | null>(null)
+  useEffect(
+    () => () => {
+      if (timer.current !== null) window.clearTimeout(timer.current)
+    },
+    []
+  )
+  const copy = (e: React.MouseEvent): void => {
+    e.stopPropagation()
+    const text = getText()
+    if (!text) return
+    const done = (): void => {
+      setCopied(true)
+      if (timer.current !== null) window.clearTimeout(timer.current)
+      timer.current = window.setTimeout(() => setCopied(false), 1500)
+    }
+    const fallback = (): void => {
+      void navigator.clipboard?.writeText(text).then(done).catch(() => {})
+    }
+    const bridge = window.Pal?.clipboard
+    if (bridge) void bridge.writeText(text).then(done).catch(fallback)
+    else fallback()
+  }
+  // 没有正文的消息（纯工具调用 / 只有交互卡）不显示按钮
+  if (!getText()) return null
+  return (
+    <button
+      type="button"
+      className="cf-msg__copy"
+      onClick={copy}
+      title={copied ? t('chat.md.copied') : t('chat.msg.copy')}
+      aria-label={copied ? t('chat.md.copied') : t('chat.msg.copy')}
+    >
+      {copied ? <Check size={13} /> : <Copy size={13} />}
+    </button>
+  )
+}
+
 /** 单条消息：IM 头像外壳 + 复用 features/chat/blocks 的 BlockView（安全渲染器不重写）。 */
 function ConvMessage({
   msg,
@@ -4449,6 +4544,7 @@ function ConvMessage({
   elapsedSec,
   footer,
   dataTurn,
+  dataMsg,
   onAsk,
   onPlan,
   onMountReq,
@@ -4466,6 +4562,8 @@ function ConvMessage({
   footer?: React.ReactNode
   /** 该消息所属的对话轮下标（0 基）；标注在根节点上，供右键菜单定位「删除此轮」。前言/未知为 undefined。 */
   dataTurn?: number
+  /** 消息 id：标在根节点 data-msg 上，右键菜单据此反查正文（见 onMsgsContextMenu）。 */
+  dataMsg?: string
   onAsk: (key: string, answers: string[]) => void
   onPlan: (key: string, decision: 'approve' | 'keep' | 'ignore', feedback?: string) => void
   onMountReq: (key: string, path: string | null) => void
@@ -4533,7 +4631,7 @@ function ConvMessage({
   if (msg.role === 'user' && msg.notify) {
     const text = msg.blocks.map((b) => (b.kind === 'text' ? b.text : '')).join('')
     return (
-      <div className="cf-msg is-user is-notify" data-turn={dataTurn}>
+      <div className="cf-msg is-user is-notify" data-turn={dataTurn} data-msg={dataMsg}>
         <div className="cf-notify">
           <Bot size={13} />
           <span>{text || t('chat.subagent.notify')}</span>
@@ -4545,7 +4643,7 @@ function ConvMessage({
   const only = msg.blocks.length === 1 ? msg.blocks[0] : undefined
   if (msg.role === 'assistant' && only?.kind === 'compaction') {
     return (
-      <div className="cf-msg is-compaction" data-turn={dataTurn}>
+      <div className="cf-msg is-compaction" data-turn={dataTurn} data-msg={dataMsg}>
         <CompactionNotice summary={only.summary} />
       </div>
     )
@@ -4553,8 +4651,9 @@ function ConvMessage({
   if (msg.role === 'user') {
     const text = msg.blocks.map((b) => (b.kind === 'text' ? b.text : '')).join('')
     return (
-      <div className="cf-msg is-user" data-turn={dataTurn}>
+      <div className="cf-msg is-user" data-turn={dataTurn} data-msg={dataMsg}>
         <div className="cf-msg__body">
+          <MessageCopyButton getText={() => text} />
           {msg.attachments && msg.attachments.length > 0 && (
             <div className="msg__attachments">
               {msg.attachments.map((a, i) => (
@@ -4615,10 +4714,10 @@ function ConvMessage({
         />
       )
     ) : undefined
-  // 有工作过程时，角色名与折叠条同一行（「Deva › 已处理 … · N 步」）；没有时单独一行。
+  // 有工作过程时，角色名与折叠条同一行（「Pal › 已处理 … · N 步」）；没有时单独一行。
   const name = <span className="cf-msg__name">{owner?.name ?? t('cf.assistant')}</span>
   return (
-    <div className="cf-msg" data-turn={dataTurn}>
+    <div className="cf-msg" data-turn={dataTurn} data-msg={dataMsg}>
       <Avatar persona={owner} size={32} />
       <div className="cf-msg__body">
         {!split && <div className="cf-msg__head">{name}</div>}
@@ -4629,6 +4728,7 @@ function ConvMessage({
             if ((e.target as HTMLElement).closest('button')) releasePeak()
           }}
         >
+          <MessageCopyButton getText={() => messageCopyText(msg)} />
           {split ? (
             <>
               <ProcessFold
@@ -4909,7 +5009,7 @@ function Composer({
   // 已挂载态不提供直接更换（见 WorkspaceMenu），卸载由尾随的 ✕ 图标承担，避免「取消对话框＝卸载」的意外语义。
   const pickWorkspace = (): void => {
     void (async () => {
-      const r = await window.deva.fs.openFolder()
+      const r = await window.Pal.fs.openFolder()
       if (r) onMount(r.path)
     })()
   }
@@ -4935,7 +5035,7 @@ function Composer({
 
   const pickFiles = async (): Promise<void> => {
     if (streaming) return
-    addPicked((await window.deva.fs.pickAttachments()) as Picked[])
+    addPicked((await window.Pal.fs.pickAttachments()) as Picked[])
   }
 
   // 粘贴 / 拖入的文件：与「附加文件」同一条链路（主进程落盘授权 → pending 附件条）。
@@ -4943,7 +5043,7 @@ function Composer({
   const addFiles = async (files: File[]): Promise<void> => {
     const results = await Promise.allSettled(
       files.map(async (f) =>
-        window.deva.fs.pasteAttachment({
+        window.Pal.fs.pasteAttachment({
           name: f.name,
           mime: f.type,
           size: f.size,
@@ -5967,15 +6067,15 @@ function GeneralPane(): React.JSX.Element {
   const { t, locale, setLocale } = useI18n()
   const { mode, setMode } = useTheme()
   // 关窗驻留托盘：仅 Windows 呈现（macOS/Linux 关窗语义不同，主进程亦仅 win32 默认驻留）。
-  const isWin = window.deva?.platform === 'win32'
+  const isWin = window.Pal?.platform === 'win32'
   const [closeToTray, setCloseToTray] = useState<boolean>(() => {
-    const v = window.deva?.config?.getSync?.().closeToTray
+    const v = window.Pal?.config?.getSync?.().closeToTray
     return typeof v === 'boolean' ? v : true // win32 默认驻留（与主进程 close 判定一致）
   })
   const toggleTray = (): void => {
     const next = !closeToTray
     setCloseToTray(next)
-    void window.deva?.config?.set?.({ closeToTray: next })
+    void window.Pal?.config?.set?.({ closeToTray: next })
   }
   // 文字大小：点选即生效（写 <html data-chat-fs>）并落盘，见 theme/chatFontSize.ts
   const [chatFontSize, setChatFontSize] = useState<ChatFontSize>(readChatFontSize)
@@ -6311,7 +6411,7 @@ function RolesPicker({
 /**
  * 技能详情（对话优先外壳）：只读的钻取式主从抽屉，顶栏与名称分隔线同 MCP 详情（返回 · 删除 · 启用）。
  * 只展示名称、可用角色与 SKILL.md 正文；描述及其余 frontmatter 字段（compatibility / license / metadata /
- * allowed-tools，以及 Deva 自有的 trigger）一律不显示。整页撑满设置面板、不出外层滚动条：
+ * allowed-tools，以及 Pal 自有的 trigger）一律不显示。整页撑满设置面板、不出外层滚动条：
  * 正文吃掉剩余高度、过长时框内滚动。删除 = 技能文件夹移到系统回收站。
  * 仅自定义技能可进入；内置技能在列表里不可点开。
  */
@@ -6616,7 +6716,7 @@ function McpKvEditor({
       const next: Record<number, boolean> = {}
       await Promise.all(
         keys.map(async (key, i) => {
-          if (key) next[i] = (await window.deva?.mcp?.hasSecret?.(serverId, key)) ?? false
+          if (key) next[i] = (await window.Pal?.mcp?.hasSecret?.(serverId, key)) ?? false
         })
       )
       if (alive) setConfigured(next)
