@@ -1,5 +1,5 @@
 /*
- * 「Deva 浏览器」窗口外框。高度须与 shared/browser.ts 的 BROWSER_CHROME 一致：
+ * 「Pal 浏览器」窗口外框。高度须与 shared/browser.ts 的 BROWSER_CHROME 一致：
  * 标签条 40 + 状态条 36（有时）；网页视图由主进程叠放在外框下方，四周留 2px 画边框。不显示网址，没有地址栏。
  */
 html,
@@ -183,7 +183,7 @@ body {
   color: var(--fg);
 }
 
-/* 状态条：Deva 正在操作 / 等你操作 */
+/* 状态条：Pal 正在操作 / 等你操作 */
 .bc-strip {
   flex: none;
   height: 36px;
@@ -279,7 +279,7 @@ body {
   background: var(--accent-hover, var(--accent));
 }
 
-/* 网页区域：网页视图盖在上面、四周留 2px；Deva 操作时这 2px 显示为主题色边框 */
+/* 网页区域：网页视图盖在上面、四周留 2px；Pal 操作时这 2px 显示为主题色边框 */
 .bc-frame {
   position: absolute;
   left: 0;

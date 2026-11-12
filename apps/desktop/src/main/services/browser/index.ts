@@ -576,7 +576,7 @@ async function act(
       const page = requirePage(sessionId)
       if (typeof a.accept !== 'boolean') fail('缺少 accept（true 点「确定」，false 点「取消」）')
       const text = typeof a.text === 'string' ? a.text : null
-      await page.wc.executeJavaScript(`window.__devaDialogAnswer = ${JSON.stringify({ accept: a.accept, text })};0`)
+      await page.wc.executeJavaScript(`window.__palDialogAnswer = ${JSON.stringify({ accept: a.accept, text })};0`)
       return {
         content: a.accept
           ? `已设定：当前页面的下一个确认框点「确定」${text != null ? '（输入框填入给定文字）' : ''}。现在重复刚才触发它的操作。`

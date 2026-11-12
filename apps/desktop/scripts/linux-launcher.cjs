@@ -6,7 +6,7 @@
  * 这些参数在主进程里 app.commandLine.appendSwitch 不生效——Ozone 平台在执行 main 脚本之前就选定了
  * （实测：参数能传到子进程，窗口却仍是 XWayland），只能在启动 Electron 之前加，故套一层脚本。
  *
- * AppImage 的 AppRun 固定 exec "$APPDIR/deva"，linux-unpacked 直接运行 deva 也一样经过本脚本。
+ * AppImage 的 AppRun 固定 exec "$APPDIR/pal"，linux-unpacked 直接运行 pal 也一样经过本脚本。
  * 用户自己传的参数排在后面，同名参数后者覆盖（Chromium 取最后一个），设了 ELECTRON_OZONE_PLATFORM_HINT 则不指定平台。
  */
 const fs = require('fs')

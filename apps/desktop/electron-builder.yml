@@ -27,7 +27,7 @@ asar: true
 # mac 包做 ad-hoc 签名（免费、无证书）；Linux 把可执行文件换成补 Wayland 参数的启动脚本。见各脚本内说明
 afterPack: ./scripts/after-pack.cjs
 
-# Windows 便携版 zip 套一层 Deva\ 目录（electron-builder 默认把文件直接放在压缩包根目录），见脚本内说明
+# Windows 便携版 zip 套一层 Pal\ 目录（electron-builder 默认把文件直接放在压缩包根目录），见脚本内说明
 afterAllArtifactBuild: ./scripts/portable-zip.cjs
 
 # Electron 二进制走国内镜像，避免打包时卡在下载
@@ -35,7 +35,7 @@ electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
 
 win:
-  # nsis = 安装包；zip = 便携版（解压后直接运行 Deva.exe，数据同样在 ~/.deva，与安装版共用）
+  # nsis = 安装包；zip = 便携版（解压后直接运行 Pal.exe，数据同样在 ~/.pal，与安装版共用）
   target:
     - nsis
     - zip
@@ -51,7 +51,7 @@ win:
     repo: pal
 
 nsis:
-  # 默认名带空格（Deva Setup x.y.z.exe），传到 GitHub Release 会被改成点号，这里统一成连字符
+  # 默认名带空格（Pal Setup x.y.z.exe），传到 GitHub Release 会被改成点号，这里统一成连字符
   artifactName: ${productName}-${version}-setup.${ext}
   oneClick: false
   perMachine: false

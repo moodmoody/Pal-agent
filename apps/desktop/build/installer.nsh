@@ -1,7 +1,7 @@
 ; electron-builder 会自动引入 buildResources 下的 installer.nsh，这里只挂官方提供的自定义宏
 
 ; 选完安装目录后检测能否写入。「仅为我安装」时安装器不提权，选到没有写入权限的目录（如 Program Files）
-; 会在复制文件时误报「Deva 无法关闭」，重试后又报写入卸载程序失败，忽略下去只留下指向空目录的快捷方式。
+; 会在复制文件时误报「Pal 无法关闭」，重试后又报写入卸载程序失败，忽略下去只留下指向空目录的快捷方式。
 ; 这里在开始安装前拦下：可写则直接跳过本页；不可写就说明原因，让用户返回更换目录或改为所有用户安装
 !macro customPageAfterChangeDir
   !include nsDialogs.nsh
@@ -49,10 +49,10 @@
     StrCpy $dirCheckWritable 0
     ClearErrors
     CreateDirectory "$dirCheckTarget"
-    FileOpen $2 "$dirCheckTarget\.deva-write-test" w
+    FileOpen $2 "$dirCheckTarget\.pal-write-test" w
     ${IfNot} ${Errors}
       FileClose $2
-      Delete "$dirCheckTarget\.deva-write-test"
+      Delete "$dirCheckTarget\.pal-write-test"
       StrCpy $dirCheckWritable 1
     ${EndIf}
 

@@ -29,7 +29,7 @@ export default defineConfig({
     plugins: [react()],
     build: {
       rollupOptions: {
-        // 两个页面：主界面与「Deva 浏览器」窗口的外框（主进程 browser/host.ts 载入）
+        // 两个页面：主界面与「Pal 浏览器」窗口的外框（主进程 browser/host.ts 载入）
         input: {
           index: resolve('src/renderer/index.html'),
           browser: resolve('src/renderer/browser.html'),

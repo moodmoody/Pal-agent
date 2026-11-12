@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540" font-family="'PingFang SC','Microsoft YaHei','Noto Sans CJK SC','Noto Sans SC',sans-serif">
-  <title>Deva 亮点演示：对话、多角色、子智能体、代码回退、定时任务、手机回复</title>
+  <title>Pal 亮点演示：对话、多角色、子智能体、代码回退、定时任务、手机回复</title>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#6D28D9"/>
@@ -64,7 +64,7 @@
   <circle cx="62" cy="52" r="5" fill="#F87171"/>
   <circle cx="80" cy="52" r="5" fill="#FBBF24"/>
   <circle cx="98" cy="52" r="5" fill="#34D399"/>
-  <text x="480" y="56" text-anchor="middle" font-size="12" fill="#6B7280">Deva</text>
+  <text x="480" y="56" text-anchor="middle" font-size="12" fill="#6B7280">Pal</text>
 
   <!-- 左侧角色栏 -->
   <circle cx="68" cy="100" r="19" fill="none" stroke="#6D28D9" stroke-width="2"/>
@@ -75,7 +75,7 @@
 
   <!-- 输入框 -->
   <rect x="116" y="396" width="784" height="32" rx="8" fill="#FFFFFF" stroke="#E5E7EB"/>
-  <text x="132" y="417" font-size="12" fill="#9CA3AF">给 Deva 发消息，或输入 / 调用命令</text>
+  <text x="132" y="417" font-size="12" fill="#9CA3AF">给 Pal 发消息，或输入 / 调用命令</text>
 
   <!-- 场景 1：All in Chat -->
   <g class="sc s1">
@@ -124,7 +124,7 @@
       <rect x="116" y="120" width="230" height="112" rx="12" fill="#FFFFFF" stroke="#DDD6FE"/>
       <circle cx="146" cy="152" r="16" fill="#6D28D9"/>
       <text x="146" y="157" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">D</text>
-      <text x="172" y="157" font-size="14" font-weight="700" fill="#111827">Deva</text>
+      <text x="172" y="157" font-size="14" font-weight="700" fill="#111827">Pal</text>
       <text x="132" y="192" font-size="12" fill="#374151">全能工作助手</text>
       <text x="132" y="212" font-size="12" fill="#6B7280">编程 · 写作 · 查资料 · 跑命令</text>
       <rect x="360" y="120" width="230" height="112" rx="12" fill="#FFFFFF" stroke="#FBCFE8"/>
@@ -250,7 +250,7 @@
       <text x="168" y="248" font-size="12" fill="#9CA3AF">日程</text>
       <text x="212" y="248" font-size="13" fill="#111827">每天 09:00</text>
       <text x="168" y="272" font-size="12" fill="#9CA3AF">角色</text>
-      <text x="212" y="272" font-size="13" fill="#111827">Deva · 跟随当前模型</text>
+      <text x="212" y="272" font-size="13" fill="#111827">Pal · 跟随当前模型</text>
       <rect x="420" y="262" width="78" height="26" rx="6" fill="#6D28D9"/>
       <text x="459" y="279" text-anchor="middle" font-size="12" fill="#FFFFFF">确认创建</text>
     </g>
@@ -273,7 +273,7 @@
     <text x="116" y="91" font-size="14" font-weight="700" fill="#111827">手机回复 · 飞书里接着聊</text>
     <rect x="716" y="110" width="172" height="280" rx="22" fill="#111827"/>
     <rect x="724" y="118" width="156" height="264" rx="16" fill="#F9FAFB"/>
-    <text x="802" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">Deva 机器人</text>
+    <text x="802" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">Pal 机器人</text>
     <line x1="724" y1="150" x2="880" y2="150" stroke="#E5E7EB"/>
     <g class="a">
       <rect x="762" y="162" width="108" height="28" rx="10" fill="#3370FF"/>
@@ -327,5 +327,5 @@
     <g class="hl t5"><rect x="628" y="458" width="136" height="34" rx="17" fill="#FFFFFF"/><text x="696" y="480" font-weight="700" fill="#6D28D9">定时任务</text><rect class="pg" x="648" y="486" width="96" height="2" rx="1" fill="#C4B5FD"/></g>
     <g class="hl t6"><rect x="772" y="458" width="136" height="34" rx="17" fill="#FFFFFF"/><text x="840" y="480" font-weight="700" fill="#6D28D9">手机回复</text><rect class="pg" x="792" y="486" width="96" height="2" rx="1" fill="#C4B5FD"/></g>
   </g>
-  <text x="480" y="522" text-anchor="middle" font-size="12" fill="#FFFFFF" fill-opacity="0.7">Deva · 对话优先的桌面 AI 助手</text>
+  <text x="480" y="522" text-anchor="middle" font-size="12" fill="#FFFFFF" fill-opacity="0.7">Pal · 对话优先的桌面 AI 助手</text>
 </svg>

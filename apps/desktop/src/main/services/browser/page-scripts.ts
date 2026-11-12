@@ -1,7 +1,7 @@
 /**
  * 注入网页执行的脚本（以源码字符串经 executeJavaScript 运行，故不参与主进程类型检查，须自包含、只用浏览器 API）。
  *
- * 元素编号：snapshot 给可操作元素分配 e1、e2…，编号 → 元素存在页面里的 window.__devaRefs（WeakRef，不改 DOM，
+ * 元素编号：snapshot 给可操作元素分配 e1、e2…，编号 → 元素存在页面里的 window.__palRefs（WeakRef，不改 DOM，
  * 不触发网页自己的 MutationObserver）。同一元素再次 snapshot 沿用原编号；页面导航后编号表随页面一起消失。
  */
 
@@ -19,8 +19,8 @@ export const SNAPSHOT_FN = String.raw`(opts) => {
   // 从当前可视区域开始列出（scroll 之后用）：跳过整块位于可视区域上方的元素
   const FROM_VIEW = !!(opts && opts.fromView)
   const W = window
-  if (!W.__devaRefs) { W.__devaRefs = new Map(); W.__devaRefOf = new WeakMap(); W.__devaRefSeq = 0 }
-  const refs = W.__devaRefs, refOf = W.__devaRefOf
+  if (!W.__palRefs) { W.__palRefs = new Map(); W.__palRefOf = new WeakMap(); W.__palRefSeq = 0 }
+  const refs = W.__palRefs, refOf = W.__palRefOf
   const out = []
   let size = 0, truncated = false
   const clean = (s, n) => {
@@ -37,7 +37,7 @@ export const SNAPSHOT_FN = String.raw`(opts) => {
   }
   const refFor = (el) => {
     let r = refOf.get(el)
-    if (!r) { r = 'e' + (++W.__devaRefSeq); refOf.set(el, r) }
+    if (!r) { r = 'e' + (++W.__palRefSeq); refOf.set(el, r) }
     refs.set(r, new WeakRef(el))
     return r
   }
@@ -242,8 +242,8 @@ export const SNAPSHOT_FN = String.raw`(opts) => {
   }
   if (document.body) walk(document.body, 0)
   flush()
-  const dialogs = W.__devaDialogs || []
-  W.__devaDialogs = []
+  const dialogs = W.__palDialogs || []
+  W.__palDialogs = []
   return {
     title: document.title,
     url: location.href,
@@ -259,7 +259,7 @@ export const SNAPSHOT_FN = String.raw`(opts) => {
  * 返回 { ok, x, y, tag, type, editable, blocker } 或 { error: 'stale' | 'invisible' }。
  */
 export const LOCATE_FN = String.raw`(ref) => {
-  const m = window.__devaRefs
+  const m = window.__palRefs
   const w = m && m.get(ref)
   const el = w && w.deref()
   if (!el || !el.isConnected) return { error: 'stale' }
@@ -297,7 +297,7 @@ export const LOCATE_FN = String.raw`(ref) => {
 
 /** 输入前：聚焦元素，需要清空时选中其全部内容（随后 insertText 会替换选区）。 */
 export const FOCUS_FN = String.raw`(ref, clear) => {
-  const m = window.__devaRefs
+  const m = window.__palRefs
   const w = m && m.get(ref)
   const el = w && w.deref()
   if (!el || !el.isConnected) return { error: 'stale' }
@@ -315,7 +315,7 @@ export const FOCUS_FN = String.raw`(ref, clear) => {
 
 /** 下拉框选择：按选项的值或显示文字匹配，触发 input / change 事件。 */
 export const SELECT_FN = String.raw`(ref, values) => {
-  const m = window.__devaRefs
+  const m = window.__palRefs
   const w = m && m.get(ref)
   const el = w && w.deref()
   if (!el || !el.isConnected) return { error: 'stale' }
@@ -339,13 +339,13 @@ export const SELECT_FN = String.raw`(ref, values) => {
  * 新文档开始时注入（CDP Page.addScriptToEvaluateOnNewDocument）：接管 alert / confirm / prompt，
  * 不弹原生对话框（离屏页面里会卡住或弹到桌面），只记下内容，下次读取页面时一并告知模型。
  * confirm / prompt 默认「取消」——删除这类操作不会被悄悄确认掉；模型确实要继续时用 dialog 动作设定一次性应答
- * （window.__devaDialogAnswer），再重做触发它的操作。记录以「待定：」开头的表示按默认取消了，结果里会附上处理办法。
+ * （window.__palDialogAnswer），再重做触发它的操作。记录以「待定：」开头的表示按默认取消了，结果里会附上处理办法。
  */
 export const DIALOG_SHIM = String.raw`(() => {
   const rec = (kind, msg, answer) => {
-    try { (window.__devaDialogs = window.__devaDialogs || []).push(kind + '「' + String(msg == null ? '' : msg).slice(0, 200) + '」，' + answer) } catch (e) {}
+    try { (window.__palDialogs = window.__palDialogs || []).push(kind + '「' + String(msg == null ? '' : msg).slice(0, 200) + '」，' + answer) } catch (e) {}
   }
-  const take = () => { const a = window.__devaDialogAnswer; window.__devaDialogAnswer = undefined; return a }
+  const take = () => { const a = window.__palDialogAnswer; window.__palDialogAnswer = undefined; return a }
   window.alert = (m) => { rec('提示框', m, '已关闭') }
   window.confirm = (m) => {
     const a = take()

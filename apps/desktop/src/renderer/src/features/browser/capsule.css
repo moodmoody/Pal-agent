@@ -184,7 +184,7 @@
 .cf-browser__shot:focus-visible .cf-browser__shot-tip {
   opacity: 1;
 }
-/* 实时画面：Deva 正在操作时主题色内框、等你操作时警示色内框（同独立窗口） */
+/* 实时画面：Pal 正在操作时主题色内框、等你操作时警示色内框（同独立窗口） */
 .cf-browser__shot::after {
   content: '';
   position: absolute;
@@ -241,7 +241,7 @@
   border-color: color-mix(in srgb, var(--accent) 45%, transparent);
   background: var(--accent-tint);
 }
-/* 关闭网页：Deva 正在用时置灰 */
+/* 关闭网页：Pal 正在用时置灰 */
 .cf-browser__open:disabled {
   opacity: 0.45;
   cursor: default;

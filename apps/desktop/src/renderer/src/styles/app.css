@@ -289,7 +289,7 @@ textarea {
   border-radius: 50%;
   /* 用 box-shadow 画一个 7px 实心圆点，避免额外的伪元素/子节点。 */
   box-shadow: inset 0 0 0 3.5px var(--accent);
-  animation: deva-pulse 1.2s ease-in-out infinite;
+  animation: pal-pulse 1.2s ease-in-out infinite;
 }
 .list-row__status.is-attention {
   color: var(--warning);
@@ -605,7 +605,7 @@ textarea {
   border-radius: 50%;
   background: var(--accent);
   flex-shrink: 0;
-  animation: deva-pulse 1.2s ease-in-out infinite;
+  animation: pal-pulse 1.2s ease-in-out infinite;
 }
 /* 接在进行中消息末尾时（已有工作过程折叠条）：跟在步骤与卡片后面，不再用列表间距的负外边距 */
 .msg__content > .chat__status {
@@ -629,7 +629,7 @@ textarea {
   background: var(--accent);
   opacity: 0.5;
   transform: scale(0.55);
-  animation: deva-pending 1.2s ease-in-out infinite;
+  animation: pal-pending 1.2s ease-in-out infinite;
 }
 .chat__pending i:nth-child(2) {
   animation-delay: 0.16s;
@@ -637,7 +637,7 @@ textarea {
 .chat__pending i:nth-child(3) {
   animation-delay: 0.32s;
 }
-@keyframes deva-pending {
+@keyframes pal-pending {
   0%,
   70%,
   100% {
@@ -676,9 +676,9 @@ textarea {
     0 0 / 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: deva-shimmer 2s linear infinite;
+  animation: pal-shimmer 2s linear infinite;
 }
-@keyframes deva-shimmer {
+@keyframes pal-shimmer {
   from {
     background-position: 100% 0;
   }
@@ -713,7 +713,7 @@ textarea {
 .chat__status-stop:hover {
   background: color-mix(in srgb, var(--danger) 18%, transparent);
 }
-@keyframes deva-pulse {
+@keyframes pal-pulse {
   0%,
   100% {
     opacity: 0.3;
@@ -2544,7 +2544,7 @@ button.tl__line:hover {
 }
 
 /* ---------- 全局对话框（Modal / Confirm / Prompt） ---------- */
-@keyframes deva-modal-fade {
+@keyframes pal-modal-fade {
   from {
     opacity: 0;
   }
@@ -2552,7 +2552,7 @@ button.tl__line:hover {
     opacity: 1;
   }
 }
-@keyframes deva-modal-pop {
+@keyframes pal-modal-pop {
   from {
     opacity: 0;
     transform: translateY(6px) scale(0.98);
@@ -2589,7 +2589,7 @@ button.tl__line:hover {
   border-radius: var(--radius-lg);
   background: var(--bg-elevated);
   box-shadow: var(--shadow);
-  animation: deva-toast-in 0.18s ease;
+  animation: pal-toast-in 0.18s ease;
 }
 .toast--default {
   border-left-color: var(--border-strong);
@@ -2667,7 +2667,7 @@ button.tl__line:hover {
 .toast__action:hover {
   background: var(--accent-tint);
 }
-@keyframes deva-toast-in {
+@keyframes pal-toast-in {
   from {
     opacity: 0;
     transform: translateY(-8px);
@@ -2693,7 +2693,7 @@ button.tl__line:hover {
   justify-content: center;
   padding: var(--space-4);
   background: rgba(0, 0, 0, 0.42);
-  animation: deva-modal-fade 0.12s ease;
+  animation: pal-modal-fade 0.12s ease;
 }
 .modal__card {
   display: flex;
@@ -2705,7 +2705,7 @@ button.tl__line:hover {
   border-radius: var(--radius-lg);
   background: var(--bg-elevated);
   box-shadow: var(--shadow);
-  animation: deva-modal-pop 0.14s ease;
+  animation: pal-modal-pop 0.14s ease;
 }
 .modal__title {
   margin: 0;
@@ -3328,9 +3328,9 @@ button.tl__line:hover {
   color: var(--fg-muted);
 }
 .spin {
-  animation: deva-spin 0.9s linear infinite;
+  animation: pal-spin 0.9s linear infinite;
 }
-@keyframes deva-spin {
+@keyframes pal-spin {
   to {
     transform: rotate(360deg);
   }
@@ -4363,9 +4363,9 @@ button.projmenu__item:disabled {
   border-radius: 1px;
   background: var(--accent);
   will-change: transform;
-  animation: deva-git-progress 1.2s ease-in-out infinite;
+  animation: pal-git-progress 1.2s ease-in-out infinite;
 }
-@keyframes deva-git-progress {
+@keyframes pal-git-progress {
   0% {
     transform: translateX(-100%) scaleX(1);
   }
@@ -4987,9 +4987,9 @@ button.projmenu__item:disabled {
 
 /* 图标旋转（测试 / 拉取中） */
 .icon-spin {
-  animation: deva-spin 0.8s linear infinite;
+  animation: pal-spin 0.8s linear infinite;
 }
-@keyframes deva-spin {
+@keyframes pal-spin {
   to {
     transform: rotate(360deg);
   }
