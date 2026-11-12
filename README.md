@@ -16,7 +16,7 @@
   <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-%E7%A4%BE%E5%8C%BA-FFB003?style=flat-square" alt="LINUX DO 社区" /></a>
 </p>
 
-<a href="https://github.com/moodmoody/Pal-agent/releases"><b>下载</b></a> · <a href="#模型破甲"><b>模型破甲</b></a> · <a href="#快速开始"><b>快速开始</b></a> · <a href="#设计"><b>设计</b></a> · <a href="#工具参考"><b>工具参考</b></a> · <a href="#安全模型"><b>安全模型</b></a> · <a href="#从源码构建"><b>从源码构建</b></a>
+<a href="https://github.com/moodmoody/Pal-agent/releases"><b>下载</b></a> · <a href="#快速开始"><b>快速开始</b></a> · <a href="#设计"><b>设计</b></a> · <a href="#工具参考"><b>工具参考</b></a> · <a href="#安全模型"><b>安全模型</b></a> · <a href="#从源码构建"><b>从源码构建</b></a>
 
 </div>
 
@@ -27,17 +27,6 @@ Pal 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、技
 <p align="center">
   <img src="docs/pal.svg" alt="Pal 界面演示" width="100%" />
 </p>
-
-## 模型破甲
-
-内置角色「小码酱」，针对国产模型（DeepSeek、Kimi、智谱 GLM、通义千问等）调校，无需安装 skill 或 MCP，选定角色即可使用。两项核心能力：
-
-**破甲** — 越狱与提示词注入研究：多轮绕过、对抗后缀、输出塑形、RAG 攻击等提示词攻防手法；对安全限制 / 伦理注入做静态清除与对抗，恢复模型原本的输出能力；针对国产模型拒答模式做针对性脱壳。
-
-**逆向** — 二进制 / 软件逆向工程：静态分析定位校验函数、关键跳转与许可证逻辑；反调试、反虚拟机、检测绕过的占位流程与代码片段；本地样本逆向工作流（隔离复制 → 定位 CHECK_FN → 标注 OFFSET / PATCH_BYTE → 重签名 → 验证并保留回滚副本）。
-
-> [!NOTE]
-> 小码酱的提示词来自 [YuJunZhiXue/dsh-purge](https://github.com/YuJunZhiXue/dsh-purge)，在其他模型上的效果不作保证。
 
 ## 功能概览
 
@@ -137,9 +126,6 @@ Pal 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、技
 | 角色   | 定位                                 |
 | ---- | ---------------------------------- |
 | Pal | 默认角色。通用工作助手，覆盖编程、写作、资料整理、数据分析与命令执行 |
-| 小码酱  | 模型破甲：红队、逆向工程与提示词安全，兼顾全栈开发          |
-
-破甲与逆向能力详见[模型破甲](#模型破甲)。
 
 ### 工程规范
 
