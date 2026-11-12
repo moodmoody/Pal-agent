@@ -4,7 +4,7 @@
   "description": "Pal 桌面应用",
   "main": "./out/main/index.js",
   "author": "sqfcy",
-  "homepage": "https://github.com/sqfcyily/deva",
+  "homepage": "https://github.com/sqfcyily/pal",
   "license": "MIT",
   "desktopName": "pal.desktop",
   "scripts": {

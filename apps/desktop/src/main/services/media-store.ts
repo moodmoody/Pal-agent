@@ -1,14 +1,14 @@
 import { createHash } from 'crypto'
 import { existsSync, mkdirSync, promises as fsp, readFileSync, renameSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { getDevaHome } from './config'
+import { getPalHome } from './config'
 import type { ContentPart, Message } from '../providers/types'
 
 /**
  * 消息里二进制附件（图片 / PDF 的 base64）的外置存储。
  *
  * 对话与子智能体记录落盘时，把 image / document 块的 base64 换成内容哈希引用 `{ blob }`，字节按哈希
- * 存为 `<DEVA_HOME>/data/media/<sha256>`（原始字节，免 base64 膨胀）；载入时按哈希读回。**内存里的
+ * 存为 `<PAL_HOME>/data/media/<sha256>`（原始字节，免 base64 膨胀）；载入时按哈希读回。**内存里的
  * 消息结构不变**（data 仍是 base64），适配器、渲染层、压缩都无感。
  * 收益：对话 JSON 从「每张图一两 MB」降到几百字节一张，每次保存不再整段重写图片；同一张图在主对话、
  * fork、子智能体记录里只存一份。旧文件里内联的 base64 照常读取，下次保存即转成引用。
@@ -29,7 +29,7 @@ const HASH_RE = /^[0-9a-f]{64}$/
 const SWEEP_GRACE_MS = 3600 * 1000
 
 function mediaDir(): string {
-  return join(getDevaHome(), 'data', 'media')
+  return join(getPalHome(), 'data', 'media')
 }
 
 function blobFile(hash: string): string {
@@ -147,7 +147,7 @@ export function hydrateMessages(messages: Message[]): void {
  * 引用只存在于 data/chats 与 data/subagents 下的 JSON 里（只有它们经 mediaReplacer 落盘）。
  */
 export async function sweepMedia(): Promise<void> {
-  const root = join(getDevaHome(), 'data')
+  const root = join(getPalHome(), 'data')
   let names: string[]
   try {
     names = await fsp.readdir(mediaDir())

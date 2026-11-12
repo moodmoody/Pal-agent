@@ -1,5 +1,5 @@
 /**
- * electron-builder afterPack 钩子（Linux）：把可执行文件 deva 换成一个启动脚本，真正的 Electron 改名为 deva-bin。
+ * electron-builder afterPack 钩子（Linux）：把可执行文件 pal 换成一个启动脚本，真正的 Electron 改名为 pal-bin。
  *
  * 为什么：Electron 33 在 Linux 上默认走 XWayland（缩放发糊、输入法上不了屏），Wayland 会话得带
  * `--ozone-platform=wayland --enable-wayland-ime --wayland-text-input-version=3` 启动。
@@ -13,7 +13,7 @@ const fs = require('fs')
 const path = require('path')
 
 const LAUNCHER = `#!/usr/bin/env bash
-# Deva 启动脚本（构建时由 scripts/linux-launcher.cjs 生成）：Wayland 会话下补上原生 Wayland 与输入法参数
+# Pal 启动脚本（构建时由 scripts/linux-launcher.cjs 生成）：Wayland 会话下补上原生 Wayland 与输入法参数
 HERE="$(dirname "$(readlink -f "$0")")"
 flags=()
 if [ "$XDG_SESSION_TYPE" = wayland ] || [ -n "$WAYLAND_DISPLAY" ]; then

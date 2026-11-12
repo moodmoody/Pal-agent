@@ -13,10 +13,11 @@
 import { app, ipcMain, net, shell, type BrowserWindow } from 'electron'
 import { autoUpdater, type AppUpdater } from 'electron-updater'
 import type { UpdateMode, UpdateRelease, UpdateState } from '../../shared/update'
+import { LATEST_RELEASE_API, REPO_URL } from '../../shared/repo'
 import { settleActiveTurns } from './chat'
 import { installedByNsis, isPortable } from './portable'
 
-const LATEST_API = 'https://api.github.com/repos/sqfcyily/Pal/releases/latest'
+const LATEST_API = LATEST_RELEASE_API
 
 interface GithubAsset {
   name: string
@@ -111,7 +112,16 @@ async function check(): Promise<void> {
       headers: { accept: 'application/vnd.github+json' },
       signal: AbortSignal.timeout(15_000)
     })
-    if (!res.ok) throw new Error(`GitHub HTTP ${res.status}`)
+    if (!res.ok) {
+      // 404 = 发布仓库还不存在（改名分叉后常见）。给一句人话，别让用户对着「HTTP 404」猜。
+      const detail =
+        res.status === 404
+          ? `未找到发布仓库 ${REPO_URL}（可能尚未创建或已改名）`
+          : res.status === 403
+            ? 'GitHub API 限流，稍后再试'
+            : `GitHub HTTP ${res.status}`
+      throw new Error(detail)
+    }
     const data = (await res.json()) as GithubRelease
     const version = data.tag_name.replace(/^v/, '')
     if (compareVersions(version, app.getVersion()) <= 0) {

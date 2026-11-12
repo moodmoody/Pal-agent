@@ -2,30 +2,30 @@
 
 **简体中文** | [English](README.en.md)
 
-<img src="apps/desktop/build/icon.png" alt="Deva" width="112" height="112" />
+<img src="apps/desktop/build/icon.png" alt="Pal" width="112" height="112" />
 
-# Deva
+# Pal
 
 以对话为唯一入口的桌面 AI Agent
 
 <p>
-  <a href="https://github.com/sqfcyily/deva/releases"><img src="https://img.shields.io/github/v/release/sqfcyily/deva?style=flat-square&color=6D28D9&label=%E7%89%88%E6%9C%AC" alt="版本" /></a>
+  <a href="https://github.com/sqfcyily/pal/releases"><img src="https://img.shields.io/github/v/release/sqfcyily/pal?style=flat-square&color=6D28D9&label=%E7%89%88%E6%9C%AC" alt="版本" /></a>
   <img src="https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS%20%7C%20Linux-4F46E5?style=flat-square" alt="平台" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-MIT-7C3AED?style=flat-square" alt="许可" /></a>
   <img src="https://img.shields.io/badge/Electron-33-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron" />
   <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-%E7%A4%BE%E5%8C%BA-FFB003?style=flat-square" alt="LINUX DO 社区" /></a>
 </p>
 
-<a href="https://github.com/sqfcyily/deva/releases"><b>下载</b></a> · <a href="#模型破甲"><b>模型破甲</b></a> · <a href="#快速开始"><b>快速开始</b></a> · <a href="#设计"><b>设计</b></a> · <a href="#工具参考"><b>工具参考</b></a> · <a href="#安全模型"><b>安全模型</b></a> · <a href="#从源码构建"><b>从源码构建</b></a>
+<a href="https://github.com/sqfcyily/pal/releases"><b>下载</b></a> · <a href="#模型破甲"><b>模型破甲</b></a> · <a href="#快速开始"><b>快速开始</b></a> · <a href="#设计"><b>设计</b></a> · <a href="#工具参考"><b>工具参考</b></a> · <a href="#安全模型"><b>安全模型</b></a> · <a href="#从源码构建"><b>从源码构建</b></a>
 
 </div>
 
 ***
 
-Deva 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、技能、MCP 服务及挂载工作区均可在对话中发起，经用户确认后生效。挂载项目目录后，Agent 可检索与修改代码、执行命令，并通过子智能体并行处理大型任务。全部数据保存在本机。
+Pal 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、技能、MCP 服务及挂载工作区均可在对话中发起，经用户确认后生效。挂载项目目录后，Agent 可检索与修改代码、执行命令，并通过子智能体并行处理大型任务。全部数据保存在本机。
 
 <p align="center">
-  <img src="docs/deva.svg" alt="Deva 界面演示" width="100%" />
+  <img src="docs/pal.svg" alt="Pal 界面演示" width="100%" />
 </p>
 
 ## 模型破甲
@@ -59,13 +59,13 @@ Deva 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、�
 
 ### 安装
 
-从 [Releases](https://github.com/sqfcyily/deva/releases) 下载对应安装包：
+从 [Releases](https://github.com/sqfcyily/pal/releases) 下载对应安装包：
 
 | 平台      | 文件                                                                |
 | ------- | ----------------------------------------------------------------- |
-| Windows | `Deva-x.y.z-setup.exe`（安装版）、`Deva-x.y.z-portable.zip`（便携版）        |
-| macOS   | `Deva-x.y.z-arm64.dmg`（Apple Silicon）、`Deva-x.y.z-x64.dmg`（Intel） |
-| Linux   | `Deva-x.y.z-x86_64.AppImage`、`Deva-x.y.z-amd64.deb`               |
+| Windows | `Pal-x.y.z-setup.exe`（安装版）、`Pal-x.y.z-portable.zip`（便携版）        |
+| macOS   | `Pal-x.y.z-arm64.dmg`（Apple Silicon）、`Pal-x.y.z-x64.dmg`（Intel） |
+| Linux   | `Pal-x.y.z-x86_64.AppImage`、`Pal-x.y.z-amd64.deb`               |
 
 <details>
 <summary>首次运行被系统拦截</summary>
@@ -76,7 +76,7 @@ Deva 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、�
 - **Windows**：在「Windows 已保护你的电脑」提示中选择「更多信息」→「仍要运行」。
 - **macOS**：在「系统设置 → 隐私与安全性」中选择「仍要打开」；如出现钥匙串访问请求，选择「始终允许」。若提示应用已损坏，执行：
   ```bash
-  xattr -cr /Applications/Deva.app
+  xattr -cr /Applications/Pal.app
   ```
 
 </details>
@@ -128,7 +128,7 @@ Deva 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、�
 
 ### 角色
 
-- **一个对话绑定一个角色**，创建对话时选定；未绑定或角色已删除时回落到默认角色 Deva。
+- **一个对话绑定一个角色**，创建对话时选定；未绑定或角色已删除时回落到默认角色 Pal。
 - **角色不收窄内置工具**，所有角色均可使用全部内置工具。技能与 MCP 服务可限定可用角色，以此形成角色专属能力；未作限定时全部角色可用。
 - **子智能体不注入角色设定**，避免角色风格影响检索与调研结论。
 
@@ -136,7 +136,7 @@ Deva 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、�
 
 | 角色   | 定位                                 |
 | ---- | ---------------------------------- |
-| Deva | 默认角色。通用工作助手，覆盖编程、写作、资料整理、数据分析与命令执行 |
+| Pal | 默认角色。通用工作助手，覆盖编程、写作、资料整理、数据分析与命令执行 |
 | 小码酱  | 模型破甲：红队、逆向工程与提示词安全，兼顾全栈开发          |
 
 破甲与逆向能力详见[模型破甲](#模型破甲)。
@@ -248,27 +248,27 @@ IM 机器人支持 `/new [角色名]`、`/list`、`/stop`、`/status`、`/help`�
 
 ### 技能
 
-技能位于 `~/.deva/skills/<id>/SKILL.md`，frontmatter 包含 `name` 与 `description`，正文为操作指令，可附带参考文档与脚本。模型只接收技能名称与描述，任务匹配时再加载全文。技能可通过「设置 → 扩展」上传 `.zip` 或 `SKILL.md`，也可直接写入技能目录，目录变动即时生效。
+技能位于 `~/.pal/skills/<id>/SKILL.md`，frontmatter 包含 `name` 与 `description`，正文为操作指令，可附带参考文档与脚本。模型只接收技能名称与描述，任务匹配时再加载全文。技能可通过「设置 → 扩展」上传 `.zip` 或 `SKILL.md`，也可直接写入技能目录，目录变动即时生效。
 
 ### MCP
 
-服务配置位于 `~/.deva/mcp.json`，沿用 Claude Desktop 的 `mcpServers` 结构，支持 stdio、SSE 与 Streamable HTTP。启用即自动连接。敏感的环境变量与请求头以 `{ "secretRef": "..." }` 占位，真实值加密保存。
+服务配置位于 `~/.pal/mcp.json`，沿用 Claude Desktop 的 `mcpServers` 结构，支持 stdio、SSE 与 Streamable HTTP。启用即自动连接。敏感的环境变量与请求头以 `{ "secretRef": "..." }` 占位，真实值加密保存。
 
 ### 记忆
 
 | 作用域 | 位置                                   | 容量       |
 | --- | ------------------------------------ | -------- |
-| 全局  | `~/.deva/memory.json`                | 共 4000 字 |
-| 项目  | `~/.deva/projects/<key>/memory.json` | 共 3000 字 |
+| 全局  | `~/.pal/memory.json`                | 共 4000 字 |
+| 项目  | `~/.pal/projects/<key>/memory.json` | 共 3000 字 |
 
 单条不超过 300 字。偏好记为事实陈述，纠正与踩坑记为「做法 + 原因」。项目记忆保存在本机，不进入项目仓库。
 
 ## 安全模型
 
 > \[!WARNING]
-> Deva 不设授权弹框。文件读写与命令执行不受路径和命令限制，由模型直接执行。请在版本控制下使用，必要时通过 `/rewind` 回退。命令造成的副作用无法通过检查点撤销。
+> Pal 不设授权弹框。文件读写与命令执行不受路径和命令限制，由模型直接执行。请在版本控制下使用，必要时通过 `/rewind` 回退。命令造成的副作用无法通过检查点撤销。
 
-- **数据本地化**：配置、对话、记忆、任务、技能与机器人配置均保存在 `~/.deva`，可通过环境变量 `DEVA_HOME` 更改位置。使用 IM 机器人时，消息内容会经过对应平台的服务器。
+- **数据本地化**：配置、对话、记忆、任务、技能与机器人配置均保存在 `~/.pal`，可通过环境变量 `PAL_HOME` 更改位置。使用 IM 机器人时，消息内容会经过对应平台的服务器。
 - **密钥加密**：服务商 API 密钥、MCP 密钥与机器人凭据经系统 safeStorage 加密存储，仅在主进程解密使用，保存后不再回传界面。
 - **提示注入防护**：工具结果一律视为数据；项目说明与记忆不得凌驾系统规范；无人值守执行不可写入记忆。
 - **检查点边界**：`/rewind` 仅恢复由 `write_file`、`edit_file` 产生的改动；回退点之后在应用外修改过的文件默认跳过，不予覆盖。
@@ -277,7 +277,7 @@ IM 机器人支持 `/new [角色名]`、`/list`、`/stop`、`/status`、`/help`�
 <summary>数据目录结构</summary>
 
 ```
-~/.deva/
+~/.pal/
 ├── config.json      设置（明文）
 ├── secrets.json     密钥（加密）
 ├── mcp.json         MCP 服务

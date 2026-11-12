@@ -9,7 +9,7 @@ import {
   writeFileSync
 } from 'fs'
 import { join } from 'path'
-import { getDevaHome } from './config'
+import { getPalHome } from './config'
 import { hydrateMessages, mediaReplacer } from './media-store'
 import type { EffortLevel, Message } from '../providers/types'
 import type { CheckpointRec } from './checkpoints'
@@ -17,14 +17,14 @@ import type { TodoEntry } from './todos'
 
 /**
  * 对话持久化（主进程）· 一对话一文件。
- * 对话优先外壳：对话不再「按项目分桶」，而是各自独立成文件 `<DEVA_HOME>/data/chats/<id>.json`，
+ * 对话优先外壳：对话不再「按项目分桶」，而是各自独立成文件 `<PAL_HOME>/data/chats/<id>.json`，
  * 另有一份仅含元信息（不含正文）的索引 `_index.json` 供左侧列表 O(1) 读取（索引缺失则扫描目录自愈）。
  * 这样单条对话读写互不牵连，避免「每说一句就整文件全量重写所有历史对话」的瓶颈；
  * 对话极多时也只重写当前这一条 + 轻量索引，磁盘写放大与单点写坏风险都被限定在一条对话内。
  *
  * 主进程持有的 provider `Message[]` 是模型上下文的**唯一真源**（续聊时回灌给模型），因此持久化落在主
  * 进程；渲染层仅按需拉取会话清单 / 重建展示。明文 JSON，可手改 / 备份（对标 config.json）；
- * 根目录随 DEVA_HOME 覆盖 —— 便携安装 / 想整体挪到别的盘（如 D:）时设置该环境变量即可。
+ * 根目录随 PAL_HOME 覆盖 —— 便携安装 / 想整体挪到别的盘（如 D:）时设置该环境变量即可。
  *
  * **无「项目 / 分桶」概念**：对话优先外壳是唯一页面（旧 IDE 式 AppShell 已删），对话不再按项目归桶。
  * 每条对话独立成文件、直接落盘，`listSessions` 一次列全部（按 updatedAt 倒序），左侧列表就是全部对话。
@@ -218,7 +218,7 @@ export function projectKey(workspaceRoot: string | null): string {
 }
 
 function chatsDir(): string {
-  const dir = join(getDevaHome(), 'data', 'chats')
+  const dir = join(getPalHome(), 'data', 'chats')
   try {
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
   } catch {

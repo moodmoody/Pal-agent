@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { getConfig, getDevaHome, setConfig } from './config'
+import { getConfig, getPalHome, setConfig } from './config'
 import { deleteSecretsByPrefix, getSecret } from './secrets'
 import { setRoles } from './ext-roles'
 
@@ -59,7 +59,7 @@ export interface McpServerInput {
 type StoredServer = Omit<McpServerConfig, 'id'>
 
 function mcpFile(): string {
-  return join(getDevaHome(), 'mcp.json')
+  return join(getPalHome(), 'mcp.json')
 }
 
 /** 读取 mcp.json 的 mcpServers 映射（不存在 / 损坏 → 空，绝不抛错）。 */

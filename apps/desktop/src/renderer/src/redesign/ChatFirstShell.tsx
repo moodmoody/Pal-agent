@@ -70,7 +70,7 @@ import { BotsPane } from './BotsPane'
 import { useComposerEditor, type ComposerKey } from './composer-editor'
 import { UpdateSection } from './UpdateSection'
 // 关于页的应用图标：直接用安装包图标的源文件，图形只维护一份
-import devaIcon from '../../../../build/icon.svg'
+import appIcon from '../../../../build/icon.svg'
 import './redesign.css'
 import type { McpKV, McpServer, McpStatus, Persona, Skill } from '../mock/extensions'
 import type {
@@ -6871,7 +6871,7 @@ function AboutPane(): React.JSX.Element {
     <>
       <h2 className="cf-pane__title">{t('settings.about')}</h2>
       <div className="cf-about">
-        <img className="cf-about__icon" src={devaIcon} alt="" aria-hidden />
+        <img className="cf-about__icon" src={appIcon} alt="" aria-hidden />
         <div className="cf-about__name">{t('app.name')}</div>
         <div className="cf-about__ver">
           {t('settings.version')} {__APP_VERSION__}

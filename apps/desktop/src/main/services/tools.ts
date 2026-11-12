@@ -1,5 +1,6 @@
 import { app } from 'electron'
 import { describeNetError, httpFetch } from '../http'
+import { REPO_URL } from '../../shared/repo'
 import { spawn } from 'node:child_process'
 import { existsSync, promises as fs, type Dirent } from 'fs'
 import { homedir } from 'node:os'
@@ -1096,7 +1097,7 @@ function execEnv(): NodeJS.ProcessEnv {
   return { ...process.env, GIT_PAGER: 'cat', PAGER: 'cat', GIT_TERMINAL_PROMPT: '0', NO_COLOR: '1' }
 }
 
-/** win + Git Bash 下一次执行的杀树凭据：MSYS bash 路径 + 注入子进程环境的唯一 DEVA_EXEC_TAG。 */
+/** win + Git Bash 下一次执行的杀树凭据：MSYS bash 路径 + 注入子进程环境的唯一 PAL_EXEC_TAG。 */
 interface MsysKillTarget {
   bash: string
   tag: string
@@ -1108,12 +1109,12 @@ let execSeq = 0
  * win + Git Bash 杀树脚本（另起一个 MSYS bash 执行，$1 = 目标 tag）。
  * MSYS 模拟 fork，管道成员之间的 Windows 父进程链是断的（中间层 bash 早已退出），taskkill /T 从启动器
  * 出发只杀得到启动器本身；npm / tail 等成了孤儿，继续攥着 stdout 管道——超时、中止都「杀了没用」。
- * 故 spawn 时注入唯一 DEVA_EXEC_TAG（子孙自然继承），此处扫 /proc/<pid>/environ **精确匹配**找回整棵树：
+ * 故 spawn 时注入唯一 PAL_EXEC_TAG（子孙自然继承），此处扫 /proc/<pid>/environ **精确匹配**找回整棵树：
  * ① 按各进程 winpid 执行 taskkill /T /F，带走 node 等原生进程再 spawn 的原生子孙（那段 Windows 父链完整）；
  * ② 按 MSYS 进程组（管道成员同组）kill -9 并逐个补刀，兜住扫描之后才 fork 出来的。
  * pgid ≤ 1 不杀组（kill -- -1 等于杀全部）；taskkill 参数禁用 MSYS 路径转换（否则 /T 会被改写成路径）。
  */
-const MSYS_KILL_SCRIPT = `tag="DEVA_EXEC_TAG=$1"
+const MSYS_KILL_SCRIPT = `tag="PAL_EXEC_TAG=$1"
 pids= pgs= wins=
 for d in /proc/[0-9]*; do
   hit=
@@ -1165,7 +1166,7 @@ function killTree(child: import('node:child_process').ChildProcess, msys?: MsysK
     }
     try {
       const env = { ...process.env }
-      delete env.DEVA_EXEC_TAG // 杀手自己绝不能带目标 tag
+      delete env.PAL_EXEC_TAG // 杀手自己绝不能带目标 tag
       const k = spawn(
         msys.bash,
         ['--noprofile', '--norc', '-c', MSYS_KILL_SCRIPT, 'Pal-kill', msys.tag],
@@ -1192,7 +1193,7 @@ function killTree(child: import('node:child_process').ChildProcess, msys?: MsysK
 /**
  * 在 cwd 下执行一条命令，合并捕获 stdout+stderr（按到达序），带超时与中止。
  * shell 由 exec-policy.resolveExecShell 决定（优先 Git Bash）；detached（posix）建进程组以便杀树，
- * win + Git Bash 则注入 DEVA_EXEC_TAG 供 MSYS 侧杀树。杀树后最多再等 EXEC_KILL_GRACE_MS 即返回。
+ * win + Git Bash 则注入 PAL_EXEC_TAG 供 MSYS 侧杀树。杀树后最多再等 EXEC_KILL_GRACE_MS 即返回。
  */
 function execCapture(
   command: string,
@@ -1212,7 +1213,7 @@ function execCapture(
       process.platform === 'win32' && !sh.useShell
         ? { bash: sh.file, tag: `${process.pid}-${++execSeq}-${Date.now().toString(36)}` }
         : undefined
-    const env = msys ? { ...execEnv(), DEVA_EXEC_TAG: msys.tag } : execEnv()
+    const env = msys ? { ...execEnv(), PAL_EXEC_TAG: msys.tag } : execEnv()
     let child: import('node:child_process').ChildProcess
     try {
       child = sh.useShell
@@ -1606,7 +1607,7 @@ export async function executeTool(
           signal: controller.signal,
           redirect: 'follow',
           headers: {
-            'user-agent': `Pal/${app.getVersion()} (+https://github.com/sqfcyily/Pal)`,
+            'user-agent': `Pal/${app.getVersion()} (+${REPO_URL})`,
             accept: 'text/html,application/xhtml+xml,application/json,text/plain;q=0.9,*/*;q=0.8'
           }
         })

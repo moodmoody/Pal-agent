@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'crypto'
 import { type Dirent, promises as fsp, realpathSync, rmSync } from 'fs'
 import { basename, dirname, join, relative, resolve, isAbsolute } from 'path'
-import { getDevaHome } from './config'
+import { getPalHome } from './config'
 import { looksBinary, writeTargetPath } from './tools'
 import { lineCount, lineStats } from './line-stats'
 import type { StoredSession } from './chat-store'
@@ -19,7 +19,7 @@ import type { StoredSession } from './chat-store'
  * 刻意不用影子 git：纯 JS、零外部依赖（免装铁律），且只追踪 Pal 自己写过的文件。run_command 的文件影响
  * 不追踪（只记命令本身，供回滚面板提示「运行过 N 条命令，影响无法撤销」）。
  *
- * 存储：`<DEVA_HOME>/data/checkpoints/<会话 id>/<sha256>`。删会话即整目录删除，GC 只在本会话目录内做。
+ * 存储：`<PAL_HOME>/data/checkpoints/<会话 id>/<sha256>`。删会话即整目录删除，GC 只在本会话目录内做。
  *
  * 安全：回滚由用户在主进程触发、**不经工具闸门**，故自守两条——①路径只来自记录，绝不接受渲染层传入的路径；
  * ②符号链接 / 硬链接 / 真实路径漂移一律跳过（防写穿到别处）。Agent 写过的任何路径（含 .git、~/.pal）都可回写。
@@ -71,7 +71,7 @@ export function checkpointDirName(id: string): string {
 }
 
 function checkpointsRoot(): string {
-  return join(getDevaHome(), 'data', 'checkpoints')
+  return join(getPalHome(), 'data', 'checkpoints')
 }
 
 /** 会话的 blob 目录；id 安全化后为空 → null（绝不能退化成根目录本身，否则删会话 = 删全部）。 */

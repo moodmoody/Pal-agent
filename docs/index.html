@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Deva · 对话式 AI 助手</title>
-<meta name="description" content="Deva：对话式 AI 助手。把 Agent 能力装进对话里，无需复杂配置，像聊天一样使用 Agent。挂载文件夹即可阅读代码、修改文件、执行命令；支持多角色、子代理、计划批准、代码回退、定时任务、手机 IM 远程对话。开源免费，Windows / macOS。" />
-<meta property="og:title" content="Deva · 对话式 AI 助手" />
+<title>Pal · 对话式 AI 助手</title>
+<meta name="description" content="Pal：对话式 AI 助手。把 Agent 能力装进对话里，无需复杂配置，像聊天一样使用 Agent。挂载文件夹即可阅读代码、修改文件、执行命令；支持多角色、子代理、计划批准、代码回退、定时任务、手机 IM 远程对话。开源免费，Windows / macOS。" />
+<meta property="og:title" content="Pal · 对话式 AI 助手" />
 <meta property="og:description" content="All in Chat：要做的事，在对话里说一句就行。开源免费，Windows / macOS。" />
 <meta name="theme-color" content="#4F46E5" />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234F46E5'/%3E%3Cstop offset='1' stop-color='%237C3AED'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1024' height='1024' rx='224' fill='url(%23g)'/%3E%3Cg fill='%23fff' transform='translate(-27 -26)'%3E%3Crect x='312' y='272' width='96' height='380' rx='48'/%3E%3Ccircle cx='360' cy='756' r='48'/%3E%3Cpath d='M468 320 H500 A218 218 0 0 1 500 756 H468' fill='none' stroke='%23fff' stroke-width='96'/%3E%3C/g%3E%3C/svg%3E" />
@@ -194,7 +194,7 @@
   .conv small.swap { animation: swap 0.4s var(--ease) both; }
   @keyframes swap { from { opacity: 0; transform: translateX(-8px); } }
   .ava { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; }
-  .ava--deva { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+  .ava--pal { background: linear-gradient(135deg, #0f766e, #1e40af); }
   .ava--wk { background: linear-gradient(135deg, #34d399, #059669); }
   .ava--tr { background: linear-gradient(135deg, #fbbf24, #d97706); }
   .ava--ma { background: linear-gradient(135deg, #f472b6, #db2777); }
@@ -503,7 +503,7 @@
   // 尽早定下深浅色（记住的选择优先，否则跟随系统），免得首屏先闪一下浅色
   ;(() => {
     let t = null
-    try { t = localStorage.getItem('deva-site-theme') } catch {}
+    try { t = localStorage.getItem('pal-site-theme') } catch {}
     if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     document.documentElement.dataset.theme = t
   })()
@@ -554,7 +554,7 @@
 
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top"><svg><use href="#logo"/></svg>Deva</a>
+    <a class="brand" href="#top"><svg><use href="#logo"/></svg>Pal</a>
     <nav class="nav__links">
       <a href="#stage">看它怎么做</a>
       <a href="#more">更多功能</a>
@@ -564,7 +564,7 @@
     </nav>
     <div class="nav__right">
       <button class="icon-link theme-btn" type="button" aria-label="切换深色模式" title="切换深色模式"><svg class="i moon"><use href="#i-moon"/></svg><svg class="i sun"><use href="#i-sun"/></svg></button>
-      <a class="icon-link" href="https://github.com/sqfcyily/deva" aria-label="GitHub" title="GitHub"><svg class="i"><use href="#i-gh"/></svg></a>
+      <a class="icon-link" href="https://github.com/sqfcyily/pal" aria-label="GitHub" title="GitHub"><svg class="i"><use href="#i-gh"/></svg></a>
       <a class="btn btn--primary btn--sm" href="#download" data-dl-auto><svg class="i"><use href="#i-down"/></svg>下载</a>
     </div>
   </div>
@@ -579,7 +579,7 @@
       <p class="hero__lead">把 Agent 能力装进对话里，无需复杂配置，像聊天一样使用 Agent。<br />挂载文件夹即可阅读代码、修改文件、执行命令；定时任务按时自动运行，离开电脑也能在手机上继续对话。</p>
       <div class="hero__cta">
         <a class="btn btn--primary" href="#download" data-dl-auto><svg class="i"><use href="#i-down"/></svg><span class="dl-label">免费下载</span></a>
-        <a class="btn" href="https://github.com/sqfcyily/deva"><svg class="i"><use href="#i-gh"/></svg>查看源码</a>
+        <a class="btn" href="https://github.com/sqfcyily/pal"><svg class="i"><use href="#i-gh"/></svg>查看源码</a>
       </div>
       <div class="hero__meta">
         <span><svg class="i"><use href="#i-check"/></svg>用你自己的 API 密钥</span>
@@ -615,7 +615,7 @@
         <div class="stage__progress"><i></i></div>
 
         <div class="stage__view">
-          <div class="mock" aria-label="Deva 界面演示">
+          <div class="mock" aria-label="Pal 界面演示">
             <div class="mock__bar"><i></i><i></i><i></i></div>
             <div class="mock__body">
               <div class="mock__rail">
@@ -628,18 +628,18 @@
               </div>
               <div class="mock__list">
                 <div class="mock__search"><svg class="i"><use href="#i-search"/></svg>搜索对话</div>
-                <div class="conv conv--cur is-on"><span class="ava ava--deva">D</span><div><b>my-app 日常维护</b><small>刚刚</small></div></div>
+                <div class="conv conv--cur is-on"><span class="ava ava--pal">D</span><div><b>my-app 日常维护</b><small>刚刚</small></div></div>
                 <div class="conv"><span class="ava ava--tr">译</span><div><b>合同条款翻译</b><small>翻译助手 · 昨天</small></div></div>
-                <div class="conv"><span class="ava ava--deva">D</span><div><b>读书笔记整理</b><small>Deva · 周一</small></div></div>
+                <div class="conv"><span class="ava ava--pal">D</span><div><b>读书笔记整理</b><small>Pal · 周一</small></div></div>
               </div>
               <div class="mock__chat">
-                <div class="chat__head">Deva <small>· my-app 日常维护</small><span class="chat__ws" hidden><svg class="i"><use href="#i-folder"/></svg>my-app</span></div>
+                <div class="chat__head">Pal <small>· my-app 日常维护</small><span class="chat__ws" hidden><svg class="i"><use href="#i-folder"/></svg>my-app</span></div>
                 <div class="chat__scroll"><div class="chat__list"></div></div>
                 <div class="chat__overlay"></div>
                 <div class="mock__composer">
                   <div class="m-todo" hidden></div>
                   <div class="m-box">
-                    <div class="ph">跟 Deva 说点什么…</div>
+                    <div class="ph">跟 Pal 说点什么…</div>
                     <div class="m-tbar">
                       <span class="attach"><svg class="i"><use href="#i-clip"/></svg></span>
                       <span class="model">deepseek-chat</span>
@@ -665,7 +665,7 @@
         <div class="feat">
           <div class="feat__icon"><svg class="i"><use href="#i-users"/></svg></div>
           <h3>多角色，各有所长</h3>
-          <p>内置全能助手 Deva 和安全研究专家小码酱；自己建的角色也有独立的性格、头像和常用模型。</p>
+          <p>内置全能助手 Pal 和安全研究专家小码酱；自己建的角色也有独立的性格、头像和常用模型。</p>
         </div>
         <div class="feat">
           <div class="feat__icon"><svg class="i"><use href="#i-bookmark"/></svg></div>
@@ -732,7 +732,7 @@
     <div class="wrap">
       <span class="eyebrow">BEFORE YOU START</span>
       <h2>用之前要知道的</h2>
-      <p class="sec-lead">Deva 追求「说了就做」，所以有几件事请先了解。</p>
+      <p class="sec-lead">Pal 追求「说了就做」，所以有几件事请先了解。</p>
       <div class="notice">
         <div class="tip tip--warn">
           <h3><svg class="i"><use href="#i-alert"/></svg>动手前不会逐个询问</h3>
@@ -740,7 +740,7 @@
         </div>
         <div class="tip">
           <h3><svg class="i"><use href="#i-lock"/></svg>数据都在本机</h3>
-          <p>设置、对话、记忆、任务都放在 <code>~/.deva</code>，API 密钥加密保存。用 IM 机器人时，手机上的对话会经过对应平台。</p>
+          <p>设置、对话、记忆、任务都放在 <code>~/.pal</code>，API 密钥加密保存。用 IM 机器人时，手机上的对话会经过对应平台。</p>
         </div>
       </div>
     </div>
@@ -750,29 +750,29 @@
   <section id="download" class="download">
     <div class="wrap">
       <span class="eyebrow">DOWNLOAD</span>
-      <h2>下载 Deva</h2>
+      <h2>下载 Pal</h2>
       <p class="sec-lead">免费、开源。点安装包直接下载最新版本<span class="dl__ver"></span>。</p>
       <div class="dl">
         <div class="os">
           <h3><svg class="i"><use href="#i-win"/></svg>Windows</h3>
-          <a class="file" data-asset="win" href="https://github.com/sqfcyily/deva/releases/latest"><code>Deva-x.y.z-setup.exe</code><span>双击安装<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
-          <a class="file" data-asset="win-portable" href="https://github.com/sqfcyily/deva/releases/latest"><code>Deva-x.y.z-portable.zip</code><span>便携版，解压即用<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="win" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-setup.exe</code><span>双击安装<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="win-portable" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-portable.zip</code><span>便携版，解压即用<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
         </div>
         <div class="os">
           <h3><svg class="i"><use href="#i-apple"/></svg>macOS</h3>
-          <a class="file" data-asset="mac-arm64" href="https://github.com/sqfcyily/deva/releases/latest"><code>Deva-x.y.z-arm64.dmg</code><span>M 系列芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
-          <a class="file" data-asset="mac-x64" href="https://github.com/sqfcyily/deva/releases/latest"><code>Deva-x.y.z-x64.dmg</code><span>Intel 芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="mac-arm64" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-arm64.dmg</code><span>M 系列芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="mac-x64" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-x64.dmg</code><span>Intel 芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
         </div>
       </div>
       <div class="dl__cta">
-        <a class="btn" href="https://github.com/sqfcyily/deva/releases"><svg class="i"><use href="#i-gh"/></svg>全部版本与更新说明</a>
+        <a class="btn" href="https://github.com/sqfcyily/pal/releases"><svg class="i"><use href="#i-gh"/></svg>全部版本与更新说明</a>
       </div>
       <details>
         <summary>第一次打开被系统拦住？</summary>
         <ul>
           <li><b>Windows</b>：弹出「Windows 已保护你的电脑」时，点「更多信息」→「仍要运行」。</li>
-          <li><b>macOS</b>：提示无法验证 Deva.app 是否包含恶意软件时，选择「完成」，前往「系统设置 → 隐私与安全性」点击「仍要打开」，然后重新打开 Deva 并在弹窗中确认。若提示应用「已损坏」或未出现「仍要打开」选项，在终端执行：
-            <pre><code>xattr -cr /Applications/Deva.app</code></pre>
+          <li><b>macOS</b>：提示无法验证 Pal.app 是否包含恶意软件时，选择「完成」，前往「系统设置 → 隐私与安全性」点击「仍要打开」，然后重新打开 Pal 并在弹窗中确认。若提示应用「已损坏」或未出现「仍要打开」选项，在终端执行：
+            <pre><code>xattr -cr /Applications/Pal.app</code></pre>
           </li>
         </ul>
       </details>
@@ -782,12 +782,12 @@
 
 <footer>
   <div class="wrap">
-    <a class="brand" href="#top"><svg><use href="#logo"/></svg>Deva</a>
+    <a class="brand" href="#top"><svg><use href="#logo"/></svg>Pal</a>
     <span>MIT License · © 2026 sqfcy</span>
     <nav>
-      <a href="https://github.com/sqfcyily/deva">GitHub</a>
-      <a href="https://github.com/sqfcyily/deva/releases">Releases</a>
-      <a href="https://github.com/sqfcyily/deva/blob/main/README.en.md">English</a>
+      <a href="https://github.com/sqfcyily/pal">GitHub</a>
+      <a href="https://github.com/sqfcyily/pal/releases">Releases</a>
+      <a href="https://github.com/sqfcyily/pal/blob/main/README.en.md">English</a>
       <a href="https://linux.do">LINUX DO 社区</a>
     </nav>
   </div>
@@ -812,12 +812,12 @@
     }
     btn.addEventListener('click', () => {
       const t = root.dataset.theme === 'dark' ? 'light' : 'dark'
-      try { localStorage.setItem('deva-site-theme', t) } catch {}
+      try { localStorage.setItem('pal-site-theme', t) } catch {}
       apply(t)
     })
     sys.addEventListener('change', (e) => {
       let saved = null
-      try { saved = localStorage.getItem('deva-site-theme') } catch {}
+      try { saved = localStorage.getItem('pal-site-theme') } catch {}
       if (!saved) apply(e.matches ? 'dark' : 'light')
     })
     label()
@@ -827,7 +827,7 @@
   // 安装包名带版本号，用不了固定的 releases/latest/download/<文件名>；取不到时保留静态链接（最新版本的 Releases 页 / 下载区）。
   // 未登录的 API 每个 IP 每小时限 60 次，结果在本机缓存半小时
   ;(() => {
-    const KEY = 'deva-site-release'
+    const KEY = 'pal-site-release'
     const PICK = { win: /-setup\.exe$/, 'win-portable': /-portable\.zip$/, 'mac-arm64': /-arm64\.dmg$/, 'mac-x64': /-x64\.dmg$/ }
     const LABEL = { win: '下载 Windows 版', 'mac-arm64': '下载 macOS 版（M 系列）', 'mac-x64': '下载 macOS 版（Intel）' }
     // 该给访客哪个包：Mac 只有 Chromium 系浏览器问得出芯片架构，问不出就不猜，让人到下载区自己挑
@@ -843,7 +843,7 @@
         const c = JSON.parse(localStorage.getItem(KEY))
         if (c && Date.now() - c.at < 30 * 60e3) return c
       } catch {}
-      const r = await fetch('https://api.github.com/repos/sqfcyily/deva/releases/latest')
+      const r = await fetch('https://api.github.com/repos/sqfcyily/pal/releases/latest')
       if (!r.ok) throw new Error(`GitHub API ${r.status}`)
       const rel = await r.json()
       const files = {}
@@ -1094,7 +1094,7 @@
         await user('以后每天早上 9 点，把前一天的提交整理成日报')
         await say('好的，核对一下时间和指令，点「创建」就建好了：')
         const card = add(`<div class="m-card m-task">${icon('cal')}
-          <div class="m-task__body"><b>my-app 提交日报</b><small>每天 09:00 · 下次 明天 09:00 · Deva · deepseek-chat</small><span>汇总 my-app 前一天的提交，按「新功能 / 修复 / 其他」分类写成日报</span></div>
+          <div class="m-task__body"><b>my-app 提交日报</b><small>每天 09:00 · 下次 明天 09:00 · Pal · deepseek-chat</small><span>汇总 my-app 前一天的提交，按「新功能 / 修复 / 其他」分类写成日报</span></div>
           <div class="m-actions"><span class="mbtn mbtn--ghost">编辑</span><span class="mbtn">忽略</span><span class="mbtn mbtn--p">✓ 创建</span></div></div>`)
         await wait(1200)
         await press(card.querySelector('.mbtn--p'))
@@ -1143,7 +1143,7 @@
         if (!instant) { note.classList.add('leave'); await wait(300) }
         note.remove()
         stage.classList.add('phone-on')
-        const phone = add(`<div class="m-phone"><div class="m-phone__top"><b>Deva</b><small>飞书 · 机器人</small></div><div class="m-phone__msgs"></div><div class="m-phone__input"><span class="pin">发消息…</span></div></div>`, overlay)
+        const phone = add(`<div class="m-phone"><div class="m-phone__top"><b>Pal</b><small>飞书 · 机器人</small></div><div class="m-phone__msgs"></div><div class="m-phone__input"><span class="pin">发消息…</span></div></div>`, overlay)
         const pmsgs = phone.querySelector('.m-phone__msgs')
         const pin = phone.querySelector('.pin')
         const q = '今天的日报发我看看'

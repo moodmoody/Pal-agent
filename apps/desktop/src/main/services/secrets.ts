@@ -1,12 +1,12 @@
 import { app, ipcMain, safeStorage } from 'electron'
 import { promises as fs } from 'fs'
 import { join } from 'path'
-import { getDevaHome } from './config'
+import { getPalHome } from './config'
 
 /**
  * 密钥安全存储（主进程）。
  * 用 Electron safeStorage 加密（OS 凭据体系：Win DPAPI / macOS Keychain / Linux libsecret），
- * 密文（base64）落盘 `~/.pal/secrets.json`（与非敏感 config.json 同一根目录，可被 DEVA_HOME 覆盖）。
+ * 密文（base64）落盘 `~/.pal/secrets.json`（与非敏感 config.json 同一根目录，可被 PAL_HOME 覆盖）。
  * 即便放在点目录，也**始终保持加密、绝不明文**——DPAPI 密文绑定 OS 用户账户、与文件路径无关。
  * **明文永不出主进程**——不提供 get 给渲染层，解密只在主进程内被 provider 调用时发生。
  * 详见 docs/architecture/security.md。
@@ -35,7 +35,7 @@ async function migrateLegacy(): Promise<void> {
 
 async function ensureLoaded(): Promise<void> {
   if (loaded) return
-  filePath = join(getDevaHome(), 'secrets.json')
+  filePath = join(getPalHome(), 'secrets.json')
   try {
     const raw = await fs.readFile(filePath, 'utf8')
     const parsed = JSON.parse(raw)

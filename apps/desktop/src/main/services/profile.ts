@@ -1,13 +1,13 @@
 import { ipcMain } from 'electron'
 import { join } from 'path'
 import { clearAvatarImage, readAvatarImage, writeAvatarImage } from './avatar-image'
-import { getConfig, getDevaHome, setConfig } from './config'
+import { getConfig, getPalHome, setConfig } from './config'
 
 /**
  * 本机用户资料（个人资料面板）：目前只有头像。
  * - 生成头像的 spec（AvatarSpec JSON 串，渲染层 humation.tsx 解析）存 `config.json` → `profile.avatar`；
  *   未配置（首次安装）时 getProfile 回 DEFAULT_USER_AVATAR，不写回配置。
- * - 上传的图片另存 `<DEVA_HOME>/profile/avatar.<ext>`（base64 不进 config.json，免得每次读写配置都带着它），
+ * - 上传的图片另存 `<PAL_HOME>/profile/avatar.<ext>`（base64 不进 config.json，免得每次读写配置都带着它），
  *   读回成 data URI 交付渲染层（CSP 不放行 file:）。
  */
 
@@ -24,7 +24,7 @@ const DEFAULT_USER_AVATAR =
   '{"selections":{"head":"hm1-p-000004","body":"hm1-p-000028","bottom":"hm1-p-000037","item":"hm1-p-000062","glasses":"hm1-p-000058"},"colors":{"stroke":"000000","hair":"B0B0B0","skin":"FFE0BD","clothes":"2D2D2D","bottom":"000000"},"background":"0D8CE9"}'
 
 function profileDir(): string {
-  return join(getDevaHome(), 'profile')
+  return join(getPalHome(), 'profile')
 }
 
 function profileSection(): Record<string, unknown> {

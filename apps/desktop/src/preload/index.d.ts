@@ -1,8 +1,8 @@
-import type { DevaApi } from './index'
+import type { PalApi } from './index'
 
 declare global {
   interface Window {
-    Pal: DevaApi
+    Pal: PalApi
   }
 }
 

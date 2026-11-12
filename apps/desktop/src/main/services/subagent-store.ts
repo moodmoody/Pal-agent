@@ -1,7 +1,7 @@
 import { createHash } from 'crypto'
 import { existsSync, mkdirSync, promises as fsp, readFileSync, rmSync, type Dirent } from 'fs'
 import { join } from 'path'
-import { getDevaHome } from './config'
+import { getPalHome } from './config'
 import { writeFileAtomic } from './chat-store'
 import { hydrateMessages, mediaReplacer } from './media-store'
 import type { Message, ToolSpec } from '../providers/types'
@@ -9,7 +9,7 @@ import type { Message, ToolSpec } from '../providers/types'
 /**
  * 子智能体记录（落盘）：供 send_to_subagent 给已派出的子智能体继续发消息，它保留自己的上下文。
  *
- * 存储：`<DEVA_HOME>/data/subagents/<会话 id>/<子智能体 id>.json`，每会话另有 `_index.json` 只存
+ * 存储：`<PAL_HOME>/data/subagents/<会话 id>/<子智能体 id>.json`，每会话另有 `_index.json` 只存
  * 元信息（剪枝 / 补全卡片标题时不必解析大文件）。system / tools 随记录定格：续聊时上下文自洽，
  * fork 还能与主对话共享提示缓存前缀。每会话至多 MAX_PER_SESSION 条，超出淘汰最久未用的非忙记录。
  *
@@ -50,7 +50,7 @@ function safeName(id: string): string {
 }
 
 function subagentsRoot(): string {
-  return join(getDevaHome(), 'data', 'subagents')
+  return join(getPalHome(), 'data', 'subagents')
 }
 
 /** 会话目录；安全化后为空 → null（绝不能退化成根目录本身，否则删会话 = 删全部）。 */

@@ -1370,4 +1370,4 @@ if (process.contextIsolated) {
   window.Pal = api
 }
 
-export type DevaApi = typeof api
+export type PalApi = typeof api

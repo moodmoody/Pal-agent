@@ -4,7 +4,7 @@
  */
 
 /** 所有版本的下载页：检查失败时给用户兜底。 */
-export const RELEASES_URL = 'https://github.com/sqfcyily/Pal/releases'
+export { RELEASES_URL } from './repo'
 
 export interface UpdateRelease {
   /** 不带 v 前缀，如 0.1.7 */

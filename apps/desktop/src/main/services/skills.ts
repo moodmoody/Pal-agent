@@ -11,7 +11,7 @@ import {
 } from 'fs'
 import { dirname, isAbsolute, join, resolve, sep } from 'path'
 import { unzipSync } from 'fflate'
-import { getConfig, getDevaHome, setConfig } from './config'
+import { getConfig, getPalHome, setConfig } from './config'
 import { allowsPersona, getRoles, setRoles } from './ext-roles'
 import { fmArray, fmMap, fmScalar, fmString, parseFrontmatter } from './frontmatter'
 
@@ -83,7 +83,7 @@ export interface SkillUpsertInput {
  * 内置元技能 `create-skill` 的正文：指导模型引导用户创建自己的技能。技能常常不止一个文件，
  * 故按「SKILL.md + scripts/ references/ assets/」的结构引导：先从用例规划可复用资源，再落盘、校验。
  * 单文件技能走 `create_skill`（校验 + 自动启用）；多文件技能直接写进技能目录。
- * 正文不写死目录路径：它是模块级常量，而路径依赖 DEVA_HOME——绝对路径由系统提示词【技能】段给出。
+ * 正文不写死目录路径：它是模块级常量，而路径依赖 PAL_HOME——绝对路径由系统提示词【技能】段给出。
  */
 const CREATE_SKILL_INSTRUCTIONS = `你正在帮助用户创建一个新的**技能（Skill）**。技能是技能目录（绝对路径见系统提示词【技能】段）下的一个文件夹：入口 \`SKILL.md\` 说明「何时用、怎么做」，复杂的技能再附带脚本、参考文档、模板等资源。启用后只有 name 与 description 常驻模型看到的技能清单；命中场景或用户输入 \`/技能名\` 时才加载 SKILL.md 正文；附带资源在执行中按需读取或运行。
 
@@ -259,10 +259,10 @@ const IMPORT_MAX_SINGLE_BYTES = 10 * 1024 * 1024
 
 /**
  * 技能根目录（绝对路径）。chat.ts 把它写进系统提示词与 skill 工具结果，供模型读写多文件技能；
- * 进程内恒定（DEVA_HOME 只在启动时读取），不破坏 §4.18 的提示缓存前缀稳定性。
+ * 进程内恒定（PAL_HOME 只在启动时读取），不破坏 §4.18 的提示缓存前缀稳定性。
  */
 export function skillsDir(): string {
-  return join(getDevaHome(), 'skills')
+  return join(getPalHome(), 'skills')
 }
 
 function skillFile(id: string): string {

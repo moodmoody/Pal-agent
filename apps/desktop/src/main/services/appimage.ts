@@ -8,16 +8,22 @@ import { join } from 'path'
 /**
  * Linux AppImage 的桌面集成：AppImage 本身不安装任何东西，不经 AppImageLauncher / Gear Lever 这类工具，
  * 启动器（GNOME / KDE 菜单、rofi、fuzzel…）里就找不到 Pal。这里在启动时把 AppImage 自带的
- * Pal.desktop 与各尺寸图标写到用户目录（~/.local/share/applications、~/.local/share/icons/hicolor），
+ * pal.desktop 与各尺寸图标写到用户目录（~/.local/share/applications、~/.local/share/icons/hicolor），
  * Exec 指向当前 AppImage 的实际路径。
  *
- * - 只管自己写的文件（带 MARKER）：用户 / 其他工具放的同名 Pal.desktop 不碰。
+ * - 只管自己写的文件（带 MARKER）：用户 / 其他工具放的同名 pal.desktop 不碰。
  * - 每次启动按需重写：AppImage 挪了位置或换了新版本，Exec 跟着更新。
- * - 用户删掉了我们写的 Pal.desktop 就不再补回（userData 里留有「集成过」的记号）。
+ * - 用户删掉了我们写的 pal.desktop 就不再补回（userData 里留有「集成过」的记号）。
  * 失败一律静默：只是启动器里没有入口，不影响应用本身。
  */
 
-const DESKTOP_FILE = 'Pal.desktop'
+/**
+ * 必须与 apps/desktop/package.json 的 `desktopName` 完全一致（含大小写）。
+ * Linux 文件系统大小写敏感：electron-builder 按 desktopName 生成包内文件名，
+ * 这里按 DESKTOP_FILE 去读；两者一不匹配 readFile 就抛，被下面的 catch 静默吞掉，
+ * 结果是启动器里永远没有 Pal——而且不报错，最难查的一种。
+ */
+const DESKTOP_FILE = 'pal.desktop'
 const MARKER = 'X-Pal-AppImage-Integration=true'
 
 /** desktop entry 的 Exec 参数转义：双引号内转义 " ` $ \，再按字符串值规则把 \ 加倍；% 写成 %%。 */
@@ -64,13 +70,16 @@ export async function integrateAppImage(): Promise<void> {
   }
 }
 
-/** 把 AppImage 里 usr/share/icons/hicolor/<尺寸>/apps/Pal.png 拷到用户图标目录（内容不变则跳过）。 */
+/**
+ * 把 AppImage 里 usr/share/icons/hicolor/<尺寸>/apps/pal.png 拷到用户图标目录（内容不变则跳过）。
+ * 图标文件名由 electron-builder 按 `executableName` 生成，与 linux.executableName 一致。
+ */
 async function copyIcons(appDir: string, destRoot: string): Promise<void> {
   const srcRoot = join(appDir, 'usr', 'share', 'icons', 'hicolor')
   for (const size of await readdir(srcRoot)) {
-    const src = join(srcRoot, size, 'apps', 'Pal.png')
+    const src = join(srcRoot, size, 'apps', 'pal.png')
     if (!existsSync(src)) continue
-    const dest = join(destRoot, size, 'apps', 'Pal.png')
+    const dest = join(destRoot, size, 'apps', 'pal.png')
     const data = await readFile(src)
     if (existsSync(dest) && data.equals(await readFile(dest))) continue
     await mkdir(join(destRoot, size, 'apps'), { recursive: true })

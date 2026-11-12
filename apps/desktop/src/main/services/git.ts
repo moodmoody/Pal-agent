@@ -3,7 +3,7 @@ import { existsSync, promises as fs } from 'node:fs'
 import { basename, delimiter, dirname, join, resolve } from 'node:path'
 import { ipcMain } from 'electron'
 import { assertAllInside, assertInside, insideRootFlags } from './fs-guard'
-import { getConfig, getDevaHome } from './config'
+import { getConfig, getPalHome } from './config'
 import { detectShells } from './shells'
 import { loadProjectDoc, PROJECT_DOC_NAME, type ProjectDoc } from './project-doc'
 import { streamChat } from '../providers'
@@ -727,12 +727,12 @@ export function registerGitIpc(): void {
     }
   )
 
-  // 提交：信息写临时文件（DEVA_HOME 下）避免多行/特殊字符问题；身份缺失回 identity-needed
+  // 提交：信息写临时文件（PAL_HOME 下）避免多行/特殊字符问题；身份缺失回 identity-needed
   ipcMain.handle('git:commit', async (_e, dir: string, message: string) => {
     assertInside(dir)
     if (typeof message !== 'string' || !message.trim())
       return { ok: false as const, reason: 'empty' as GitFailReason }
-    const tmp = join(getDevaHome(), `commit-msg-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`)
+    const tmp = join(getPalHome(), `commit-msg-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`)
     try {
       await fs.writeFile(tmp, message, 'utf8')
       const res = await runGit(dir, ['commit', '-F', tmp])

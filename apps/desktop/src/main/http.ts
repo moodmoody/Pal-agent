@@ -19,13 +19,13 @@ import { isEn } from './locale'
  *
  * 其他：不带 Cookie、不走 HTTP 缓存，与应用界面、内置浏览器的会话隔开。fetch 规范禁用的端口（如 6000、6665–6669、
  * 10080）Chromium 与 Node fetch 都拒绝（ERR_UNSAFE_PORT / bad port），只能给出说明。
- * 排查时设环境变量 DEVA_HTTP=node 整体切回 Node fetch。
+ * 排查时设环境变量 PAL_HTTP=node 整体切回 Node fetch。
  */
 
 type Route = 'default' | 'system'
 
 const POOL_SIZE = 4
-const USE_NODE = (process.env.DEVA_HTTP ?? '').trim().toLowerCase() === 'node'
+const USE_NODE = (process.env.PAL_HTTP ?? '').trim().toLowerCase() === 'node'
 
 /** 请求一定没送达服务器的错误：可以换线路重发。 */
 const PRE_DELIVERY =
@@ -164,7 +164,7 @@ export function describeNetError(e: unknown): string {
     const text = explain(code)
     return text ? withCode(text, code) : msg
   }
-  // Node fetch（DEVA_HTTP=node）：真实原因在 cause 里，message 只有 "fetch failed"。
+  // Node fetch（PAL_HTTP=node）：真实原因在 cause 里，message 只有 "fetch failed"。
   const cause = err?.cause as
     | { code?: unknown; syscall?: unknown; address?: unknown; port?: unknown; message?: unknown }
     | undefined

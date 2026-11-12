@@ -7,7 +7,7 @@ import {
   readAvatarImage as readAvatarImageFile,
   writeAvatarImage as writeAvatarImageFile
 } from './avatar-image'
-import { getConfig, getDevaHome, setConfig } from './config'
+import { getConfig, getPalHome, setConfig } from './config'
 import { pruneRoles } from './ext-roles'
 import { setSkillEnabled } from './skills'
 import { setEnabled as setMcpEnabled } from './mcp-config'
@@ -82,7 +82,7 @@ export interface PersonaUpsertInput {
 }
 
 function personasDir(): string {
-  return join(getDevaHome(), 'personas')
+  return join(getPalHome(), 'personas')
 }
 
 function personaFile(id: string): string {

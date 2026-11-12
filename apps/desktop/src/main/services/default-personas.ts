@@ -1,4 +1,4 @@
-import Pal from "./deva-personas"
+import Pal from "./pal-personas"
 import XIAOMAJIANG from "./xiaomajiang-personas"
 
 /**

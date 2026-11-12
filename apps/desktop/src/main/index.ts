@@ -378,7 +378,7 @@ if (!app.requestSingleInstanceLock()) {
   ipcMain.handle('window:is-fullscreen', () => mainWindow?.isFullScreen() ?? false)
   ipcMain.handle('app:get-platform', () => process.platform)
 
-  // 应用配置（~/.pal/config.json：主题/语言/模型等非敏感项，可 DEVA_HOME 覆盖）
+  // 应用配置（~/.pal/config.json：主题/语言/模型等非敏感项，可 PAL_HOME 覆盖）
   registerConfigIpc()
 
   // 工作区文件服务（打开文件夹 / 读目录 / 读写文件）

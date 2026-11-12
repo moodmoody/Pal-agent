@@ -2,21 +2,21 @@
 
 [简体中文](README.md) | **English**
 
-<img src="apps/desktop/build/icon.png" alt="Deva" width="112" height="112" />
+<img src="apps/desktop/build/icon.png" alt="Pal" width="112" height="112" />
 
-# Deva
+# Pal
 
 A desktop AI agent with the conversation as its single entry point
 
 <p>
-  <a href="https://github.com/sqfcyily/deva/releases"><img src="https://img.shields.io/github/v/release/sqfcyily/deva?style=flat-square&color=6D28D9&label=release" alt="Release" /></a>
+  <a href="https://github.com/sqfcyily/pal/releases"><img src="https://img.shields.io/github/v/release/sqfcyily/pal?style=flat-square&color=6D28D9&label=release" alt="Release" /></a>
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-4F46E5?style=flat-square" alt="Platform" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-7C3AED?style=flat-square" alt="License" /></a>
   <img src="https://img.shields.io/badge/Electron-33-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron" />
   <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-community-FFB003?style=flat-square" alt="LINUX DO Community" /></a>
 </p>
 
-<a href="https://github.com/sqfcyily/deva/releases"><b>Download</b></a> ·
+<a href="https://github.com/sqfcyily/pal/releases"><b>Download</b></a> ·
 <a href="#model-breaking"><b>Model breaking</b></a> ·
 <a href="#quick-start"><b>Quick Start</b></a> ·
 <a href="#design"><b>Design</b></a> ·
@@ -28,10 +28,10 @@ A desktop AI agent with the conversation as its single entry point
 
 ---
 
-Deva is a cross-platform desktop agent client. Personas, scheduled tasks, skills, MCP servers and workspace mounts can all be requested in conversation and take effect once you confirm them. With a project folder mounted, the agent searches and edits code, runs commands, and splits large jobs across parallel subagents. All data stays on your machine.
+Pal is a cross-platform desktop agent client. Personas, scheduled tasks, skills, MCP servers and workspace mounts can all be requested in conversation and take effect once you confirm them. With a project folder mounted, the agent searches and edits code, runs commands, and splits large jobs across parallel subagents. All data stays on your machine.
 
 <p align="center">
-  <img src="docs/deva.en.svg" alt="Deva interface demo" width="100%" />
+  <img src="docs/pal.en.svg" alt="Pal interface demo" width="100%" />
 </p>
 
 ## Model breaking
@@ -65,13 +65,13 @@ Built-in special persona 小码酱 (Xiaomajiang), tuned for Chinese models (Deep
 
 ### Install
 
-Download from [Releases](https://github.com/sqfcyily/deva/releases):
+Download from [Releases](https://github.com/sqfcyily/pal/releases):
 
 | Platform | File |
 | --- | --- |
-| Windows | `Deva-x.y.z-setup.exe` (installer), `Deva-x.y.z-portable.zip` (portable) |
-| macOS | `Deva-x.y.z-arm64.dmg` (Apple Silicon), `Deva-x.y.z-x64.dmg` (Intel) |
-| Linux | `Deva-x.y.z-x86_64.AppImage`, `Deva-x.y.z-amd64.deb` |
+| Windows | `Pal-x.y.z-setup.exe` (installer), `Pal-x.y.z-portable.zip` (portable) |
+| macOS | `Pal-x.y.z-arm64.dmg` (Apple Silicon), `Pal-x.y.z-x64.dmg` (Intel) |
+| Linux | `Pal-x.y.z-x86_64.AppImage`, `Pal-x.y.z-amd64.deb` |
 
 <details>
 <summary>Blocked on first launch</summary>
@@ -83,7 +83,7 @@ The packages are not code-signed (macOS builds are ad-hoc signed only).
 - **macOS**: choose "Open Anyway" in "System Settings → Privacy & Security"; if a keychain access prompt appears, choose "Always Allow". If the app is reported as damaged, run:
 
   ```bash
-  xattr -cr /Applications/Deva.app
+  xattr -cr /Applications/Pal.app
   ```
 
 </details>
@@ -135,7 +135,7 @@ The system rules never prescribe identity or style, and personas never touch too
 
 ### Personas
 
-- **One persona per conversation**, chosen when the conversation is created. Unbound conversations, or those whose persona was deleted, fall back to the default persona Deva.
+- **One persona per conversation**, chosen when the conversation is created. Unbound conversations, or those whose persona was deleted, fall back to the default persona Pal.
 - **Personas do not restrict built-in tools**; every persona can use all of them. Skills and MCP servers can be limited to specific personas to give a persona its own capabilities; without a limit they are available to all.
 - **Subagents do not receive the persona**, so persona style does not leak into search and research results.
 
@@ -143,7 +143,7 @@ Built-in personas:
 
 | Persona | Focus |
 | --- | --- |
-| Deva | Default persona. General-purpose assistant for coding, writing, research, data analysis and running commands |
+| Pal | Default persona. General-purpose assistant for coding, writing, research, data analysis and running commands |
 | 小码酱 (Xiaomajiang) | Security research: red teaming, reverse engineering and prompt security, plus full-stack development |
 
 See [Model breaking](#model-breaking) for details.
@@ -255,27 +255,27 @@ With a workspace mounted, the root `AGENTS.md` is read at the start of each turn
 
 ### Skills
 
-Skills live in `~/.deva/skills/<id>/SKILL.md`. The frontmatter holds `name` and `description`; the body holds the instructions and may reference bundled documents and scripts. The model sees only names and descriptions and loads the full body when a task matches. Skills can be uploaded as `.zip` or `SKILL.md` under Settings → Extensions, or written straight into the skills directory; changes take effect immediately.
+Skills live in `~/.pal/skills/<id>/SKILL.md`. The frontmatter holds `name` and `description`; the body holds the instructions and may reference bundled documents and scripts. The model sees only names and descriptions and loads the full body when a task matches. Skills can be uploaded as `.zip` or `SKILL.md` under Settings → Extensions, or written straight into the skills directory; changes take effect immediately.
 
 ### MCP
 
-Servers are configured in `~/.deva/mcp.json` using the Claude Desktop `mcpServers` structure, over stdio, SSE or Streamable HTTP. Enabling a server connects it. Sensitive environment variables and headers are stored as `{ "secretRef": "..." }` placeholders, with the real values encrypted.
+Servers are configured in `~/.pal/mcp.json` using the Claude Desktop `mcpServers` structure, over stdio, SSE or Streamable HTTP. Enabling a server connects it. Sensitive environment variables and headers are stored as `{ "secretRef": "..." }` placeholders, with the real values encrypted.
 
 ### Memory
 
 | Scope | Location | Capacity |
 | --- | --- | --- |
-| Global | `~/.deva/memory.json` | 4,000 characters total |
-| Project | `~/.deva/projects/<key>/memory.json` | 3,000 characters total |
+| Global | `~/.pal/memory.json` | 4,000 characters total |
+| Project | `~/.pal/projects/<key>/memory.json` | 3,000 characters total |
 
 Each entry is at most 300 characters. Preferences are written as statements of fact; corrections and lessons as "what to do + why". Project memory stays on your machine and never enters the repository.
 
 ## Security Model
 
 > [!WARNING]
-> Deva has no approval prompts. File access and command execution are not restricted by path or command and run directly. Use it under version control and roll back with `/rewind` when needed. Side effects of commands cannot be undone by checkpoints.
+> Pal has no approval prompts. File access and command execution are not restricted by path or command and run directly. Use it under version control and roll back with `/rewind` when needed. Side effects of commands cannot be undone by checkpoints.
 
-- **Local data**: settings, conversations, memory, tasks, skills and bot configuration live in `~/.deva`; set `DEVA_HOME` to relocate it. When IM bots are used, messages pass through the respective platform's servers.
+- **Local data**: settings, conversations, memory, tasks, skills and bot configuration live in `~/.pal`; set `PAL_HOME` to relocate it. When IM bots are used, messages pass through the respective platform's servers.
 - **Encrypted secrets**: provider API keys, MCP secrets and bot credentials are encrypted with the system safeStorage, decrypted only in the main process, and never sent back to the UI after saving.
 - **Prompt-injection hardening**: tool results are always treated as data; the project doc and memory cannot override the system rules; unattended runs cannot write memory.
 - **Checkpoint scope**: `/rewind` restores changes made by `write_file` and `edit_file` only; files modified outside the app after the rewind point are skipped by default rather than overwritten.
@@ -284,7 +284,7 @@ Each entry is at most 300 characters. Preferences are written as statements of f
 <summary>Data directory layout</summary>
 
 ```
-~/.deva/
+~/.pal/
 ├── config.json      settings (plain text)
 ├── secrets.json     secrets (encrypted)
 ├── mcp.json         MCP servers
