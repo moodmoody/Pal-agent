@@ -4,7 +4,7 @@
   "description": "Pal 桌面应用",
   "main": "./out/main/index.js",
   "author": "sqfcy",
-  "homepage": "https://github.com/sqfcyily/pal",
+  "homepage": "https://github.com/moodmoody/Pal-agent",
   "license": "MIT",
   "desktopName": "pal.desktop",
   "scripts": {

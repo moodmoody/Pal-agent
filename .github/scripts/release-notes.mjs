@@ -11,7 +11,7 @@
  */
 import { execFileSync } from 'node:child_process'
 
-const REPO_URL = 'https://github.com/sqfcyily/pal'
+const REPO_URL = 'https://github.com/moodmoody/Pal-agent'
 
 const GROUPS = [
   { title: '新功能 / New Features', types: ['feat'] },

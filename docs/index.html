@@ -564,7 +564,7 @@
     </nav>
     <div class="nav__right">
       <button class="icon-link theme-btn" type="button" aria-label="切换深色模式" title="切换深色模式"><svg class="i moon"><use href="#i-moon"/></svg><svg class="i sun"><use href="#i-sun"/></svg></button>
-      <a class="icon-link" href="https://github.com/sqfcyily/pal" aria-label="GitHub" title="GitHub"><svg class="i"><use href="#i-gh"/></svg></a>
+      <a class="icon-link" href="https://github.com/moodmoody/Pal-agent" aria-label="GitHub" title="GitHub"><svg class="i"><use href="#i-gh"/></svg></a>
       <a class="btn btn--primary btn--sm" href="#download" data-dl-auto><svg class="i"><use href="#i-down"/></svg>下载</a>
     </div>
   </div>
@@ -579,7 +579,7 @@
       <p class="hero__lead">把 Agent 能力装进对话里，无需复杂配置，像聊天一样使用 Agent。<br />挂载文件夹即可阅读代码、修改文件、执行命令；定时任务按时自动运行，离开电脑也能在手机上继续对话。</p>
       <div class="hero__cta">
         <a class="btn btn--primary" href="#download" data-dl-auto><svg class="i"><use href="#i-down"/></svg><span class="dl-label">免费下载</span></a>
-        <a class="btn" href="https://github.com/sqfcyily/pal"><svg class="i"><use href="#i-gh"/></svg>查看源码</a>
+        <a class="btn" href="https://github.com/moodmoody/Pal-agent"><svg class="i"><use href="#i-gh"/></svg>查看源码</a>
       </div>
       <div class="hero__meta">
         <span><svg class="i"><use href="#i-check"/></svg>用你自己的 API 密钥</span>
@@ -755,17 +755,17 @@
       <div class="dl">
         <div class="os">
           <h3><svg class="i"><use href="#i-win"/></svg>Windows</h3>
-          <a class="file" data-asset="win" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-setup.exe</code><span>双击安装<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
-          <a class="file" data-asset="win-portable" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-portable.zip</code><span>便携版，解压即用<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="win" href="https://github.com/moodmoody/Pal-agent/releases/latest"><code>Pal-x.y.z-setup.exe</code><span>双击安装<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="win-portable" href="https://github.com/moodmoody/Pal-agent/releases/latest"><code>Pal-x.y.z-portable.zip</code><span>便携版，解压即用<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
         </div>
         <div class="os">
           <h3><svg class="i"><use href="#i-apple"/></svg>macOS</h3>
-          <a class="file" data-asset="mac-arm64" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-arm64.dmg</code><span>M 系列芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
-          <a class="file" data-asset="mac-x64" href="https://github.com/sqfcyily/pal/releases/latest"><code>Pal-x.y.z-x64.dmg</code><span>Intel 芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="mac-arm64" href="https://github.com/moodmoody/Pal-agent/releases/latest"><code>Pal-x.y.z-arm64.dmg</code><span>M 系列芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
+          <a class="file" data-asset="mac-x64" href="https://github.com/moodmoody/Pal-agent/releases/latest"><code>Pal-x.y.z-x64.dmg</code><span>Intel 芯片<span class="file__size"></span></span><svg class="i"><use href="#i-down"/></svg></a>
         </div>
       </div>
       <div class="dl__cta">
-        <a class="btn" href="https://github.com/sqfcyily/pal/releases"><svg class="i"><use href="#i-gh"/></svg>全部版本与更新说明</a>
+        <a class="btn" href="https://github.com/moodmoody/Pal-agent/releases"><svg class="i"><use href="#i-gh"/></svg>全部版本与更新说明</a>
       </div>
       <details>
         <summary>第一次打开被系统拦住？</summary>
@@ -785,9 +785,9 @@
     <a class="brand" href="#top"><svg><use href="#logo"/></svg>Pal</a>
     <span>MIT License · © 2026 sqfcy</span>
     <nav>
-      <a href="https://github.com/sqfcyily/pal">GitHub</a>
-      <a href="https://github.com/sqfcyily/pal/releases">Releases</a>
-      <a href="https://github.com/sqfcyily/pal/blob/main/README.en.md">English</a>
+      <a href="https://github.com/moodmoody/Pal-agent">GitHub</a>
+      <a href="https://github.com/moodmoody/Pal-agent/releases">Releases</a>
+      <a href="https://github.com/moodmoody/Pal-agent/blob/main/README.en.md">English</a>
       <a href="https://linux.do">LINUX DO 社区</a>
     </nav>
   </div>
@@ -843,7 +843,7 @@
         const c = JSON.parse(localStorage.getItem(KEY))
         if (c && Date.now() - c.at < 30 * 60e3) return c
       } catch {}
-      const r = await fetch('https://api.github.com/repos/sqfcyily/pal/releases/latest')
+      const r = await fetch('https://api.github.com/repos/moodmoody/Pal-agent/releases/latest')
       if (!r.ok) throw new Error(`GitHub API ${r.status}`)
       const rel = await r.json()
       const files = {}

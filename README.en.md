@@ -9,14 +9,14 @@
 A desktop AI agent with the conversation as its single entry point
 
 <p>
-  <a href="https://github.com/sqfcyily/pal/releases"><img src="https://img.shields.io/github/v/release/sqfcyily/pal?style=flat-square&color=6D28D9&label=release" alt="Release" /></a>
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-4F46E5?style=flat-square" alt="Platform" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-7C3AED?style=flat-square" alt="License" /></a>
+  <a href="https://github.com/moodmoody/Pal-agent/releases"><img src="https://img.shields.io/github/v/release/moodmoody/Pal-agent?style=flat-square&color=0F766E&label=release" alt="Release" /></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-1E40AF?style=flat-square" alt="Platform" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-0F766E?style=flat-square" alt="License" /></a>
   <img src="https://img.shields.io/badge/Electron-33-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron" />
   <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-community-FFB003?style=flat-square" alt="LINUX DO Community" /></a>
 </p>
 
-<a href="https://github.com/sqfcyily/pal/releases"><b>Download</b></a> ·
+<a href="https://github.com/moodmoody/Pal-agent/releases"><b>Download</b></a> ·
 <a href="#model-breaking"><b>Model breaking</b></a> ·
 <a href="#quick-start"><b>Quick Start</b></a> ·
 <a href="#design"><b>Design</b></a> ·
@@ -65,7 +65,7 @@ Built-in special persona 小码酱 (Xiaomajiang), tuned for Chinese models (Deep
 
 ### Install
 
-Download from [Releases](https://github.com/sqfcyily/pal/releases):
+Download from [Releases](https://github.com/moodmoody/Pal-agent/releases):
 
 | Platform | File |
 | --- | --- |

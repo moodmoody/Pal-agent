@@ -9,14 +9,14 @@
 以对话为唯一入口的桌面 AI Agent
 
 <p>
-  <a href="https://github.com/sqfcyily/pal/releases"><img src="https://img.shields.io/github/v/release/sqfcyily/pal?style=flat-square&color=6D28D9&label=%E7%89%88%E6%9C%AC" alt="版本" /></a>
-  <img src="https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS%20%7C%20Linux-4F46E5?style=flat-square" alt="平台" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-MIT-7C3AED?style=flat-square" alt="许可" /></a>
+  <a href="https://github.com/moodmoody/Pal-agent/releases"><img src="https://img.shields.io/github/v/release/moodmoody/Pal-agent?style=flat-square&color=0F766E&label=%E7%89%88%E6%9C%AC" alt="版本" /></a>
+  <img src="https://img.shields.io/badge/%E5%B9%B3%E5%8F%B0-Windows%20%7C%20macOS%20%7C%20Linux-1E40AF?style=flat-square" alt="平台" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/%E8%AE%B8%E5%8F%AF-MIT-0F766E?style=flat-square" alt="许可" /></a>
   <img src="https://img.shields.io/badge/Electron-33-47848F?style=flat-square&logo=electron&logoColor=white" alt="Electron" />
   <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-%E7%A4%BE%E5%8C%BA-FFB003?style=flat-square" alt="LINUX DO 社区" /></a>
 </p>
 
-<a href="https://github.com/sqfcyily/pal/releases"><b>下载</b></a> · <a href="#模型破甲"><b>模型破甲</b></a> · <a href="#快速开始"><b>快速开始</b></a> · <a href="#设计"><b>设计</b></a> · <a href="#工具参考"><b>工具参考</b></a> · <a href="#安全模型"><b>安全模型</b></a> · <a href="#从源码构建"><b>从源码构建</b></a>
+<a href="https://github.com/moodmoody/Pal-agent/releases"><b>下载</b></a> · <a href="#模型破甲"><b>模型破甲</b></a> · <a href="#快速开始"><b>快速开始</b></a> · <a href="#设计"><b>设计</b></a> · <a href="#工具参考"><b>工具参考</b></a> · <a href="#安全模型"><b>安全模型</b></a> · <a href="#从源码构建"><b>从源码构建</b></a>
 
 </div>
 
@@ -59,7 +59,7 @@ Pal 是一款跨平台桌面 Agent 客户端。创建角色、定时任务、技
 
 ### 安装
 
-从 [Releases](https://github.com/sqfcyily/pal/releases) 下载对应安装包：
+从 [Releases](https://github.com/moodmoody/Pal-agent/releases) 下载对应安装包：
 
 | 平台      | 文件                                                                |
 | ------- | ----------------------------------------------------------------- |

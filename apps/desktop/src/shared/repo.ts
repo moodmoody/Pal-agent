@@ -9,8 +9,8 @@
  * 注意：仓库真实存在前，检查更新会得到 404。这是预期的——见 updater.ts 对 404 的处理。
  */
 
-export const REPO_OWNER = 'sqfcyily'
-export const REPO_NAME = 'pal'
+export const REPO_OWNER = 'moodmoody'
+export const REPO_NAME = 'Pal-agent'
 
 /** 仓库主页。 */
 export const REPO_URL = `https://github.com/${REPO_OWNER}/${REPO_NAME}`
