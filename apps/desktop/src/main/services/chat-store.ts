@@ -32,6 +32,24 @@ import type { TodoEntry } from './todos'
  * 存在哪里 / 列不列出」彻底无关。历史文件里可能残留 `bucket` 字段（旧实现遗留），读时忽略、写时不再产生。
  */
 
+/**
+ * 会话累计用量（跨轮累加，供渲染层的用量面板）。
+ * **纯观测**：不参与上下文压缩判定、不影响计费，删掉也不改变任何行为。
+ * 与 `lastInputTokens` 的区别：后者只记「上一轮」，压缩逻辑用它；这里是自会话建立以来的总和。
+ */
+export interface SessionUsageTotals {
+  /** 累计输入 token（每次请求都含完整上下文，故会随轮数快速累积，不等于「新增内容」）。 */
+  input: number
+  /** 累计输出 token。 */
+  output: number
+  /** 累计提示缓存命中 token。 */
+  cacheRead: number
+  /** 累计提示缓存写入 token。 */
+  cacheWrite: number
+  /** 产生过用量的请求次数（一轮可能有多个 step，故常大于轮数）。 */
+  requests: number
+}
+
 export interface StoredSession {
   id: string
   title: string
@@ -51,6 +69,11 @@ export interface StoredSession {
    */
   lastCacheRead?: number
   lastCacheWrite?: number
+  /**
+   * 自会话建立以来的累计用量。见 SessionUsageTotals。
+   * 缺省 = 该字段引入前建立的老会话；读到缺省按 0 处理，不影响任何判定。
+   */
+  usage?: SessionUsageTotals
   /**
    * 绑定的 persona id（对话优先外壳：一对话一身份，单选当值）。
    * 缺省 = 旧版遗留的未绑定对话，执行与显示都按默认角色（见 personas.ts resolvePersonaId）。首发落库后绑定不再改。

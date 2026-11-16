@@ -4636,3 +4636,172 @@ a.bots-btn {
   padding: 12px 16px;
   border-top: 1px solid var(--border);
 }
+
+/* ============================ 会话用量面板 ============================ */
+/* 标题栏右上角：入/出 token + 缓存命中率。纯展示，不拦截事件。 */
+.cf-usage {
+  position: relative;
+  margin-left: auto;
+  -webkit-app-region: no-drag;
+}
+
+.cf-usage__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.cf-usage__chip:hover {
+  background: var(--accent-tint);
+  border-color: var(--accent);
+  color: var(--fg);
+}
+
+.cf-usage__pair {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.cf-usage__k {
+  font-size: 11px;
+  opacity: 0.65;
+}
+.cf-usage__v {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.cf-usage__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.3;
+}
+.cf-usage__cache {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+/* 命中率健康（≥60%）时用主色强调；低于则保持弱色，避免被误读成报错。 */
+.cf-usage__cache.is-good {
+  color: var(--accent);
+  opacity: 1;
+  font-weight: 600;
+}
+
+.cf-usage__pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: 288px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+.cf-usage__popTitle {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fg);
+}
+.cf-usage__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px 14px;
+  margin: 0;
+}
+.cf-usage__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cf-usage__grid dt {
+  font-size: 11px;
+  color: var(--fg-subtle);
+}
+.cf-usage__grid dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.cf-usage__pct {
+  font-weight: 400;
+  color: var(--fg-muted);
+}
+.cf-usage__hint {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--fg-subtle);
+}
+
+/* ============================ 助手回复操作行 ============================ */
+/* 正文下方新的一行，左对齐：复制 + 回答反馈。流式中不渲染（见 ConvMessage）。 */
+.cf-msg__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* 内联版复制按钮：取消「悬停浮现 + 绝对定位」，作为操作行里的普通按钮排布 */
+.cf-msg__copy--inline {
+  position: static;
+  opacity: 1;
+  width: auto;
+  height: 24px;
+  padding: 0 8px;
+  transform: none;
+  margin: 0;
+}
+.cf-msg:hover .cf-msg__copy--inline {
+  opacity: 1;
+}
+
+/* 反馈按钮：默认弱化，选中后按语义着色（好=绿 / 有问题=橙） */
+.cf-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-subtle);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+.cf-act:hover {
+  color: var(--fg);
+  background: var(--bg-hover);
+}
+.cf-act.is-on.is-good {
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
+  background: color-mix(in srgb, var(--success) 10%, transparent);
+}
+.cf-act.is-on.is-bad {
+  color: var(--warning);
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+  background: color-mix(in srgb, var(--warning) 12%, transparent);
+}

@@ -15,6 +15,7 @@ import type {
   RewindApplyResult,
   RewindMode,
   RewindUndoResult,
+  SessionUsageTotals,
   TodoItem,
   TodoState
 } from '../../../preload'
@@ -509,6 +510,11 @@ interface ChatContextValue {
   ) => Promise<ResolveAutotaskResult>
   /** 当前会话的待办清单状态（输入框上方的进度胶囊 + 清单面板）。无进行中的清单时 active 为 null。 */
   todos: TodoState
+  /**
+   * 某会话的**累计用量**（跨轮求和，供标题栏的用量面板）。
+   * 打开会话时从主进程拉一次做基准，流式期间由 usage 事件自增；老会话无记录时返回全 0。
+   */
+  usageOf: (sessionId: string) => SessionUsageTotals
   /** 手动取消当前会话的清单（不再进行）：胶囊收起，下一条消息告知模型。回合进行中主进程不受理。 */
   cancelTodoList: () => void
   /**
@@ -1006,6 +1012,15 @@ const EMPTY_RUNTIME: SessionRuntime = Object.freeze({
 /** 尚无待办清单的会话对外暴露的空状态（稳定引用）。 */
 const EMPTY_TODOS: TodoState = Object.freeze({ active: null })
 
+/** 无用量记录的会话对外暴露的空用量（稳定引用，避免每次渲染新建对象）。 */
+const EMPTY_USAGE: SessionUsageTotals = Object.freeze({
+  input: 0,
+  output: 0,
+  cacheRead: 0,
+  cacheWrite: 0,
+  requests: 0
+})
+
 /** 当前所视会话无活动态时对外暴露的空消息数组（稳定引用，避免每次渲染新建）。 */
 const EMPTY_MESSAGES: ChatMessage[] = Object.freeze([]) as unknown as ChatMessage[]
 
@@ -1156,6 +1171,51 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     todoStatesRef.current = map
     setTodoStates(map)
   }, [])
+
+  // 各会话的累计用量（键=sessionId）：打开会话时从主进程拉一次做基准，之后随 usage 事件自增。
+  // 只用于标题栏面板展示，不参与任何判定；因此丢了也不会影响功能（重开会话会重新拉回准确值）。
+  const [usageStates, setUsageStates] = useState<Map<string, SessionUsageTotals>>(() => new Map())
+  const usageStatesRef = useRef(usageStates)
+  const setUsage = useCallback((sid: string, u: SessionUsageTotals): void => {
+    const map = new Map(usageStatesRef.current)
+    map.set(sid, u)
+    usageStatesRef.current = map
+    setUsageStates(map)
+  }, [])
+  /** 在已有累计值上叠加一次请求的用量（流式 usage 事件逐 step 到达）。 */
+  const addUsage = useCallback((sid: string, d: SessionUsageTotals): void => {
+    const cur = usageStatesRef.current.get(sid) ?? EMPTY_USAGE
+    const map = new Map(usageStatesRef.current)
+    map.set(sid, {
+      input: cur.input + d.input,
+      output: cur.output + d.output,
+      cacheRead: cur.cacheRead + d.cacheRead,
+      cacheWrite: cur.cacheWrite + d.cacheWrite,
+      requests: cur.requests + d.requests
+    })
+    usageStatesRef.current = map
+    setUsageStates(map)
+  }, [])
+
+  // 切到某会话时拉一次累计用量做基准（主进程持久化的权威值）。
+  // 期间若正好有流式 usage 事件先到，以事件为准、不被这次拉取覆盖：只在本地还没有记录时写入。
+  useEffect(() => {
+    const sid = currentSessionId
+    if (!sid) return
+    let alive = true
+    void window.Pal.chat
+      .usage(sid)
+      .then((u) => {
+        if (!alive) return
+        if (!usageStatesRef.current.has(sid)) setUsage(sid, u)
+      })
+      .catch(() => {
+        /* 拉取失败不影响使用：面板保持 0，事件到了照样累加 */
+      })
+    return () => {
+      alive = false
+    }
+  }, [currentSessionId, setUsage])
 
   // 各会话待送达的插入消息（键=sessionId）：只由主进程的 inserts 事件更新（插入 / 送达 / 撤回 / 回合结束都会推）。
   const [insertStates, setInsertStates] = useState<Map<string, string[]>>(() => new Map())
@@ -1496,7 +1556,17 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
         patchMessages(sid, dropStepPartial)
         return
       }
-      if (ev.type === 'usage') return
+      // 用量事件：只累加标题栏面板的计数（主进程同时已把它写进会话的累计字段，重开时以主进程为准）。
+      if (ev.type === 'usage') {
+        addUsage(sid, {
+          input: ev.input,
+          output: ev.output,
+          cacheRead: ev.cacheRead ?? 0,
+          cacheWrite: ev.cacheWrite ?? 0,
+          requests: 1
+        })
+        return
+      }
       // 交互卡在手机端被答复：卡可能不在末条助手消息里，按 key 全量查找收敛。
       if (ev.type === 'interaction_resolved') {
         patchCardBlocks(sid, (blocks) => resolveCard(blocks, ev))
@@ -2155,6 +2225,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
       resolveProposal,
       resolveAutotask,
       todos: todoStates.get(currentSessionId) ?? EMPTY_TODOS,
+      usageOf: (id: string) => usageStates.get(id) ?? EMPTY_USAGE,
       cancelTodoList,
       stopSubagent,
       insert,
@@ -2166,6 +2237,7 @@ export function ChatProvider({ children }: { children: ReactNode }): React.JSX.E
     sessions,
     currentSessionId,
     todoStates,
+    usageStates,
     setTodoState,
     insertStates,
     messages,

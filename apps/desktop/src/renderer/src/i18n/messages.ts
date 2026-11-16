@@ -941,8 +941,27 @@ const zhCN: MessageTree = {
     historyShowAll: '展开全部（共 {n} 次）',
     historyCollapse: '收起'
   },
+  // 会话用量面板（标题栏右上角）：纯展示，不参与任何判定。
+  usage: {
+    title: '本会话累计用量',
+    in: '入',
+    out: '出',
+    cache: '缓存',
+    input: '累计输入',
+    output: '累计输出',
+    cacheRead: '缓存命中',
+    cacheWrite: '缓存写入',
+    requests: '请求次数',
+    empty: '暂无用量',
+    hint: '输入每次携带完整上下文，累计值会远大于内容本身；缓存命中率越高越省。'
+  },
   // 对话优先外壳（chat-first）专用文案。t 只收 key、不插值——含名字/计数/相对时间的动态串在 JS 组。
   cf: {
+    // 助手回复底部操作行（复制 / 回答反馈）
+    answerGood: '好的回答',
+    answerGoodHint: '标记这条回答有帮助',
+    answerBad: '有问题的回答',
+    answerBadHint: '标记这条回答有问题',
     // 右侧对话轮次索引（只索引用户消息）
     toc: {
       title: '对话导航',
@@ -2221,12 +2240,30 @@ const en: MessageTree = {
     historyShowAll: 'Show all ({n} runs)',
     historyCollapse: 'Show less'
   },
+  // Session usage panel (top-right of the chat header). Display only — never affects behaviour.
+  usage: {
+    title: 'Session usage',
+    in: 'In',
+    out: 'Out',
+    cache: 'Cache',
+    input: 'Input tokens',
+    output: 'Output tokens',
+    cacheRead: 'Cache hits',
+    cacheWrite: 'Cache writes',
+    requests: 'Requests',
+    empty: 'No usage yet',
+    hint: 'Each request carries the full context, so the running total far exceeds the content itself. A higher cache hit rate costs less.'
+  },
   // Chat-first shell strings. t takes a key only; dynamic strings (names/counts/relative time) are composed in JS.
   cf: {
     toc: {
       title: 'Conversation index',
       untitled: '(attachment)'
     },
+    answerGood: 'Good answer',
+    answerGoodHint: 'Mark this answer as helpful',
+    answerBad: 'Problem with this answer',
+    answerBadHint: 'Mark this answer as problematic',
     brandTag: 'Chat-first',
     newChat: 'New chat',
     draftTag: '[Draft]',

@@ -126,6 +126,15 @@ export interface PickedAttachment {
   reason?: string
 }
 
+/** 会话累计用量（与 chat-store.ts 的 SessionUsageTotals 对齐）。纯观测，不参与任何判定。 */
+export interface SessionUsageTotals {
+  input: number
+  output: number
+  cacheRead: number
+  cacheWrite: number
+  requests: number
+}
+
 /** 会话元信息（左侧列表用，与 chat-store.ts 对齐）。 */
 export interface ChatSessionMeta {
   id: string
@@ -1010,6 +1019,9 @@ const api = {
     /** 载入历史 + 进行中回合的 turnId（同一时刻取出，用于接上别处发起、仍在跑的一轮） */
     attachSession: (sessionId: string): Promise<{ messages: DisplayMessage[]; turnId: string | null }> =>
       ipcRenderer.invoke('chat:attach-session', sessionId),
+    /** 会话累计用量（跨轮求和）：打开会话时拉一次做基准，流式期间由 usage 事件自增。 */
+    usage: (sessionId: string): Promise<SessionUsageTotals> =>
+      ipcRenderer.invoke('chat:usage', sessionId),
     /** 删除某会话 */
     deleteSession: (sessionId: string, workspaceRoot: string | null): Promise<{ ok: true }> =>
       ipcRenderer.invoke('chat:delete-session', sessionId, workspaceRoot),
