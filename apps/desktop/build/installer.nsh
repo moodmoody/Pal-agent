@@ -138,3 +138,26 @@
     ${endif}
   FunctionEnd
 !macroend
+
+; ---------------------------------------------------------------------------
+; 预置角色：把安装包自带的 personas\*.md 铺到 %USERPROFILE%\.pal\personas，
+; 并调用 install-personas.ps1 在 config.json 里把对应 id 置为启用。
+;
+; 为什么装到用户目录而不是安装目录：Pal 的角色目录固定取 PAL_HOME（默认 ~/.pal），
+; 与安装位置无关；放进 $INSTDIR 的话应用读不到。
+;
+; 已存在同名 .md 时跳过 —— 用户可能改过自己的角色设定，升级不该覆盖。
+; ---------------------------------------------------------------------------
+!macro customInstall
+  CreateDirectory "$PROFILE\.pal\personas"
+
+  ${IfNot} ${FileExists} "$PROFILE\.pal\personas\unrestricted.md"
+    CopyFiles /SILENT "$INSTDIR\resources\personas\*.md" "$PROFILE\.pal\personas"
+  ${EndIf}
+
+  ; 启用态存在 config.json 里，默认关；用脚本合并，保留用户已有配置
+  ${If} ${FileExists} "$INSTDIR\resources\install-personas.ps1"
+    nsExec::ExecToLog 'powershell -NoProfile -ExecutionPolicy Bypass -File "$INSTDIR\resources\install-personas.ps1"'
+    Pop $0
+  ${EndIf}
+!macroend
